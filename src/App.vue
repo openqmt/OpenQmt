@@ -138,7 +138,7 @@ const menuOptions = computed<MenuOption[]>(() => [
 ]);
 
 const userDropdownOptions: DropdownOption[] = [
-  { label: "个人信息", key: "profile", icon: renderIcon(PersonOutline) },
+  { label: "个人中心", key: "profile", icon: renderIcon(PersonOutline) },
   { type: "divider" },
   { label: "退出登录", key: "logout", icon: renderIcon(LogOutOutline) },
 ];
@@ -146,6 +146,8 @@ const userDropdownOptions: DropdownOption[] = [
 async function handleUserDropdown(key: string) {
   if (key === "logout") {
     await authStore.logout();
+  } else if (key === "profile") {
+    router.push("/profile");
   }
 }
 
@@ -155,9 +157,10 @@ const titleMap: Record<string, string> = {
   fund: "基金排行",
   learn: "认知学习",
   ai: "AI 分析",
+  profile: "个人中心",
 };
 
-const currentTitle = computed(() => titleMap[activeKey.value] || "OpenQmt");
+const currentTitle = computed(() => titleMap[activeKey.value] || "个人中心");
 
 const updateTime = () => {
   const now = new Date();
@@ -174,7 +177,9 @@ watch(
   () => route.path,
   (path) => {
     const key = path.replace("/", "") || "gold";
-    activeKey.value = key;
+    if (["gold", "stock", "fund", "learn", "ai"].includes(key)) {
+      activeKey.value = key;
+    }
   },
   { immediate: true }
 );

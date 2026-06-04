@@ -97,6 +97,7 @@ export interface UserInfo {
   nickname: string;
   avatar_url: string | null;
   github_id: string | null;
+  credits: number;
 }
 
 /** 认证结果 */
@@ -105,20 +106,4 @@ export interface AuthResult {
   message: string;
   user: UserInfo | null;
   token: string | null;
-}
-
-/** GitHub Device Code */
-export interface GithubDeviceCode {
-  device_code: string;
-  user_code: string;
-  verification_uri: string;
-  expires_in: number;
-  interval: number;
-}
-
-/** GitHub Token 轮询结果 */
-export interface GithubTokenResult {
-  success: boolean;
-  access_token: string | null;
-  error: string | null;
 }

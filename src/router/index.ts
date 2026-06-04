@@ -36,6 +36,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import("../pages/AIPage.vue"),
     meta: { title: "AI分析", requiresAuth: true },
   },
+  {
+    path: "/profile",
+    name: "Profile",
+    component: () => import("../pages/ProfilePage.vue"),
+    meta: { title: "个人中心", requiresAuth: true },
+  },
 ];
 
 const router = createRouter({
@@ -48,7 +54,6 @@ router.beforeEach((to, _from, next) => {
   if (to.meta.requiresAuth) {
     const authStore = useAuthStore();
     if (!authStore.isAuthenticated) {
-      // 标记需要登录，由 App.vue 弹出登录框
       authStore.pendingAuthRoute = to.fullPath;
       next({ path: "/gold", query: { auth: "required" } });
     } else {

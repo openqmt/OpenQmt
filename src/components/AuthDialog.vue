@@ -115,19 +115,20 @@
 
         <!-- GitHub 登录 -->
         <n-tab-pane name="github" tab="GitHub">
-          <div class="github-flow" v-if="!githubStep">
+          <div class="github-flow">
             <div class="github-icon-area">
               <svg viewBox="0 0 24 24" width="48" height="48" fill="currentColor" class="github-svg">
                 <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
               </svg>
             </div>
-            <p class="github-desc">使用 GitHub 账号登录 OpenQmt</p>
+            <p class="github-desc">使用 GitHub 账号快速登录 OpenQmt</p>
+            <p class="github-hint">模拟 GitHub 授权，将自动创建账号并登录</p>
             <n-button
               type="primary"
               block
               size="large"
-              :loading="githubLoading"
-              @click="handleGithubStart"
+              :loading="authStore.loading"
+              @click="handleGithubLogin"
               class="auth-submit-btn github-btn"
             >
               <template #icon>
@@ -137,38 +138,6 @@
               </template>
               GitHub 登录
             </n-button>
-          </div>
-
-          <div class="github-flow" v-else>
-            <div class="github-step-info">
-              <n-icon size="28" color="var(--gold-primary)"><InformationCircleOutline /></n-icon>
-              <p class="github-step-title">请在 GitHub 上授权</p>
-            </div>
-
-            <div class="github-code-area">
-              <span class="github-code-label">验证码</span>
-              <div class="github-code-value">
-                <span class="github-user-code">{{ githubUserCode }}</span>
-                <n-button text size="small" @click="copyUserCode" class="copy-btn">
-                  <n-icon size="16"><CopyOutline /></n-icon>
-                </n-button>
-              </div>
-            </div>
-
-            <p class="github-hint">
-              1. 打开 <a href="#" @click.prevent="openGithubVerify" class="github-link">{{ githubVerifyUrl }}</a><br/>
-              2. 输入上方验证码<br/>
-              3. 授权后自动完成登录
-            </p>
-
-            <div class="github-polling" v-if="githubPolling">
-              <n-spin size="small" />
-              <span>等待授权中...</span>
-            </div>
-            <div class="github-polling github-success" v-else-if="githubDone">
-              <n-icon size="20" color="#22c55e"><CheckmarkCircleOutline /></n-icon>
-              <span>授权成功!</span>
-            </div>
           </div>
         </n-tab-pane>
       </n-tabs>
@@ -183,13 +152,12 @@
 <script setup lang="ts">
 import { ref, reactive } from "vue";
 import {
-  NModal, NTabs, NTabPane, NForm, NFormItem, NInput, NButton, NIcon, NSpin,
+  NModal, NTabs, NTabPane, NForm, NFormItem, NInput, NButton, NIcon,
   useMessage,
 } from "naive-ui";
-import { MailOutline, LockClosedOutline, InformationCircleOutline, CopyOutline, CheckmarkCircleOutline } from "@vicons/ionicons5";
+import { MailOutline, LockClosedOutline } from "@vicons/ionicons5";
 import { useAuthStore } from "../stores/auth";
 import type { FormInst, FormRules } from "naive-ui";
-import { openUrl } from "@tauri-apps/plugin-opener";
 
 const props = defineProps<{ show: boolean }>();
 const emit = defineEmits<{ "update:show": [value: boolean] }>();
@@ -241,9 +209,7 @@ const registerRules: FormRules = {
   confirmPassword: [
     { required: true, message: "请确认密码", trigger: "blur" },
     {
-      validator: (_rule, value) => {
-        return value === registerForm.password;
-      },
+      validator: (_rule, value) => value === registerForm.password,
       message: "两次密码不一致",
       trigger: "blur",
     },
@@ -266,83 +232,15 @@ async function handleRegister() {
   }
 }
 
-// ── GitHub Device Flow ──
-const githubLoading = ref(false);
-const githubStep = ref(false);
-const githubUserCode = ref("");
-const githubVerifyUrl = ref("https://github.com/login/device");
-const githubDeviceCode = ref("");
-const githubPolling = ref(false);
-const githubDone = ref(false);
-let pollTimer: ReturnType<typeof setInterval> | null = null;
-
-async function handleGithubStart() {
-  githubLoading.value = true;
-  const result = await authStore.githubStartDeviceFlow();
-  githubLoading.value = false;
-
-  if (!result) {
-    message.error("无法连接 GitHub，请检查网络");
-    return;
-  }
-
-  githubUserCode.value = result.user_code;
-  githubVerifyUrl.value = result.verification_uri;
-  githubDeviceCode.value = result.device_code;
-  githubStep.value = true;
-  githubPolling.value = true;
-  githubDone.value = false;
-
-  // start polling
-  const interval = result.interval * 1000;
-  pollTimer = setInterval(async () => {
-    const pollResult = await authStore.githubPollToken(githubDeviceCode.value);
-    if (pollResult.success) {
-      stopPolling();
-      githubDone.value = true;
-      githubPolling.value = false;
-      message.success("GitHub 登录成功");
-      setTimeout(() => {
-        emit("update:show", false);
-        resetGithub();
-      }, 1000);
-    } else if (pollResult.error && pollResult.error !== "authorization_pending" && pollResult.error !== "slow_down") {
-      stopPolling();
-      githubPolling.value = false;
-      if (pollResult.error === "expired_token") {
-        message.error("验证码已过期，请重试");
-        resetGithub();
-      }
-    }
-  }, interval);
-}
-
-function stopPolling() {
-  if (pollTimer) {
-    clearInterval(pollTimer);
-    pollTimer = null;
-  }
-}
-
-function resetGithub() {
-  githubStep.value = false;
-  githubUserCode.value = "";
-  githubDeviceCode.value = "";
-  githubPolling.value = false;
-  githubDone.value = false;
-}
-
-function copyUserCode() {
-  navigator.clipboard.writeText(githubUserCode.value);
-  message.success("验证码已复制");
-}
-
-async function openGithubVerify() {
-  try {
-    await openUrl(githubVerifyUrl.value);
-  } catch {
-    // fallback
-    window.open(githubVerifyUrl.value, "_blank");
+// ── GitHub Login (mock) ──
+async function handleGithubLogin() {
+  const result = await authStore.githubLogin();
+  if (result.success) {
+    message.success("GitHub 登录成功");
+    emit("update:show", false);
+    resetForms();
+  } else {
+    message.error(result.message);
   }
 }
 
@@ -354,8 +252,6 @@ function resetForms() {
   registerForm.password = "";
   registerForm.confirmPassword = "";
   activeTab.value = "login";
-  stopPolling();
-  resetGithub();
 }
 </script>
 
@@ -435,7 +331,6 @@ function resetForms() {
   background: #2f363d !important;
 }
 
-/* GitHub Flow */
 .github-flow {
   padding: 24px 0;
   text-align: center;
@@ -449,90 +344,13 @@ function resetForms() {
 .github-desc {
   font-size: 14px;
   color: var(--text-secondary);
-  margin-bottom: 20px;
-}
-
-.github-step-info {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-bottom: 20px;
-}
-
-.github-step-title {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.github-code-area {
-  background: var(--bg-primary);
-  border: 1px solid var(--border-accent);
-  border-radius: 10px;
-  padding: 16px 20px;
-  margin-bottom: 16px;
-}
-
-.github-code-label {
-  font-size: 12px;
-  color: var(--text-muted);
-  display: block;
-  margin-bottom: 6px;
-}
-
-.github-code-value {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.github-user-code {
-  font-size: 28px;
-  font-weight: 700;
-  font-family: 'JetBrains Mono', monospace;
-  color: var(--gold-primary);
-  letter-spacing: 4px;
-}
-
-.copy-btn {
-  color: var(--text-muted) !important;
-}
-
-.copy-btn:hover {
-  color: var(--gold-primary) !important;
+  margin-bottom: 8px;
 }
 
 .github-hint {
-  font-size: 13px;
-  color: var(--text-secondary);
-  line-height: 1.8;
-  text-align: left;
-  padding: 0 8px;
-  margin-bottom: 16px;
-}
-
-.github-link {
-  color: var(--gold-primary);
-  text-decoration: none;
-}
-
-.github-link:hover {
-  text-decoration: underline;
-}
-
-.github-polling {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-muted);
-}
-
-.github-success {
-  color: #22c55e !important;
+  margin-bottom: 20px;
 }
 
 .auth-footer {
