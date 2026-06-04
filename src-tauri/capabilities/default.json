@@ -1,0 +1,16 @@
+{
+  "identifier": "default",
+  "description": "Default capability for OpenQmt",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "http:default",
+    {
+      "identifier": "http:allow-fetch",
+      "allow": [
+        { "url": "https://**" },
+        { "url": "http://**" }
+      ]
+    }
+  ]
+}
