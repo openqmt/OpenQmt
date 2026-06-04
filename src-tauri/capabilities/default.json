@@ -5,6 +5,10 @@
   "permissions": [
     "core:default",
     "http:default",
+    "core:window:default",
+    "core:window:allow-close",
+    "core:window:allow-set-title",
+    "opener:default",
     {
       "identifier": "http:allow-fetch",
       "allow": [

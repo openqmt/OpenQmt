@@ -37,6 +37,33 @@
               <span class="header-badge" v-if="store.loading">更新中...</span>
             </div>
             <div class="header-right">
+              <!-- 未登录 -->
+              <template v-if="!authStore.isAuthenticated">
+                <n-button size="small" type="primary" ghost @click="showAuthDialog = true" class="login-btn">
+                  <template #icon>
+                    <n-icon :component="LogInOutline" />
+                  </template>
+                  登录
+                </n-button>
+              </template>
+              <!-- 已登录 -->
+              <template v-else>
+                <n-dropdown :options="userDropdownOptions" @select="handleUserDropdown">
+                  <div class="user-area">
+                    <n-avatar
+                      v-if="authStore.user?.avatar_url"
+                      :src="authStore.user.avatar_url"
+                      :size="28"
+                      round
+                    />
+                    <n-avatar v-else :size="28" round class="user-avatar-default">
+                      {{ authStore.user?.nickname?.charAt(0)?.toUpperCase() || 'U' }}
+                    </n-avatar>
+                    <span class="user-name">{{ authStore.user?.nickname || authStore.user?.email }}</span>
+                    <n-icon size="14" color="var(--text-muted)"><ChevronDownOutline /></n-icon>
+                  </div>
+                </n-dropdown>
+              </template>
               <span class="header-time">{{ currentTime }}</span>
             </div>
           </n-layout-header>
@@ -48,6 +75,9 @@
           </n-layout-content>
         </n-layout>
       </n-layout>
+
+      <!-- 登录/注册对话框 -->
+      <AuthDialog v-model:show="showAuthDialog" />
     </n-message-provider>
   </n-config-provider>
 </template>
@@ -56,36 +86,68 @@
 import { ref, computed, h, onMounted, onUnmounted, watch } from "vue";
 import { useRoute } from "vue-router";
 import { darkTheme, NIcon, type GlobalThemeOverrides } from "naive-ui";
-import type { MenuOption } from "naive-ui";
+import type { MenuOption, DropdownOption } from "naive-ui";
 import {
   FlashOutline,
   TrendingUpOutline,
   WalletOutline,
   BookOutline,
   SparklesOutline,
+  LogInOutline,
+  LogOutOutline,
+  PersonOutline,
+  LockClosedOutline,
+  ChevronDownOutline,
 } from "@vicons/ionicons5";
 import router from "./router";
 import { useGoldStore } from "./stores/gold";
+import { useAuthStore } from "./stores/auth";
+import AuthDialog from "./components/AuthDialog.vue";
 
 const route = useRoute();
 const goldStore = useGoldStore();
+const authStore = useAuthStore();
 const store = goldStore;
 const activeKey = ref<string>("gold");
 const collapsed = ref(false);
 const currentTime = ref("");
+const showAuthDialog = ref(false);
 let timer: ReturnType<typeof setInterval> | null = null;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const renderIcon = (icon: any) => () =>
   h(NIcon, { size: 18 }, { default: () => h(icon) });
 
-const menuOptions: MenuOption[] = [
+const renderLabelWithLock = (label: string, requiresAuth: boolean) => {
+  if (requiresAuth && !authStore.isAuthenticated) {
+    return () =>
+      h("div", { style: "display:flex;align-items:center;gap:6px" }, [
+        h("span", label),
+        h(NIcon, { size: 12, color: "var(--text-muted)" }, { default: () => h(LockClosedOutline) }),
+      ]);
+  }
+  return label;
+};
+
+const menuOptions = computed<MenuOption[]>(() => [
   { label: "黄金行情", key: "gold", icon: renderIcon(FlashOutline) },
   { label: "股票行情", key: "stock", icon: renderIcon(TrendingUpOutline) },
   { label: "基金排行", key: "fund", icon: renderIcon(WalletOutline) },
-  { label: "认知学习", key: "learn", icon: renderIcon(BookOutline) },
-  { label: "AI 分析", key: "ai", icon: renderIcon(SparklesOutline) },
+  { label: renderLabelWithLock("认知学习", true), key: "learn", icon: renderIcon(BookOutline) },
+  { label: renderLabelWithLock("AI 分析", true), key: "ai", icon: renderIcon(SparklesOutline) },
+]);
+
+const userDropdownOptions: DropdownOption[] = [
+  { label: "个人信息", key: "profile", icon: renderIcon(PersonOutline) },
+  { type: "divider" },
+  { label: "退出登录", key: "logout", icon: renderIcon(LogOutOutline) },
 ];
+
+async function handleUserDropdown(key: string) {
+  if (key === "logout") {
+    await authStore.logout();
+  }
+}
 
 const titleMap: Record<string, string> = {
   gold: "黄金行情",
@@ -123,6 +185,30 @@ watch(activeKey, (key) => {
   }
 });
 
+// 检测路由 query 中的 auth=required，自动弹出登录框
+watch(
+  () => route.query.auth,
+  (auth) => {
+    if (auth === "required") {
+      showAuthDialog.value = true;
+    }
+  },
+  { immediate: true }
+);
+
+// 登录成功后跳转到之前想访问的页面
+watch(
+  () => authStore.isAuthenticated,
+  (isAuth) => {
+    if (isAuth && authStore.pendingAuthRoute) {
+      const target = authStore.pendingAuthRoute;
+      authStore.pendingAuthRoute = null;
+      router.push(target);
+      showAuthDialog.value = false;
+    }
+  }
+);
+
 const themeOverrides: GlobalThemeOverrides = {
   common: {
     primaryColor: "#d4a843",
@@ -159,9 +245,10 @@ const themeOverrides: GlobalThemeOverrides = {
   },
 };
 
-onMounted(() => {
+onMounted(async () => {
   updateTime();
   timer = setInterval(updateTime, 1000);
+  await authStore.checkAuth();
 });
 
 onUnmounted(() => {
@@ -267,6 +354,41 @@ onUnmounted(() => {
 .header-right {
   display: flex;
   align-items: center;
+  gap: 16px;
+}
+
+.login-btn {
+  font-size: 13px;
+}
+
+.user-area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.user-area:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.user-avatar-default {
+  background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark)) !important;
+  color: #0a0e1a !important;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.user-name {
+  font-size: 13px;
+  color: var(--text-primary);
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .header-time {

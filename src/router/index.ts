@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory, type RouteRecordRaw } from "vue-router";
+import { useAuthStore } from "../stores/auth";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -27,19 +28,35 @@ const routes: RouteRecordRaw[] = [
     path: "/learn",
     name: "Learn",
     component: () => import("../pages/LearnPage.vue"),
-    meta: { title: "认知学习" },
+    meta: { title: "认知学习", requiresAuth: true },
   },
   {
     path: "/ai",
     name: "AI",
     component: () => import("../pages/AIPage.vue"),
-    meta: { title: "AI分析" },
+    meta: { title: "AI分析", requiresAuth: true },
   },
 ];
 
 const router = createRouter({
   history: createWebHashHistory(),
   routes,
+});
+
+// 全局路由守卫
+router.beforeEach((to, _from, next) => {
+  if (to.meta.requiresAuth) {
+    const authStore = useAuthStore();
+    if (!authStore.isAuthenticated) {
+      // 标记需要登录，由 App.vue 弹出登录框
+      authStore.pendingAuthRoute = to.fullPath;
+      next({ path: "/gold", query: { auth: "required" } });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
 });
 
 export default router;
