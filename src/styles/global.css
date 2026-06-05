@@ -7,7 +7,9 @@
   --bp-lg: 1024px;
   --bp-xl: 1280px;
   --header-height: 56px;
-  --content-padding: 24px 28px;
+  --content-padding-y: 24px;
+  --content-padding-x: 28px;
+  --content-padding: var(--content-padding-y) var(--content-padding-x);
   --header-padding: 0 28px;
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -19,14 +21,16 @@
 
 @media (max-width: 1024px) {
   :root {
-    --content-padding: 20px 20px;
+    --content-padding-y: 20px;
+    --content-padding-x: 20px;
     --header-padding: 0 20px;
   }
 }
 
 @media (max-width: 768px) {
   :root {
-    --content-padding: 16px;
+    --content-padding-y: 16px;
+    --content-padding-x: 16px;
     --header-padding: 0 14px;
     --header-height: 52px;
   }
@@ -34,7 +38,8 @@
 
 @media (max-width: 480px) {
   :root {
-    --content-padding: 12px;
+    --content-padding-y: 12px;
+    --content-padding-x: 12px;
     --header-padding: 0 10px;
   }
 }

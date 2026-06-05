@@ -89,7 +89,7 @@
               </template>
             </div>
           </n-layout-header>
-          <n-layout-content class="app-content">
+          <n-layout-content class="app-content" :class="{ 'app-content--fill': activeKey === 'ai' }">
             <router-view />
           </n-layout-content>
         </n-layout>
@@ -586,6 +586,17 @@ onUnmounted(() => {
   flex-direction: column;
   min-width: 0;
   max-width: 100%;
+}
+
+.app-content--fill {
+  overflow: hidden;
+}
+
+.app-content--fill :deep(.n-layout-scroll-container) {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
 }
 
 .mobile-drawer-inner {
