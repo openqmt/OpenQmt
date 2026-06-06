@@ -108,14 +108,14 @@ function formatVolume(val: number): string {
 
 <style scoped>
 .card-body {
-    padding: 18px 20px;
+    padding: 14px 16px;
 }
 
 .card-header {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 16px;
+    gap: 6px;
+    margin-bottom: 10px;
 }
 
 .status-dot {
@@ -136,22 +136,22 @@ function formatVolume(val: number): string {
 }
 
 .card-icon {
-    font-size: 18px;
+    font-size: 16px;
     line-height: 1;
 }
 
 .card-name {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
     color: var(--text-secondary);
     flex: 1;
 }
 
 .card-unit {
-    font-size: 11px;
+    font-size: 10px;
     color: var(--text-muted);
     background: var(--surface-muted);
-    padding: 2px 8px;
+    padding: 1px 6px;
     border-radius: 100px;
 }
 
@@ -159,12 +159,12 @@ function formatVolume(val: number): string {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 18px;
+    gap: 8px;
+    margin-bottom: 12px;
 }
 
 .card-price {
-    font-size: 28px;
+    font-size: 24px;
     font-weight: 600;
     line-height: 1.1;
     letter-spacing: -0.03em;
@@ -181,9 +181,9 @@ function formatVolume(val: number): string {
 }
 
 .card-change-pill {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 500;
-    padding: 4px 10px;
+    padding: 2px 8px;
     border-radius: 100px;
     white-space: nowrap;
 }
@@ -206,41 +206,40 @@ function formatVolume(val: number): string {
 .card-detail {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px 16px;
-    padding-top: 16px;
+    gap: 6px 12px;
+    padding-top: 10px;
     border-top: 1px solid var(--border-subtle);
 }
 
 .detail-item {
     display: flex;
-    flex-direction: column;
-    gap: 2px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    min-width: 0;
 }
 
 .detail-label {
     color: var(--text-muted);
     font-size: 11px;
     font-weight: 500;
+    flex-shrink: 0;
 }
 
 .detail-value {
     color: var(--text-primary);
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
+    text-align: right;
 }
 
 @media (max-width: 768px) {
     .card-body {
-        padding: 16px;
+        padding: 12px 14px;
     }
 
     .card-price {
-        font-size: 24px;
-    }
-
-    .card-change-pill {
-        font-size: 11px;
-        padding: 3px 8px;
+        font-size: 22px;
     }
 }
 </style>

@@ -141,13 +141,13 @@ onUnmounted(() => {
 .card-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
+    gap: 12px;
 }
 
 @media (max-width: 768px) {
     .card-grid {
         grid-template-columns: 1fr;
-        gap: 12px;
+        gap: 10px;
     }
 }
 
