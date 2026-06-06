@@ -9,7 +9,7 @@
         <n-grid :cols="gridCols" :x-gap="14" :y-gap="14">
             <n-gi v-for="topic in topics" :key="topic.id">
                 <div
-                    class="learn-card surface-card"
+                    class="learn-card surface-card surface-card--interactive"
                     :class="`level-${topic.level}`"
                     @click="selectTopic(topic)"
                 >
@@ -170,14 +170,6 @@ const topics: LearnTopic[] = [
 
 .page-intro {
     margin-bottom: 24px;
-}
-
-.learn-card {
-    cursor: pointer;
-}
-
-.learn-card:hover {
-    transform: none;
 }
 
 .learn-card-inner {

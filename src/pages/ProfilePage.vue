@@ -1,6 +1,6 @@
 <template>
     <div class="profile-page">
-        <div class="profile-header surface-card">
+        <div class="profile-header surface-card surface-card--flat">
             <div class="profile-avatar-area">
                 <n-avatar
                     v-if="authStore.user?.avatar_url"
@@ -34,7 +34,7 @@
 
         <div class="profile-grid">
             <!-- 积分卡片 -->
-            <div class="profile-card credits-card surface-card">
+            <div class="profile-card credits-card surface-card surface-card--flat">
                 <div class="card-header">
                     <n-icon size="20" color="var(--gold-primary)"
                         ><DiamondOutline
@@ -79,7 +79,7 @@
             </div>
 
             <!-- 修改昵称 -->
-            <div class="profile-card surface-card">
+            <div class="profile-card surface-card surface-card--flat">
                 <div class="card-header">
                     <n-icon size="20" color="var(--gold-primary)"
                         ><CreateOutline
@@ -107,7 +107,7 @@
             </div>
 
             <!-- 修改密码 -->
-            <div class="profile-card surface-card">
+            <div class="profile-card surface-card surface-card--flat">
                 <div class="card-header">
                     <n-icon size="20" color="var(--gold-primary)"
                         ><LockClosedOutline
@@ -154,7 +154,7 @@
             </div>
 
             <!-- 账户信息 -->
-            <div class="profile-card surface-card">
+            <div class="profile-card surface-card surface-card--flat">
                 <div class="card-header">
                     <n-icon size="20" color="var(--gold-primary)"
                         ><InformationCircleOutline
@@ -296,10 +296,6 @@ async function handleUpdatePassword() {
     margin-bottom: 20px;
 }
 
-.profile-header:hover {
-    transform: none;
-}
-
 .profile-avatar-default {
     background: linear-gradient(
         135deg,
@@ -347,10 +343,6 @@ async function handleUpdatePassword() {
 
 .profile-card {
     padding: 24px;
-}
-
-.profile-card:hover {
-    transform: none;
 }
 
 .card-header {

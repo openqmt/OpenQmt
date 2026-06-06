@@ -146,10 +146,6 @@ onUnmounted(() => { if (timer) clearInterval(timer); });
   padding: 18px 20px;
 }
 
-.detail-panel:hover {
-  transform: none;
-}
-
 .panel-header {
   display: flex;
   align-items: center;

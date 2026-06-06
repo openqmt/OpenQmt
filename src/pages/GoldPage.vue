@@ -175,10 +175,6 @@ onUnmounted(() => {
     gap: 14px;
 }
 
-.info-card:hover {
-    transform: none;
-}
-
 .info-icon-wrap {
     width: 40px;
     height: 40px;

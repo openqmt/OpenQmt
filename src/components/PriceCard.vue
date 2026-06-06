@@ -107,14 +107,6 @@ function formatVolume(val: number): string {
 </script>
 
 <style scoped>
-.price-card-wrap {
-    cursor: default;
-}
-
-.price-card-wrap:hover {
-    transform: none;
-}
-
 .card-body {
     padding: 18px 20px;
 }

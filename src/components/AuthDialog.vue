@@ -262,7 +262,7 @@ function resetForms() {
   background: var(--bg-card);
   border-radius: var(--radius-xl);
   padding: 32px 32px 24px;
-  box-shadow: var(--shadow-card-hover);
+  box-shadow: var(--shadow-card);
   border: 1px solid var(--border-subtle);
 }
 

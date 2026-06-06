@@ -1,6 +1,6 @@
 <template>
     <div class="ai-page">
-        <div class="chat-container surface-card">
+        <div class="chat-container surface-card surface-card--flat">
             <div class="chat-messages" ref="messagesRef">
                 <div v-if="messages.length === 0" class="welcome-area">
                     <div class="welcome-icon-wrap">✨</div>
@@ -191,10 +191,6 @@ function generateAIResponse(question: string): string {
     flex: 1 1 0;
     min-height: 0;
     overflow: hidden;
-}
-
-.chat-container:hover {
-    transform: none;
 }
 
 .chat-messages {
