@@ -169,7 +169,12 @@ export interface AuthResult {
 }
 
 /** 推送渠道类型 */
-export type PushChannel = 'feishu' | 'wecom' | 'dingtalk' | 'wxpusher' | 'custom'
+export type PushChannel =
+    | 'feishu'
+    | 'wecom'
+    | 'dingtalk'
+    | 'wxpusher'
+    | 'custom'
 
 /** 推送渠道配置 */
 export interface PushChannelConfig {
