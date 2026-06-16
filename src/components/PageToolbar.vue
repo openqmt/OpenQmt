@@ -1,7 +1,7 @@
 <template>
     <div class="page-toolbar header-toolbar">
         <n-space
-            v-if="pageType !== 'learn'"
+            v-if="pageType !== 'learn' && pageType !== 'ai'"
             align="center"
             :size="10"
             class="toolbar-actions"
@@ -46,6 +46,28 @@
             class="learn-category-select"
         />
 
+        <n-space
+            v-if="pageType === 'ai'"
+            align="center"
+            :size="8"
+            class="toolbar-actions ai-model-toolbar"
+        >
+            <n-select
+                v-model:value="selectedProvider"
+                :options="providerOptions"
+                size="small"
+                class="ai-provider-select"
+                @update:value="onProviderChange"
+            />
+            <n-select
+                v-model:value="selectedModel"
+                :options="modelOptions"
+                size="small"
+                class="ai-model-select"
+                @update:value="onModelChange"
+            />
+        </n-space>
+
         <span v-if="lastUpdate" class="update-time num-mono">{{
             lastUpdate
         }}</span>
@@ -60,14 +82,24 @@ import { useGoldStore } from '../stores/gold'
 import { useStockStore } from '../stores/stock'
 import { useFundStore } from '../stores/fund'
 import { useLearnStore } from '../stores/learn'
+import { useAiModelSelection } from '../composables/useAiModelSelection'
 
 const route = useRoute()
 const goldStore = useGoldStore()
 const stockStore = useStockStore()
 const fundStore = useFundStore()
 const learnStore = useLearnStore()
+const {
+    selectedProvider,
+    selectedModel,
+    providerOptions,
+    modelOptions,
+    onProviderChange,
+    onModelChange,
+} = useAiModelSelection()
 
 const pageType = computed(() => {
+    if (route.path.startsWith('/ai')) return 'ai'
     const key = route.path.replace('/', '') || 'gold'
     if (key === 'gold' || key === 'stock' || key === 'fund' || key === 'learn')
         return key
@@ -135,7 +167,7 @@ watch(autoRefresh, startAutoRefresh)
 watch(
     pageType,
     (type) => {
-        if (!type || type === 'learn') {
+        if (!type || type === 'learn' || type === 'ai') {
             clearTimer()
             return
         }

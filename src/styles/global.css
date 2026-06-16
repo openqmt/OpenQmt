@@ -273,6 +273,18 @@ body,
     width: 128px;
 }
 
+.page-toolbar .ai-provider-select {
+    width: 120px;
+}
+
+.page-toolbar .ai-model-select {
+    width: 140px;
+}
+
+.page-toolbar .ai-model-toolbar {
+    flex-wrap: nowrap;
+}
+
 .table-scroll-wrap {
     width: 100%;
     min-width: 0;
@@ -312,7 +324,9 @@ body,
 
     .page-toolbar .n-select,
     .page-toolbar .fund-type-select,
-    .page-toolbar .learn-category-select {
+    .page-toolbar .learn-category-select,
+    .page-toolbar .ai-provider-select,
+    .page-toolbar .ai-model-select {
         width: 96px !important;
     }
 }

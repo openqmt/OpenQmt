@@ -457,7 +457,7 @@ const titleMap: Record<string, string> = {
 const currentTitle = computed(() => titleMap[activeKey.value] || '个人中心')
 
 const showPageToolbar = computed(() =>
-    ['gold', 'stock', 'fund', 'learn'].includes(activeKey.value)
+    ['gold', 'stock', 'fund', 'learn', 'ai'].includes(activeKey.value)
 )
 
 const pageLoading = computed(() => {

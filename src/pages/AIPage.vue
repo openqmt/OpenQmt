@@ -1,39 +1,6 @@
 <template>
     <div class="ai-page">
         <div class="chat-container surface-card surface-card--flat">
-            <!-- 模型选择器 -->
-            <div class="model-selector">
-                <div class="selector-item">
-                    <!-- <span class="selector-label">服务商:</span> -->
-                    <n-select
-                        v-model:value="selectedProvider"
-                        :options="providerOptions"
-                        size="small"
-                        class="selector-select"
-                        @update:value="onProviderChange"
-                    />
-                </div>
-                <div class="selector-item">
-                    <!-- <span class="selector-label">模型:</span> -->
-                    <n-select
-                        v-model:value="selectedModel"
-                        :options="modelOptions"
-                        size="small"
-                        class="selector-select"
-                    />
-                </div>
-                <n-button
-                    size="small"
-                    class="new-chat-btn"
-                    @click="newConversation"
-                >
-                    <template #icon>
-                        <n-icon :component="AddOutline" />
-                    </template>
-                    新对话
-                </n-button>
-            </div>
-
             <div class="chat-messages" ref="messagesRef">
                 <div v-if="messages.length === 0" class="welcome-area">
                     <div class="welcome-icon-wrap">✨</div>
@@ -112,51 +79,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, nextTick, watch } from 'vue'
-import { useRoute } from 'vue-router'
-import { NSelect, NButton, NIcon, useMessage } from 'naive-ui'
+import { ref, computed, nextTick } from 'vue'
+import { useMessage } from 'naive-ui'
 import { httpFetch } from '../utils/http'
-import { AddOutline } from '@vicons/ionicons5'
-import type { AiMessage, ModelProvider } from '../types'
-import { useSettingsStore, PROVIDER_LABELS } from '../stores/settings'
+import type { AiMessage } from '../types'
+import { useSettingsStore } from '../stores/settings'
 import { useAiStore } from '../stores/ai'
-import router from '../router'
+import { useAiModelSelection } from '../composables/useAiModelSelection'
 
-const route = useRoute()
 const settingsStore = useSettingsStore()
 const aiStore = useAiStore()
 const message = useMessage()
+const { selectedProvider, selectedModel, currentProviderLabel } =
+    useAiModelSelection()
 
 const messages = computed(() => aiStore.currentConversation?.messages || [])
 const inputText = ref('')
 const isLoading = ref(false)
 const messagesRef = ref<HTMLElement | null>(null)
-
-// 模型选择
-const selectedProvider = ref<ModelProvider>(settingsStore.model.provider)
-const selectedModel = ref<string>(settingsStore.model.model)
-
-const providerOptions = computed(() =>
-    settingsStore.providerOptions.map(opt => ({
-        label: opt.label,
-        value: opt.value as ModelProvider,
-    }))
-)
-
-const modelOptions = computed(() => {
-    const config = settingsStore.model.providers[selectedProvider.value]
-    if (!config) return []
-    return config.models
-        .filter(m => m.enabled)
-        .map(m => ({
-            label: m.name,
-            value: m.id,
-        }))
-})
-
-const currentProviderLabel = computed(
-    () => PROVIDER_LABELS[selectedProvider.value]
-)
 
 const quickQuestions = [
     '推荐新能源相关的基金',
@@ -190,28 +130,11 @@ function scrollToBottom(): void {
     })
 }
 
-function onProviderChange(provider: ModelProvider) {
-    settingsStore.setProvider(provider)
-    const config = settingsStore.model.providers[provider]
-    if (config) {
-        selectedProvider.value = provider
-        selectedModel.value = config.activeModel
-    }
-    aiStore.updateConversationModel(provider, selectedModel.value)
-}
-
 /** 确保有当前对话，如果没有则创建 */
 function ensureConversation(): void {
     if (!aiStore.currentConversationId) {
         aiStore.createConversation(selectedProvider.value, selectedModel.value)
     }
-}
-
-/** 新建对话 */
-function newConversation(): void {
-    aiStore.currentConversationId = null
-    aiStore.persist()
-    router.push('/ai')
 }
 
 async function sendQuickQuestion(question: string): Promise<void> {
@@ -370,34 +293,6 @@ async function callAIStream(userMessage: string, messageId: string): Promise<voi
         throw new Error('网络请求失败')
     }
 }
-
-// 监听路由参数，切换对话
-watch(
-    () => route.params.id,
-    (id) => {
-        if (id && typeof id === 'string') {
-            aiStore.switchConversation(id)
-            // 恢复该对话的模型选择
-            const conv = aiStore.currentConversation
-            if (conv) {
-                selectedProvider.value = conv.provider
-                selectedModel.value = conv.model
-            }
-        }
-    },
-    { immediate: true }
-)
-
-// 监听当前对话变化，恢复模型选择
-watch(
-    () => aiStore.currentConversation,
-    (conv) => {
-        if (conv) {
-            selectedProvider.value = conv.provider
-            selectedModel.value = conv.model
-        }
-    }
-)
 </script>
 
 <style scoped>
@@ -416,38 +311,6 @@ watch(
     flex: 1 1 0;
     min-height: 0;
     overflow: hidden;
-}
-
-/* 模型选择器 */
-.model-selector {
-    display: flex;
-    gap: 16px;
-    padding: 12px 24px;
-    border-bottom: 1px solid var(--border-subtle);
-    background: var(--surface-muted);
-    flex-shrink: 0;
-}
-
-.selector-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.selector-label {
-    font-size: 13px;
-    color: var(--text-secondary);
-    font-weight: 500;
-    white-space: nowrap;
-}
-
-.selector-select {
-    width: 180px;
-}
-
-.new-chat-btn {
-    margin-left: auto;
-    flex-shrink: 0;
 }
 
 .chat-messages {
@@ -690,21 +553,6 @@ watch(
 }
 
 @media (max-width: 768px) {
-    .model-selector {
-        flex-direction: column;
-        gap: 10px;
-        padding: 12px 16px;
-    }
-
-    .selector-select {
-        width: 100%;
-    }
-
-    .new-chat-btn {
-        margin-left: 0;
-        width: 100%;
-    }
-
     .chat-messages {
         padding: 16px;
     }
