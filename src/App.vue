@@ -30,7 +30,7 @@
                         :collapsed="collapsed"
                         :collapsed-width="64"
                         :collapsed-icon-size="20"
-                        :options="menuOptions"
+                        :options="isInSettingsArea ? settingsMenuOptions : menuOptions"
                         :indent="20"
                     />
                 </n-layout-sider>
@@ -164,7 +164,7 @@
                     <div class="sidebar-divider"></div>
                     <n-menu
                         v-model:value="activeKey"
-                        :options="menuOptions"
+                        :options="isInSettingsArea ? settingsMenuOptions : menuOptions"
                         :indent="20"
                     />
                 </div>
@@ -199,6 +199,7 @@ import {
     MenuOutline,
     SettingsOutline,
     InformationCircleOutline,
+    NotificationsOutline,
 } from '@vicons/ionicons5'
 import router from './router'
 import { useBreakpoint } from './composables/useBreakpoint'
@@ -223,6 +224,11 @@ const showAuthDialog = ref(false)
 const showSettingsDialog = ref(false)
 const showAboutDialog = ref(false)
 let timer: ReturnType<typeof setInterval> | null = null
+
+// 设置区域菜单状态
+const isInSettingsArea = computed(() => {
+    return ['profile', 'settings', 'notifications'].includes(activeKey.value)
+})
 
 // ── Naive UI 主题 ──
 const naiveTheme = computed(() => (themeStore.isDark ? darkTheme : null))
@@ -339,6 +345,17 @@ const menuOptions = computed<MenuOption[]>(() => [
     },
 ])
 
+// 设置区域菜单
+const settingsMenuOptions = computed<MenuOption[]>(() => [
+    { label: '个人中心', key: 'profile', icon: renderIcon(PersonOutline) },
+    { label: '系统设置', key: 'settings', icon: renderIcon(SettingsOutline) },
+    {
+        label: '推送通知',
+        key: 'notifications',
+        icon: renderIcon(NotificationsOutline),
+    },
+])
+
 const userDropdownOptions: DropdownOption[] = [
     { label: '个人中心', key: 'profile', icon: renderIcon(PersonOutline) },
     { label: '系统设置', key: 'settings', icon: renderIcon(SettingsOutline) },
@@ -357,7 +374,7 @@ async function handleUserDropdown(key: string) {
     } else if (key === 'profile') {
         router.push('/profile')
     } else if (key === 'settings') {
-        showSettingsDialog.value = true
+        router.push('/settings')
     } else if (key === 'about') {
         showAboutDialog.value = true
     }
@@ -389,7 +406,7 @@ watch(
     () => route.path,
     (path) => {
         const key = path.replace('/', '') || 'gold'
-        if (['gold', 'stock', 'fund', 'learn', 'ai'].includes(key)) {
+        if (['gold', 'stock', 'fund', 'learn', 'ai', 'profile', 'settings', 'notifications'].includes(key)) {
             activeKey.value = key
         }
     },

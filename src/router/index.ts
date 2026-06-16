@@ -42,6 +42,18 @@ const routes: RouteRecordRaw[] = [
     component: () => import("../pages/ProfilePage.vue"),
     meta: { title: "个人中心", requiresAuth: true },
   },
+  {
+    path: "/settings",
+    name: "Settings",
+    component: () => import("../pages/SettingsPage.vue"),
+    meta: { title: "系统设置", requiresAuth: true },
+  },
+  {
+    path: "/notifications",
+    name: "Notifications",
+    component: () => import("../pages/NotificationsPage.vue"),
+    meta: { title: "推送通知", requiresAuth: true },
+  },
 ];
 
 const router = createRouter({
