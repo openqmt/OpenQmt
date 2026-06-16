@@ -81,37 +81,29 @@
                                             添加模型
                                         </n-button>
                                     </div>
-                                    <div class="models-list">
-                                        <div
+                                    <div class="models-tags">
+                                        <n-tag
                                             v-for="model in currentModels"
                                             :key="model.id"
-                                            class="model-item"
-                                            :class="{
-                                                active:
-                                                    model.id === activeModel,
-                                            }"
+                                            :type="model.id === activeModel ? 'warning' : 'default'"
+                                            :bordered="false"
+                                            closable
+                                            size="large"
+                                            class="model-tag"
+                                            @close="removeModel(model.id)"
                                         >
                                             <div
-                                                class="model-info"
-                                                @click="selectModel(model.id)"
+                                                class="model-tag-content"
+                                                @click.stop="selectModel(model.id)"
                                             >
-                                                <span class="model-name">{{
+                                                <span class="model-tag-name">{{
                                                     model.name
                                                 }}</span>
-                                                <span class="model-id">{{
+                                                <span class="model-tag-id">{{
                                                     model.id
                                                 }}</span>
                                             </div>
-                                            <n-switch
-                                                v-model:value="model.enabled"
-                                                @update:value="
-                                                    toggleModelStatus(
-                                                        activeProvider,
-                                                        model.id
-                                                    )
-                                                "
-                                            />
-                                        </div>
+                                        </n-tag>
                                     </div>
                                 </div>
                             </div>
@@ -260,6 +252,7 @@ import {
     NTabPane,
     NIcon,
     NModal,
+    NTag,
     useMessage,
 } from 'naive-ui'
 import {
@@ -333,6 +326,13 @@ function handleAddModel() {
     newModelForm.id = ''
     newModelForm.name = ''
     message.success('模型已添加')
+}
+
+function removeModel(modelId: string) {
+    const config = settingsStore.model.providers[activeProvider.value]
+    if (!config) return
+    config.models = config.models.filter(m => m.id !== modelId)
+    message.success('模型已删除')
 }
 
 function toggleModelStatus(provider: ModelProvider, modelId: string) {
@@ -497,48 +497,37 @@ function handleReset() {
     color: var(--text-secondary);
 }
 
-.models-list {
+.models-tags {
     display: flex;
-    flex-direction: column;
-    gap: 8px;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
-.model-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 14px;
-    background: var(--surface-muted);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-md);
+.model-tag {
     cursor: pointer;
     transition: all var(--transition-fast);
 }
 
-.model-item:hover {
-    border-color: var(--border-accent);
+.model-tag:hover {
+    transform: translateY(-2px);
 }
 
-.model-item.active {
-    border-color: var(--gold-primary);
-    background: rgba(212, 168, 67, 0.08);
-}
-
-.model-info {
+.model-tag-content {
     display: flex;
     flex-direction: column;
     gap: 2px;
-    flex: 1;
+    padding: 4px 0;
+    min-width: 100px;
 }
 
-.model-name {
-    font-size: 14px;
+.model-tag-name {
+    font-size: 13px;
     font-weight: 500;
     color: var(--text-primary);
 }
 
-.model-id {
-    font-size: 12px;
+.model-tag-id {
+    font-size: 11px;
     color: var(--text-muted);
     font-family: 'JetBrains Mono', monospace;
 }
