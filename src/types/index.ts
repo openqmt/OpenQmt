@@ -113,6 +113,17 @@ export interface AiMessage {
     timestamp: number
 }
 
+/** AI 对话记录 */
+export interface AiConversation {
+    id: string
+    title: string
+    messages: AiMessage[]
+    provider: ModelProvider
+    model: string
+    createdAt: number
+    updatedAt: number
+}
+
 /** 东方财富 Push2 API 返回字段 */
 export interface EastMoneyQuoteFields {
     f43: number // 最新价

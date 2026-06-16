@@ -22,6 +22,16 @@
                         class="selector-select"
                     />
                 </div>
+                <n-button
+                    size="small"
+                    class="new-chat-btn"
+                    @click="newConversation"
+                >
+                    <template #icon>
+                        <n-icon :component="AddOutline" />
+                    </template>
+                    新对话
+                </n-button>
             </div>
 
             <div class="chat-messages" ref="messagesRef">
@@ -102,16 +112,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, nextTick } from 'vue'
-import { NSelect, useMessage } from 'naive-ui'
+import { ref, computed, nextTick, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import { NSelect, NButton, NIcon, useMessage } from 'naive-ui'
 import { fetch as tauriFetch } from '@tauri-apps/plugin-http'
+import { AddOutline } from '@vicons/ionicons5'
 import type { AiMessage, ModelProvider } from '../types'
 import { useSettingsStore, PROVIDER_LABELS } from '../stores/settings'
+import { useAiStore } from '../stores/ai'
+import router from '../router'
 
+const route = useRoute()
 const settingsStore = useSettingsStore()
+const aiStore = useAiStore()
 const message = useMessage()
 
-const messages = ref<AiMessage[]>([])
+const messages = computed(() => aiStore.currentConversation?.messages || [])
 const inputText = ref('')
 const isLoading = ref(false)
 const messagesRef = ref<HTMLElement | null>(null)
@@ -181,6 +197,21 @@ function onProviderChange(provider: ModelProvider) {
         selectedProvider.value = provider
         selectedModel.value = config.activeModel
     }
+    aiStore.updateConversationModel(provider, selectedModel.value)
+}
+
+/** 确保有当前对话，如果没有则创建 */
+function ensureConversation(): void {
+    if (!aiStore.currentConversationId) {
+        aiStore.createConversation(selectedProvider.value, selectedModel.value)
+    }
+}
+
+/** 新建对话 */
+function newConversation(): void {
+    aiStore.currentConversationId = null
+    aiStore.persist()
+    router.push('/ai')
 }
 
 async function sendQuickQuestion(question: string): Promise<void> {
@@ -199,35 +230,35 @@ async function handleSend(): Promise<void> {
         return
     }
 
-    messages.value.push({
+    // 确保有当前对话
+    ensureConversation()
+
+    const userMessage: AiMessage = {
         id: genId(),
         role: 'user',
         content: text,
         timestamp: Date.now(),
-    })
+    }
+    aiStore.addMessage(userMessage)
     inputText.value = ''
     scrollToBottom()
 
     isLoading.value = true
-    
+
     // 创建一个空的 AI 消息用于流式更新
     const aiMessageId = genId()
-    messages.value.push({
+    aiStore.addMessage({
         id: aiMessageId,
         role: 'assistant',
         content: '',
         timestamp: Date.now(),
     })
-    
+
     try {
         await callAIStream(text, aiMessageId)
     } catch (error: any) {
         message.error(error.message || '请求失败')
-        // 更新错误消息
-        const msgIndex = messages.value.findIndex(m => m.id === aiMessageId)
-        if (msgIndex !== -1) {
-            messages.value[msgIndex].content = `❌ 请求失败: ${error.message || '未知错误'}`
-        }
+        aiStore.updateMessage(aiMessageId, `❌ 请求失败: ${error.message || '未知错误'}`)
     } finally {
         isLoading.value = false
         scrollToBottom()
@@ -323,11 +354,8 @@ async function callAIStream(userMessage: string, messageId: string): Promise<voi
                             fullContent += delta
                             
                             // 更新消息内容
-                            const msgIndex = messages.value.findIndex(m => m.id === messageId)
-                            if (msgIndex !== -1) {
-                                messages.value[msgIndex].content = fullContent
-                                scrollToBottom()
-                            }
+                            aiStore.updateMessage(messageId, fullContent)
+                            scrollToBottom()
                         }
                     } catch (e) {
                         console.warn('Failed to parse SSE data:', e)
@@ -342,6 +370,34 @@ async function callAIStream(userMessage: string, messageId: string): Promise<voi
         throw new Error('网络请求失败')
     }
 }
+
+// 监听路由参数，切换对话
+watch(
+    () => route.params.id,
+    (id) => {
+        if (id && typeof id === 'string') {
+            aiStore.switchConversation(id)
+            // 恢复该对话的模型选择
+            const conv = aiStore.currentConversation
+            if (conv) {
+                selectedProvider.value = conv.provider
+                selectedModel.value = conv.model
+            }
+        }
+    },
+    { immediate: true }
+)
+
+// 监听当前对话变化，恢复模型选择
+watch(
+    () => aiStore.currentConversation,
+    (conv) => {
+        if (conv) {
+            selectedProvider.value = conv.provider
+            selectedModel.value = conv.model
+        }
+    }
+)
 </script>
 
 <style scoped>
@@ -387,6 +443,11 @@ async function callAIStream(userMessage: string, messageId: string): Promise<voi
 
 .selector-select {
     width: 180px;
+}
+
+.new-chat-btn {
+    margin-left: auto;
+    flex-shrink: 0;
 }
 
 .chat-messages {
@@ -636,6 +697,11 @@ async function callAIStream(userMessage: string, messageId: string): Promise<voi
     }
 
     .selector-select {
+        width: 100%;
+    }
+
+    .new-chat-btn {
+        margin-left: 0;
         width: 100%;
     }
 

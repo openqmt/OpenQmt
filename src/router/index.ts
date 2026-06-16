@@ -37,6 +37,12 @@ const routes: RouteRecordRaw[] = [
     meta: { title: "AI分析", requiresAuth: true },
   },
   {
+    path: "/ai/:id",
+    name: "AIConversation",
+    component: () => import("../pages/AIPage.vue"),
+    meta: { title: "AI分析", requiresAuth: true },
+  },
+  {
     path: "/profile",
     name: "Profile",
     component: () => import("../pages/ProfilePage.vue"),

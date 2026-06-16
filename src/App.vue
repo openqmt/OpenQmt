@@ -213,12 +213,16 @@ import {
     InformationCircleOutline,
     NotificationsOutline,
     ArrowBackOutline,
+    AddOutline,
+    CloseOutline,
+    ChatbubbleOutline,
 } from '@vicons/ionicons5'
 import router from './router'
 import { useBreakpoint } from './composables/useBreakpoint'
 import { useGoldStore } from './stores/gold'
 import { useAuthStore } from './stores/auth'
 import { useThemeStore } from './stores/theme'
+import { useAiStore } from './stores/ai'
 import AuthDialog from './components/AuthDialog.vue'
 import SettingsDialog from './components/SettingsDialog.vue'
 import AboutDialog from './components/AboutDialog.vue'
@@ -227,6 +231,7 @@ const route = useRoute()
 const goldStore = useGoldStore()
 const authStore = useAuthStore()
 const themeStore = useThemeStore()
+const aiStore = useAiStore()
 const store = goldStore
 const { isMobile } = useBreakpoint()
 const activeKey = ref<string>('gold')
@@ -355,6 +360,40 @@ const menuOptions = computed<MenuOption[]>(() => [
         label: renderLabelWithLock('AI 分析', true),
         key: 'ai',
         icon: renderIcon(SparklesOutline),
+        children: [
+            {
+                label: '新建对话',
+                key: 'ai-new',
+                icon: renderIcon(AddOutline),
+            },
+            ...aiStore.sortedConversations.map(conv => ({
+                label: () => h('div', {
+                    style: 'display:flex;align-items:center;justify-content:space-between;width:100%;gap:4px',
+                    onClick: (e: MouseEvent) => {
+                        e.stopPropagation()
+                    },
+                }, [
+                    h('span', {
+                        style: 'overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0',
+                        onClick: () => {
+                            aiStore.switchConversation(conv.id)
+                            router.push(`/ai/${conv.id}`)
+                        },
+                    }, conv.title),
+                    h(NIcon, {
+                        size: 14,
+                        color: 'var(--text-muted)',
+                        style: 'flex-shrink:0;cursor:pointer;',
+                        onClick: (e: MouseEvent) => {
+                            e.stopPropagation()
+                            aiStore.deleteConversation(conv.id)
+                        },
+                    }, { default: () => h(CloseOutline) }),
+                ]),
+                key: `ai-conv-${conv.id}`,
+                icon: renderIcon(ChatbubbleOutline),
+            })),
+        ],
     },
 ])
 
@@ -422,6 +461,10 @@ const updateTime = () => {
 watch(
     () => route.path,
     (path) => {
+        if (path.startsWith('/ai')) {
+            activeKey.value = 'ai'
+            return
+        }
         const key = path.replace('/', '') || 'gold'
         if (['gold', 'stock', 'fund', 'learn', 'ai', 'profile', 'settings', 'notifications'].includes(key)) {
             activeKey.value = key
@@ -431,6 +474,26 @@ watch(
 )
 
 watch(activeKey, (key) => {
+    // AI 子菜单的特殊处理
+    if (key === 'ai-new') {
+        aiStore.currentConversationId = null
+        router.push('/ai')
+        activeKey.value = 'ai'
+        if (isMobile.value) {
+            mobileSidebarOpen.value = false
+        }
+        return
+    }
+    if (key?.startsWith('ai-conv-')) {
+        const convId = key.replace('ai-conv-', '')
+        aiStore.switchConversation(convId)
+        router.push(`/ai/${convId}`)
+        activeKey.value = 'ai'
+        if (isMobile.value) {
+            mobileSidebarOpen.value = false
+        }
+        return
+    }
     if (route.path !== `/${key}`) {
         router.push(`/${key}`)
     }
