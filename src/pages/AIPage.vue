@@ -4,7 +4,7 @@
             <!-- 模型选择器 -->
             <div class="model-selector">
                 <div class="selector-item">
-                    <span class="selector-label">服务商:</span>
+                    <!-- <span class="selector-label">服务商:</span> -->
                     <n-select
                         v-model:value="selectedProvider"
                         :options="providerOptions"
@@ -14,7 +14,7 @@
                     />
                 </div>
                 <div class="selector-item">
-                    <span class="selector-label">模型:</span>
+                    <!-- <span class="selector-label">模型:</span> -->
                     <n-select
                         v-model:value="selectedModel"
                         :options="modelOptions"
