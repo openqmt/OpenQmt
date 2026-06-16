@@ -15,7 +15,7 @@
                     :bordered="false"
                     class="app-sidebar"
                 >
-                    <div class="logo-area">
+                    <div class="logo-area" @click="backToMain">
                         <div class="logo-icon-wrap">
                             <span class="logo-letter">Q</span>
                         </div>
@@ -37,6 +37,18 @@
                 <n-layout class="app-main">
                     <n-layout-header :bordered="false" class="app-header">
                         <div class="header-left">
+                            <n-button
+                                v-if="isInSettingsArea"
+                                quaternary
+                                circle
+                                size="small"
+                                class="back-btn"
+                                @click="backToMain"
+                            >
+                                <template #icon>
+                                    <n-icon size="18"><ArrowBackOutline /></n-icon>
+                                </template>
+                            </n-button>
                             <n-button
                                 v-if="isMobile"
                                 quaternary
@@ -152,7 +164,7 @@
                 class="mobile-sidebar-drawer"
             >
                 <div class="mobile-drawer-inner">
-                    <div class="logo-area">
+                    <div class="logo-area" @click="backToMain">
                         <div class="logo-icon-wrap">
                             <span class="logo-letter">Q</span>
                         </div>
@@ -200,6 +212,7 @@ import {
     SettingsOutline,
     InformationCircleOutline,
     NotificationsOutline,
+    ArrowBackOutline,
 } from '@vicons/ionicons5'
 import router from './router'
 import { useBreakpoint } from './composables/useBreakpoint'
@@ -380,6 +393,10 @@ async function handleUserDropdown(key: string) {
     }
 }
 
+function backToMain() {
+    router.push('/gold')
+}
+
 const titleMap: Record<string, string> = {
     gold: '黄金行情',
     stock: '股票行情',
@@ -470,6 +487,12 @@ onUnmounted(() => {
     gap: 12px;
     overflow: hidden;
     white-space: nowrap;
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+.logo-area:hover {
+    background: var(--user-hover-bg);
 }
 
 .logo-icon-wrap {
@@ -544,6 +567,16 @@ onUnmounted(() => {
     gap: 10px;
     min-width: 0;
     flex: 1;
+}
+
+.back-btn {
+    color: var(--text-muted) !important;
+    flex-shrink: 0;
+    transition: color 0.2s;
+}
+
+.back-btn:hover {
+    color: var(--gold-primary) !important;
 }
 
 .menu-toggle-btn {
