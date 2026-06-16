@@ -155,3 +155,44 @@ export interface AuthResult {
     user: UserInfo | null
     token: string | null
 }
+
+/** 推送渠道类型 */
+export type PushChannel = 'feishu' | 'wecom' | 'dingtalk' | 'wxpusher' | 'custom'
+
+/** 推送渠道配置 */
+export interface PushChannelConfig {
+    id: string
+    type: PushChannel
+    name: string
+    enabled: boolean
+    webhook: string
+    token?: string
+    secret?: string
+    corpId?: string
+    agentId?: string
+}
+
+/** 通知类型 */
+export type NotificationType =
+    | 'gold_price'
+    | 'stock_alert'
+    | 'fund_update'
+    | 'ai_report'
+    | 'learn_progress'
+    | 'system_update'
+    | 'credits_change'
+
+/** 通知类型配置 */
+export interface NotificationTypeConfig {
+    type: NotificationType
+    name: string
+    description: string
+    enabled: boolean
+    channels: string[]
+}
+
+/** 推送通知设置 */
+export interface PushNotificationSettings {
+    channels: PushChannelConfig[]
+    notifications: NotificationTypeConfig[]
+}
