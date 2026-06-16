@@ -1,6 +1,29 @@
 <template>
     <div class="ai-page">
         <div class="chat-container surface-card surface-card--flat">
+            <!-- 模型选择器 -->
+            <div class="model-selector">
+                <div class="selector-item">
+                    <span class="selector-label">服务商:</span>
+                    <n-select
+                        v-model:value="selectedProvider"
+                        :options="providerOptions"
+                        size="small"
+                        class="selector-select"
+                        @update:value="onProviderChange"
+                    />
+                </div>
+                <div class="selector-item">
+                    <span class="selector-label">模型:</span>
+                    <n-select
+                        v-model:value="selectedModel"
+                        :options="modelOptions"
+                        size="small"
+                        class="selector-select"
+                    />
+                </div>
+            </div>
+
             <div class="chat-messages" ref="messagesRef">
                 <div v-if="messages.length === 0" class="welcome-area">
                     <div class="welcome-icon-wrap">✨</div>
@@ -9,7 +32,7 @@
                         输入您感兴趣的领域，AI 将为您推荐相关的投资标的
                     </p>
                     <p class="welcome-provider">
-                        当前模型：{{ settingsStore.providerLabel }} · {{ settingsStore.model.model }}
+                        当前模型：{{ currentProviderLabel }} · {{ selectedModel }}
                     </p>
                     <div class="quick-questions">
                         <div
@@ -45,7 +68,7 @@
                     </div>
                 </div>
 
-                <div v-if="isLoading" class="chat-bubble bubble-ai">
+                <div v-if="isLoading && messages.length > 0 && messages[messages.length - 1].content === ''" class="chat-bubble bubble-ai">
                     <div class="bubble-avatar">🤖</div>
                     <div class="bubble-body">
                         <div class="bubble-loading">
@@ -79,16 +102,45 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick } from 'vue'
-import type { AiMessage } from '../types'
-import { useSettingsStore } from '../stores/settings'
+import { ref, computed, nextTick } from 'vue'
+import { NSelect, useMessage } from 'naive-ui'
+import { fetch as tauriFetch } from '@tauri-apps/plugin-http'
+import type { AiMessage, ModelProvider } from '../types'
+import { useSettingsStore, PROVIDER_LABELS } from '../stores/settings'
 
 const settingsStore = useSettingsStore()
+const message = useMessage()
 
 const messages = ref<AiMessage[]>([])
 const inputText = ref('')
 const isLoading = ref(false)
 const messagesRef = ref<HTMLElement | null>(null)
+
+// 模型选择
+const selectedProvider = ref<ModelProvider>(settingsStore.model.provider)
+const selectedModel = ref<string>(settingsStore.model.model)
+
+const providerOptions = computed(() =>
+    settingsStore.providerOptions.map(opt => ({
+        label: opt.label,
+        value: opt.value as ModelProvider,
+    }))
+)
+
+const modelOptions = computed(() => {
+    const config = settingsStore.model.providers[selectedProvider.value]
+    if (!config) return []
+    return config.models
+        .filter(m => m.enabled)
+        .map(m => ({
+            label: m.name,
+            value: m.id,
+        }))
+})
+
+const currentProviderLabel = computed(
+    () => PROVIDER_LABELS[selectedProvider.value]
+)
 
 const quickQuestions = [
     '推荐新能源相关的基金',
@@ -109,7 +161,10 @@ function formatTime(ts: number): string {
 }
 
 function formatContent(content: string): string {
-    return content.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+    return content
+        .replace(/\n/g, '<br>')
+        .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+        .replace(/`(.*?)`/g, '<code>$1</code>')
 }
 
 function scrollToBottom(): void {
@@ -117,6 +172,15 @@ function scrollToBottom(): void {
         if (messagesRef.value)
             messagesRef.value.scrollTop = messagesRef.value.scrollHeight
     })
+}
+
+function onProviderChange(provider: ModelProvider) {
+    settingsStore.setProvider(provider)
+    const config = settingsStore.model.providers[provider]
+    if (config) {
+        selectedProvider.value = provider
+        selectedModel.value = config.activeModel
+    }
 }
 
 async function sendQuickQuestion(question: string): Promise<void> {
@@ -128,6 +192,13 @@ async function handleSend(): Promise<void> {
     const text = inputText.value.trim()
     if (!text || isLoading.value) return
 
+    // 检查 API Key
+    const config = settingsStore.model.providers[selectedProvider.value]
+    if (!config || !config.apiKey) {
+        message.error('请先在系统设置中配置 API Key')
+        return
+    }
+
     messages.value.push({
         id: genId(),
         role: 'user',
@@ -138,46 +209,138 @@ async function handleSend(): Promise<void> {
     scrollToBottom()
 
     isLoading.value = true
-    await new Promise((resolve) =>
-        setTimeout(resolve, 600 + Math.random() * 1000)
-    )
-
+    
+    // 创建一个空的 AI 消息用于流式更新
+    const aiMessageId = genId()
     messages.value.push({
-        id: genId(),
+        id: aiMessageId,
         role: 'assistant',
-        content: generateAIResponse(text),
+        content: '',
         timestamp: Date.now(),
     })
-    isLoading.value = false
-    scrollToBottom()
+    
+    try {
+        await callAIStream(text, aiMessageId)
+    } catch (error: any) {
+        message.error(error.message || '请求失败')
+        // 更新错误消息
+        const msgIndex = messages.value.findIndex(m => m.id === aiMessageId)
+        if (msgIndex !== -1) {
+            messages.value[msgIndex].content = `❌ 请求失败: ${error.message || '未知错误'}`
+        }
+    } finally {
+        isLoading.value = false
+        scrollToBottom()
+    }
 }
 
-function generateAIResponse(question: string): string {
-    const q = question.toLowerCase()
-    if (q.includes('黄金') || q.includes('金') || q.includes('xau')) {
-        return `**黄金投资分析**\n\n当前黄金板块值得关注的标的：\n\n📈 **相关ETF**\n- 黄金ETF（518880）：跟踪国内金价\n- 黄金基金ETF（518800）：优质黄金投资工具\n\n🏦 **积存金**\n- 适合长期定投，1克起投\n- 当前金价高位区间，建议分批建仓\n\n⚠️ 关注美联储加息节奏与地缘政治`
+async function callAIStream(userMessage: string, messageId: string): Promise<void> {
+    const config = settingsStore.model.providers[selectedProvider.value]
+    if (!config) throw new Error('模型配置不存在')
+
+    const baseUrl = config.baseUrl
+    const apiKey = config.apiKey
+    const model = selectedModel.value
+
+    // 构建请求 URL
+    const url = `${baseUrl}/chat/completions`
+
+    // 构建请求体，启用流式输出
+    const requestBody = {
+        model: model,
+        messages: [
+            {
+                role: 'system',
+                content: settingsStore.model.systemPrompt,
+            },
+            {
+                role: 'user',
+                content: userMessage,
+            },
+        ],
+        temperature: 0.7,
+        max_tokens: 2000,
+        stream: true, // 启用流式输出
     }
-    if (q.includes('新能源') || q.includes('光伏')) {
-        return `**新能源板块分析**\n\n📊 **推荐基金**\n- 中欧中证机器人指数A（019770）\n- 国泰新能源汽车ETF（159770）\n- 华夏能源革新A（003834）\n\n💡 储能、充电桩、钠电池值得关注\n\n⚠️ 波动较大，建议定投为主`
+
+    try {
+        const response = await tauriFetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify(requestBody),
+        })
+
+        if (!response.ok) {
+            const errorText = await response.text()
+            throw new Error(`HTTP ${response.status}: ${errorText}`)
+        }
+
+        // 处理流式响应
+        const reader = response.body?.getReader()
+        if (!reader) {
+            throw new Error('无法读取响应流')
+        }
+
+        const decoder = new TextDecoder()
+        let buffer = ''
+        let fullContent = ''
+
+        while (true) {
+            const { done, value } = await reader.read()
+            
+            if (done) {
+                break
+            }
+
+            // 解码数据块
+            buffer += decoder.decode(value, { stream: true })
+            
+            // 解析 SSE 数据
+            const lines = buffer.split('\n')
+            buffer = lines.pop() || '' // 保留最后一个不完整的行
+
+            for (const line of lines) {
+                const trimmedLine = line.trim()
+                if (!trimmedLine || trimmedLine.startsWith(':')) {
+                    continue // 跳过空行和注释
+                }
+
+                if (trimmedLine.startsWith('data: ')) {
+                    const dataStr = trimmedLine.slice(6)
+                    
+                    if (dataStr === '[DONE]') {
+                        return // 流结束
+                    }
+
+                    try {
+                        const data = JSON.parse(dataStr)
+                        const delta = data.choices?.[0]?.delta?.content
+                        
+                        if (delta) {
+                            fullContent += delta
+                            
+                            // 更新消息内容
+                            const msgIndex = messages.value.findIndex(m => m.id === messageId)
+                            if (msgIndex !== -1) {
+                                messages.value[msgIndex].content = fullContent
+                                scrollToBottom()
+                            }
+                        }
+                    } catch (e) {
+                        console.warn('Failed to parse SSE data:', e)
+                    }
+                }
+            }
+        }
+    } catch (error: any) {
+        if (error.message) {
+            throw error
+        }
+        throw new Error('网络请求失败')
     }
-    if (
-        q.includes('科技') ||
-        q.includes('芯片') ||
-        q.includes('半导体') ||
-        q.includes('ai')
-    ) {
-        return `**科技板块分析**\n\n🚀 **AI与算力**\n- AI芯片需求持续增长\n- 算力基础设施投资加速\n\n💻 **推荐关注**\n- 国泰CES芯片ETF联接A（001838）\n- 诺安成长混合（320007）\n\n⚠️ 波动较大，逢低布局`
-    }
-    if (q.includes('定投') || q.includes('长期') || q.includes('稳健')) {
-        return `**定投基金推荐**\n\n🏦 **宽基指数**\n- 沪深300ETF\n- 中证500ETF\n- 纳斯达克100ETF\n\n💰 **定投策略**\n- 月投收入的10-20%\n- 熊市多投，牛市少投\n- 坚持3年以上\n- 收益30%部分止盈`
-    }
-    if (q.includes('基金') || q.includes('排行')) {
-        return `**基金推荐**\n\n🔥 **进取型**\n- 中欧中证机器人指数A - 近一年45.60%\n- 国泰新能源汽车ETF - 近一年42.30%\n\n⚖️ **稳健型**\n- 交银新成长混合 - 近一年38.60%\n\n🛡️ **保守型**\n- 鹏华中债国开债A - 近一年3.05%`
-    }
-    if (q.includes('股票') || q.includes('a股') || q.includes('指数')) {
-        return `**A股市场分析**\n\n📊 上证指数估值合理偏低\n🚀 创业板关注科技成长\n\n💡 建议关注高股息蓝筹+科技成长\n⚠️ 关注宏观经济与外资流向`
-    }
-    return `关于"${question}"的建议：\n\n1. 关注市场趋势，不盲目追涨杀跌\n2. 分散投资，降低单一标的风险\n3. 长期投资优于短期投机\n\n⚠️ 以上仅供参考，投资需谨慎`
 }
 </script>
 
@@ -197,6 +360,33 @@ function generateAIResponse(question: string): string {
     flex: 1 1 0;
     min-height: 0;
     overflow: hidden;
+}
+
+/* 模型选择器 */
+.model-selector {
+    display: flex;
+    gap: 16px;
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--border-subtle);
+    background: var(--surface-muted);
+    flex-shrink: 0;
+}
+
+.selector-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.selector-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.selector-select {
+    width: 180px;
 }
 
 .chat-messages {
@@ -329,6 +519,14 @@ function generateAIResponse(question: string): string {
     font-weight: 600;
 }
 
+.bubble-text :deep(code) {
+    background: var(--bg-card);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+}
+
 .bubble-time {
     font-size: 11px;
     color: var(--text-muted);
@@ -431,6 +629,16 @@ function generateAIResponse(question: string): string {
 }
 
 @media (max-width: 768px) {
+    .model-selector {
+        flex-direction: column;
+        gap: 10px;
+        padding: 12px 16px;
+    }
+
+    .selector-select {
+        width: 100%;
+    }
+
     .chat-messages {
         padding: 16px;
     }

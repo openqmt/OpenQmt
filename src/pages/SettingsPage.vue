@@ -46,9 +46,8 @@
                         >
                             <div class="provider-config">
                                 <n-form
-                                    label-placement="left"
+                                    label-placement="top"
                                     :show-feedback="false"
-                                    label-width="100px"
                                 >
                                     <n-form-item label="API 地址">
                                         <n-input
