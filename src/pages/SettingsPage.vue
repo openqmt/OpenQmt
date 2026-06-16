@@ -46,22 +46,23 @@
                         >
                             <div class="provider-config">
                                 <n-form
-                                    label-placement="top"
+                                    label-placement="left"
                                     :show-feedback="false"
+                                    label-width="100px"
                                 >
+                                    <n-form-item label="API 地址">
+                                        <n-input
+                                            v-model:value="providerForm.baseUrl"
+                                            placeholder="https://api.example.com/v1"
+                                        />
+                                    </n-form-item>
+
                                     <n-form-item label="API Key">
                                         <n-input
                                             v-model:value="providerForm.apiKey"
                                             type="password"
                                             show-password-on="click"
                                             placeholder="请输入 API Key"
-                                        />
-                                    </n-form-item>
-
-                                    <n-form-item label="API 地址">
-                                        <n-input
-                                            v-model:value="providerForm.baseUrl"
-                                            placeholder="https://api.example.com/v1"
                                         />
                                     </n-form-item>
                                 </n-form>
@@ -468,6 +469,12 @@ function handleReset() {
 
 /* 提供商配置 */
 .provider-config {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.provider-config .n-form {
     display: flex;
     flex-direction: column;
     gap: 16px;
