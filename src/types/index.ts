@@ -57,6 +57,7 @@ export interface LearnTopic {
     icon: string
     title: string
     level: '初级' | '中级' | '高级'
+    category: 'basic' | 'strategy'
     desc: string
     detail: string
 }

@@ -1,32 +1,5 @@
 <template>
     <div class="gold-page">
-        <div class="page-toolbar">
-            <n-space align="center" :size="12">
-                <n-button
-                    size="small"
-                    round
-                    @click="refreshData"
-                    :loading="store.loading"
-                >
-                    <template #icon
-                        ><span style="font-size: 14px">↻</span></template
-                    >
-                    刷新
-                </n-button>
-                <n-switch
-                    v-model:value="autoRefresh"
-                    size="small"
-                    class="toolbar-switch"
-                >
-                    <template #checked>自动刷新</template>
-                    <template #unchecked>手动</template>
-                </n-switch>
-            </n-space>
-            <span class="update-time num-mono" v-if="store.lastUpdate">
-                {{ store.lastUpdate }}
-            </span>
-        </div>
-
         <n-spin :show="store.loading && Object.keys(store.data).length === 0">
             <div class="card-grid">
                 <PriceCard
@@ -90,45 +63,12 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, watch } from 'vue'
 import { useGoldStore } from '../stores/gold'
 import PriceCard from '../components/PriceCard.vue'
 import type { GoldKey, SymbolConfig } from '../types'
 
 const store = useGoldStore()
 const goldConfig = store.getConfig() as Record<GoldKey, SymbolConfig>
-const autoRefresh = ref(true)
-let timer: ReturnType<typeof setInterval> | null = null
-
-function refreshData(): void {
-    store.loadData()
-}
-
-function startAutoRefresh(): void {
-    if (timer) clearInterval(timer)
-    if (autoRefresh.value) {
-        timer = setInterval(() => {
-            store.loadData()
-        }, 10000)
-    }
-}
-
-watch(autoRefresh, (val) => {
-    if (val) {
-        startAutoRefresh()
-    } else {
-        if (timer) clearInterval(timer)
-        timer = null
-    }
-})
-
-onMounted(() => {
-    refreshData()
-    startAutoRefresh()
-})
-onUnmounted(() => {
-    if (timer) clearInterval(timer)
-})
 </script>
 
 <style scoped>

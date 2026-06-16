@@ -62,9 +62,10 @@
                                 </template>
                             </n-button>
                             <span class="header-title">{{ currentTitle }}</span>
-                            <span class="header-badge" v-if="store.loading"
+                            <span class="header-badge" v-if="pageLoading"
                                 >更新中...</span
                             >
+                            <PageToolbar v-if="showPageToolbar" />
                         </div>
                         <div class="header-right">
                             <span
@@ -220,19 +221,23 @@ import {
 import router from './router'
 import { useBreakpoint } from './composables/useBreakpoint'
 import { useGoldStore } from './stores/gold'
+import { useStockStore } from './stores/stock'
+import { useFundStore } from './stores/fund'
 import { useAuthStore } from './stores/auth'
 import { useThemeStore } from './stores/theme'
 import { useAiStore } from './stores/ai'
 import AuthDialog from './components/AuthDialog.vue'
 import SettingsDialog from './components/SettingsDialog.vue'
 import AboutDialog from './components/AboutDialog.vue'
+import PageToolbar from './components/PageToolbar.vue'
 
 const route = useRoute()
 const goldStore = useGoldStore()
+const stockStore = useStockStore()
+const fundStore = useFundStore()
 const authStore = useAuthStore()
 const themeStore = useThemeStore()
 const aiStore = useAiStore()
-const store = goldStore
 const { isMobile } = useBreakpoint()
 const activeKey = ref<string>('gold')
 const collapsed = ref(false)
@@ -451,6 +456,18 @@ const titleMap: Record<string, string> = {
 
 const currentTitle = computed(() => titleMap[activeKey.value] || '个人中心')
 
+const showPageToolbar = computed(() =>
+    ['gold', 'stock', 'fund', 'learn'].includes(activeKey.value)
+)
+
+const pageLoading = computed(() => {
+    const key = activeKey.value
+    if (key === 'gold') return goldStore.loading
+    if (key === 'stock') return stockStore.loading
+    if (key === 'fund') return fundStore.loading
+    return false
+})
+
 const updateTime = () => {
     const now = new Date()
     currentTime.value = now.toLocaleString('zh-CN', {
@@ -634,6 +651,12 @@ onUnmounted(() => {
     gap: 10px;
     min-width: 0;
     flex: 1;
+}
+
+.header-left :deep(.header-toolbar) {
+    margin-left: 4px;
+    flex: 1;
+    min-width: 0;
 }
 
 .back-btn {

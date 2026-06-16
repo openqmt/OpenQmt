@@ -1,31 +1,5 @@
 <template>
     <div class="fund-page">
-        <div class="page-toolbar">
-            <n-space align="center" :size="12">
-                <n-button
-                    size="small"
-                    round
-                    @click="refreshData"
-                    :loading="store.loading"
-                >
-                    <template #icon
-                        ><span style="font-size: 14px">↻</span></template
-                    >
-                    刷新
-                </n-button>
-                <n-select
-                    v-model:value="fundType"
-                    :options="typeOptions"
-                    size="small"
-                    style="width: 140px"
-                    @update:value="onTypeChange"
-                />
-            </n-space>
-            <span class="update-time num-mono" v-if="store.lastUpdate">{{
-                store.lastUpdate
-            }}</span>
-        </div>
-
         <n-spin :show="store.loading">
             <div class="table-scroll-wrap">
                 <n-data-table
@@ -44,22 +18,12 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, h } from 'vue'
+import { h } from 'vue'
 import { NTag, type DataTableColumns } from 'naive-ui'
 import { useFundStore } from '../stores/fund'
 import type { FundRankItem } from '../types'
 
 const store = useFundStore()
-const fundType = ref('all')
-
-const typeOptions = [
-    { label: '全部', value: 'all' },
-    { label: '股票型', value: 'gp' },
-    { label: '混合型', value: 'hh' },
-    { label: '债券型', value: 'zq' },
-    { label: '指数型', value: 'zs' },
-    { label: 'QDII', value: 'qdii' },
-]
 
 const pagination = { pageSize: 15 }
 
@@ -245,16 +209,6 @@ function getTypeColor(
 function rowClassName(): string {
     return 'fund-row'
 }
-function refreshData(): void {
-    store.loadData()
-}
-function onTypeChange(): void {
-    refreshData()
-}
-
-onMounted(() => {
-    refreshData()
-})
 </script>
 
 <style scoped>

@@ -1,0 +1,149 @@
+<template>
+    <div class="page-toolbar header-toolbar">
+        <n-space
+            v-if="pageType !== 'learn'"
+            align="center"
+            :size="10"
+            class="toolbar-actions"
+        >
+            <n-button
+                size="small"
+                round
+                @click="refresh"
+                :loading="loading"
+            >
+                <template #icon>
+                    <span style="font-size: 14px">↻</span>
+                </template>
+                刷新
+            </n-button>
+
+            <n-switch
+                v-if="pageType !== 'fund'"
+                v-model:value="autoRefresh"
+                size="small"
+                class="toolbar-switch"
+            >
+                <template #checked>自动刷新</template>
+                <template #unchecked>手动</template>
+            </n-switch>
+
+            <n-select
+                v-if="pageType === 'fund'"
+                v-model:value="fundType"
+                :options="fundTypeOptions"
+                size="small"
+                class="fund-type-select"
+                @update:value="onFundTypeChange"
+            />
+        </n-space>
+
+        <n-select
+            v-if="pageType === 'learn'"
+            v-model:value="learnStore.category"
+            :options="learnCategoryOptions"
+            size="small"
+            class="learn-category-select"
+        />
+
+        <span v-if="lastUpdate" class="update-time num-mono">{{
+            lastUpdate
+        }}</span>
+    </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, watch, onUnmounted } from 'vue'
+import { useRoute } from 'vue-router'
+import { NSpace, NButton, NSwitch, NSelect } from 'naive-ui'
+import { useGoldStore } from '../stores/gold'
+import { useStockStore } from '../stores/stock'
+import { useFundStore } from '../stores/fund'
+import { useLearnStore } from '../stores/learn'
+
+const route = useRoute()
+const goldStore = useGoldStore()
+const stockStore = useStockStore()
+const fundStore = useFundStore()
+const learnStore = useLearnStore()
+
+const pageType = computed(() => {
+    const key = route.path.replace('/', '') || 'gold'
+    if (key === 'gold' || key === 'stock' || key === 'fund' || key === 'learn')
+        return key
+    return null
+})
+
+const autoRefresh = ref(true)
+const fundType = ref('all')
+let timer: ReturnType<typeof setInterval> | null = null
+
+const fundTypeOptions = [
+    { label: '全部', value: 'all' },
+    { label: '股票型', value: 'gp' },
+    { label: '混合型', value: 'hh' },
+    { label: '债券型', value: 'zq' },
+    { label: '指数型', value: 'zs' },
+    { label: 'QDII', value: 'qdii' },
+]
+
+const learnCategoryOptions = [
+    { label: '全部知识', value: 'all' },
+    { label: '基础概念', value: 'basic' },
+    { label: '投资策略', value: 'strategy' },
+]
+
+const loading = computed(() => {
+    if (pageType.value === 'gold') return goldStore.loading
+    if (pageType.value === 'stock') return stockStore.loading
+    if (pageType.value === 'fund') return fundStore.loading
+    return false
+})
+
+const lastUpdate = computed(() => {
+    if (pageType.value === 'gold') return goldStore.lastUpdate
+    if (pageType.value === 'stock') return stockStore.lastUpdate
+    if (pageType.value === 'fund') return fundStore.lastUpdate
+    return ''
+})
+
+function refresh() {
+    if (pageType.value === 'gold') goldStore.loadData()
+    else if (pageType.value === 'stock') stockStore.loadData()
+    else if (pageType.value === 'fund') fundStore.loadData()
+}
+
+function onFundTypeChange() {
+    refresh()
+}
+
+function clearTimer() {
+    if (timer) {
+        clearInterval(timer)
+        timer = null
+    }
+}
+
+function startAutoRefresh() {
+    clearTimer()
+    if (!autoRefresh.value || pageType.value === 'fund') return
+    timer = setInterval(refresh, 10000)
+}
+
+watch(autoRefresh, startAutoRefresh)
+
+watch(
+    pageType,
+    (type) => {
+        if (!type || type === 'learn') {
+            clearTimer()
+            return
+        }
+        refresh()
+        startAutoRefresh()
+    },
+    { immediate: true }
+)
+
+onUnmounted(clearTimer)
+</script>
