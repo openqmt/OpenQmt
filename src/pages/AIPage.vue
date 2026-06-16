@@ -115,7 +115,7 @@
 import { ref, computed, nextTick, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { NSelect, NButton, NIcon, useMessage } from 'naive-ui'
-import { fetch as tauriFetch } from '@tauri-apps/plugin-http'
+import { httpFetch } from '../utils/http'
 import { AddOutline } from '@vicons/ionicons5'
 import type { AiMessage, ModelProvider } from '../types'
 import { useSettingsStore, PROVIDER_LABELS } from '../stores/settings'
@@ -295,7 +295,7 @@ async function callAIStream(userMessage: string, messageId: string): Promise<voi
     }
 
     try {
-        const response = await tauriFetch(url, {
+        const response = await httpFetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

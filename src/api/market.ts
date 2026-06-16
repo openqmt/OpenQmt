@@ -1,9 +1,14 @@
 /**
  * OpenQmt 行情数据 API 模块
  * 使用东方财富 Push2 API 获取实时行情数据
- * Tauri HTTP 插件补丁了全局 fetch，可绕过 CORS 限制
+ * Tauri 环境通过 httpFetch 绕过 CORS；浏览器开发走 Vite 代理
  */
 
+import {
+  httpFetch,
+  getEastMoneyQuoteUrl,
+  getFundRankUrl,
+} from "../utils/http";
 import type {
   QuoteData,
   SymbolConfig,
@@ -14,9 +19,6 @@ import type {
   FundRankItem,
   EastMoneyResponse,
 } from "../types";
-
-const PUSH2_BASE = "https://push2.eastmoney.com/api/qt/stock/get";
-const FUND_RANK_URL = "https://fund.eastmoney.com/data/rankhandler.aspx";
 
 const COMMON_PARAMS: Record<string, string> = {
   ut: "fa5fd1943c7b386f172d6893dbbd1d0c",
@@ -138,8 +140,8 @@ function parseQuoteData(data: EastMoneyResponse | null): QuoteData | null {
 async function fetchQuote(secid: string): Promise<QuoteData | null> {
   try {
     const params = new URLSearchParams({ ...COMMON_PARAMS, secid });
-    const url = `${PUSH2_BASE}?${params}`;
-    const resp = await fetch(url);
+    const url = getEastMoneyQuoteUrl(params);
+    const resp = await httpFetch(url);
     const data: EastMoneyResponse = await resp.json();
     return parseQuoteData(data);
   } catch (e) {
@@ -227,8 +229,8 @@ export async function fetchFundRanking(
       pn: String(pageSize),
       dx: "1",
     });
-    const url = `${FUND_RANK_URL}?${params}`;
-    const resp = await fetch(url, {
+    const url = getFundRankUrl(params);
+    const resp = await httpFetch(url, {
       headers: { Referer: "https://fund.eastmoney.com/" },
     });
     const text = await resp.text();
