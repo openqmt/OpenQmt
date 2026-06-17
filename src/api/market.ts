@@ -159,8 +159,8 @@ function parseGoldPriceItem(item: GoldPriceItem): QuoteData {
   const closeVal = typeof item.close === "string" ? parseFloat(item.close) : item.close;
   const high = typeof item.high === "string" ? parseFloat(item.high) : item.high;
   const low = typeof item.low === "string" ? parseFloat(item.low) : item.low;
-  const change = price - closeVal;
-  const changePercent = closeVal !== 0 ? (change / closeVal) * 100 : 0;
+  const change = price - open;
+  const changePercent = open !== 0 ? (change / open) * 100 : 0;
   return {
     name: item.name,
     current: price,

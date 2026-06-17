@@ -24,13 +24,13 @@
                 </div>
                 <div class="detail-item">
                     <span class="detail-label">最高</span>
-                    <span class="detail-value num-mono price-up">{{
+                    <span class="detail-value num-mono" :class="highClass">{{
                         formatPrice(high)
                     }}</span>
                 </div>
                 <div class="detail-item">
                     <span class="detail-label">最低</span>
-                    <span class="detail-value num-mono price-down">{{
+                    <span class="detail-value num-mono" :class="lowClass">{{
                         formatPrice(low)
                     }}</span>
                 </div>
@@ -84,6 +84,18 @@ const priceClass = computed(() => {
     if (isUp.value) return 'up'
     if (isDown.value) return 'down'
     return 'flat'
+})
+
+const highClass = computed(() => {
+    if (props.high > props.open) return 'price-up'
+    if (props.high < props.open) return 'price-down'
+    return ''
+})
+
+const lowClass = computed(() => {
+    if (props.low > props.open) return 'price-up'
+    if (props.low < props.open) return 'price-down'
+    return ''
 })
 
 const changeStr = computed(() => {
@@ -231,6 +243,14 @@ function formatVolume(val: number): string {
     font-size: 12px;
     font-weight: 500;
     text-align: right;
+}
+
+.detail-value.price-up {
+    color: var(--color-up);
+}
+
+.detail-value.price-down {
+    color: var(--color-down);
 }
 
 @media (max-width: 768px) {
