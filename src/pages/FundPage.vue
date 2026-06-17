@@ -8,7 +8,7 @@
                     :data="store.data"
                     :bordered="false"
                     size="small"
-                    :scroll-x="860"
+                    :scroll-x="900"
                     flex-height
                     style="height: 100%"
                     :row-class-name="rowClassName"
@@ -162,8 +162,9 @@ const columns: DataTableColumns<FundRankItem> = [
     {
         title: '日涨跌',
         key: 'dayChange',
-        width: 78,
+        width: 84,
         align: 'right',
+        className: 'fund-change-col',
         render(row) {
             return changeCell(row.dayChange)
         },
@@ -171,8 +172,9 @@ const columns: DataTableColumns<FundRankItem> = [
     {
         title: '近一周',
         key: 'weekChange',
-        width: 78,
+        width: 84,
         align: 'right',
+        className: 'fund-change-col',
         render(row) {
             return changeCell(row.weekChange)
         },
@@ -180,8 +182,9 @@ const columns: DataTableColumns<FundRankItem> = [
     {
         title: '近一月',
         key: 'monthChange',
-        width: 78,
+        width: 84,
         align: 'right',
+        className: 'fund-change-col',
         render(row) {
             return changeCell(row.monthChange)
         },
@@ -189,8 +192,9 @@ const columns: DataTableColumns<FundRankItem> = [
     {
         title: '近三月',
         key: 'threeMonthChange',
-        width: 78,
+        width: 84,
         align: 'right',
+        className: 'fund-change-col',
         render(row) {
             return changeCell(row.threeMonthChange)
         },
@@ -198,8 +202,9 @@ const columns: DataTableColumns<FundRankItem> = [
     {
         title: '近一年',
         key: 'yearChange',
-        width: 78,
+        width: 84,
         align: 'right',
+        className: 'fund-change-col',
         render(row) {
             return changeCell(row.yearChange)
         },
@@ -223,15 +228,16 @@ function changeCell(val: number) {
     return h(
         'span',
         {
-            class: 'num-mono',
+            class: 'num-mono fund-change-cell',
             style: {
                 color,
                 background: bg,
-                padding: '2px 8px',
+                padding: '2px 6px',
                 borderRadius: '5px',
                 fontSize: '12px',
                 fontWeight: '600',
                 display: 'inline-block',
+                whiteSpace: 'nowrap',
             },
         },
         `${sign}${val.toFixed(2)}%`
@@ -312,6 +318,14 @@ function rowClassName(): string {
 
 :deep(.n-data-table .n-data-table-tr:hover td) {
     background: var(--surface-muted) !important;
+}
+
+:deep(.fund-change-col) {
+    white-space: nowrap;
+}
+
+:deep(.fund-change-cell) {
+    white-space: nowrap;
 }
 
 .load-more-sentinel {
