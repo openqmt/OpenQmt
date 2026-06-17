@@ -48,15 +48,15 @@
                 </div>
                 <div class="footer-item" v-if="passionTemp">
                     <span class="footer-label">温度</span>
-                    <span class="footer-value" :class="passionLevel(passionTemp)">{{ passionTemp }}°</span>
+                    <span class="footer-value" :class="passionLevel(passionTemp)">{{ passionTemp }}°<span class="footer-desc">({{ tempDesc(passionTemp) }})</span></span>
                 </div>
                 <div class="footer-item" v-if="passionValuation">
                     <span class="footer-label">估值</span>
-                    <span class="footer-value" :class="passionLevel(passionValuation)">{{ passionValuation }}</span>
+                    <span class="footer-value" :class="passionLevel(passionValuation)">{{ passionValuation }}<span class="footer-desc">({{ valuationDesc(passionValuation) }})</span></span>
                 </div>
                 <div class="footer-item" v-if="passionSentiment">
                     <span class="footer-label">情绪</span>
-                    <span class="footer-value" :class="passionLevel(passionSentiment)">{{ passionSentiment }}</span>
+                    <span class="footer-value" :class="passionLevel(passionSentiment)">{{ passionSentiment }}<span class="footer-desc">({{ sentimentDesc(passionSentiment) }})</span></span>
                 </div>
             </div>
         </div>
@@ -156,6 +156,33 @@ function passionLevel(val: string): string {
     if (n >= 80) return 'hot'
     if (n >= 50) return 'warm'
     return 'cool'
+}
+
+function tempDesc(val: string): string {
+    const n = parseInt(val, 10)
+    if (isNaN(n)) return ''
+    if (n >= 80) return '暴热'
+    if (n >= 60) return '过热'
+    if (n >= 30) return '适度'
+    return '冰点'
+}
+
+function valuationDesc(val: string): string {
+    const n = parseInt(val, 10)
+    if (isNaN(n)) return ''
+    if (n >= 80) return '极高'
+    if (n >= 60) return '偏高'
+    if (n >= 30) return '适中'
+    return '偏低'
+}
+
+function sentimentDesc(val: string): string {
+    const n = parseInt(val, 10)
+    if (isNaN(n)) return ''
+    if (n >= 80) return '亢奋'
+    if (n >= 60) return '积极'
+    if (n >= 30) return '平静'
+    return '低落'
 }
 </script>
 
@@ -322,6 +349,13 @@ function passionLevel(val: string): string {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.footer-desc {
+    font-size: 9px;
+    font-weight: 600;
+    margin-left: 1px;
+    opacity: 0.85;
 }
 
 .footer-value.hot {
