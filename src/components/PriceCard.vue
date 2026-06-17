@@ -47,8 +47,8 @@
                     <span class="footer-value num-mono">{{ formatAmount(amount) }}</span>
                 </div>
                 <div class="footer-item" v-if="passionTemp">
-                    <span class="footer-label">温度</span>
-                    <span class="footer-value" :class="passionLevel(passionTemp)">{{ passionTemp }}°<span class="footer-desc">({{ tempDesc(passionTemp) }})</span></span>
+                    <span class="footer-label" :title="passionTempIntro">温度</span>
+                    <span class="footer-value" :class="passionLevel(passionTemp)" :title="passionTempIntro">{{ passionTemp }}°<span class="footer-desc">({{ tempDesc(passionTemp) }})</span></span>
                 </div>
                 <div class="footer-item" v-if="passionValuation">
                     <span class="footer-label">估值</span>
@@ -81,6 +81,7 @@ const props = withDefaults(
         amount?: number
         decimals?: number
         passionTemp?: string
+        passionTempIntro?: string
         passionValuation?: string
         passionSentiment?: string
     }>(),
@@ -97,6 +98,7 @@ const props = withDefaults(
         amount: 0,
         decimals: 2,
         passionTemp: '',
+        passionTempIntro: '',
         passionValuation: '',
         passionSentiment: '',
     }

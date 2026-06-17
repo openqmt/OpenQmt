@@ -18,6 +18,7 @@
           :volume="store.data[key]?.volume ?? 0"
           :amount="store.data[key]?.amount ?? 0"
           :passionTemp="getPassion(key)?.temp"
+          :passionTempIntro="getPassion(key)?.temp_intro"
           :passionValuation="getPassion(key)?.valuation"
           :passionSentiment="getPassion(key)?.sentiment"
         />
