@@ -9,7 +9,8 @@
                         输入您感兴趣的领域，AI 将为您推荐相关的投资标的
                     </p>
                     <p class="welcome-provider">
-                        当前模型：{{ currentProviderLabel }} · {{ selectedModel }}
+                        当前模型：{{ currentProviderLabel }} ·
+                        {{ selectedModel }}
                     </p>
                     <div class="quick-questions">
                         <div
@@ -45,7 +46,14 @@
                     </div>
                 </div>
 
-                <div v-if="isLoading && messages.length > 0 && messages[messages.length - 1].content === ''" class="chat-bubble bubble-ai">
+                <div
+                    v-if="
+                        isLoading &&
+                        messages.length > 0 &&
+                        messages[messages.length - 1].content === ''
+                    "
+                    class="chat-bubble bubble-ai"
+                >
                     <div class="bubble-avatar">🤖</div>
                     <div class="bubble-body">
                         <div class="bubble-loading">
@@ -181,14 +189,20 @@ async function handleSend(): Promise<void> {
         await callAIStream(text, aiMessageId)
     } catch (error: any) {
         message.error(error.message || '请求失败')
-        aiStore.updateMessage(aiMessageId, `❌ 请求失败: ${error.message || '未知错误'}`)
+        aiStore.updateMessage(
+            aiMessageId,
+            `❌ 请求失败: ${error.message || '未知错误'}`
+        )
     } finally {
         isLoading.value = false
         scrollToBottom()
     }
 }
 
-async function callAIStream(userMessage: string, messageId: string): Promise<void> {
+async function callAIStream(
+    userMessage: string,
+    messageId: string
+): Promise<void> {
     const config = settingsStore.model.providers[selectedProvider.value]
     if (!config) throw new Error('模型配置不存在')
 
@@ -244,14 +258,14 @@ async function callAIStream(userMessage: string, messageId: string): Promise<voi
 
         while (true) {
             const { done, value } = await reader.read()
-            
+
             if (done) {
                 break
             }
 
             // 解码数据块
             buffer += decoder.decode(value, { stream: true })
-            
+
             // 解析 SSE 数据
             const lines = buffer.split('\n')
             buffer = lines.pop() || '' // 保留最后一个不完整的行
@@ -264,7 +278,7 @@ async function callAIStream(userMessage: string, messageId: string): Promise<voi
 
                 if (trimmedLine.startsWith('data: ')) {
                     const dataStr = trimmedLine.slice(6)
-                    
+
                     if (dataStr === '[DONE]') {
                         return // 流结束
                     }
@@ -272,10 +286,10 @@ async function callAIStream(userMessage: string, messageId: string): Promise<voi
                     try {
                         const data = JSON.parse(dataStr)
                         const delta = data.choices?.[0]?.delta?.content
-                        
+
                         if (delta) {
                             fullContent += delta
-                            
+
                             // 更新消息内容
                             aiStore.updateMessage(messageId, fullContent)
                             scrollToBottom()

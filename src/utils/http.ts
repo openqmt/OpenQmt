@@ -1,9 +1,5 @@
+import { isTauri } from '@tauri-apps/api/core'
 import { fetch as tauriFetch } from '@tauri-apps/plugin-http'
-
-/** 是否在 Tauri 桌面环境中运行 */
-export function isTauri(): boolean {
-    return typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window
-}
 
 /**
  * 统一 HTTP 请求：
@@ -18,13 +14,4 @@ export async function httpFetch(
         return tauriFetch(input, init)
     }
     return fetch(input, init)
-}
-
-/** 东方财富基金排行接口 */
-export function getFundRankUrl(params: URLSearchParams): string {
-    const path = `/data/rankhandler.aspx?${params}`
-    if (isTauri()) {
-        return `https://fund.eastmoney.com${path}`
-    }
-    return `/api/fund${path}`
 }

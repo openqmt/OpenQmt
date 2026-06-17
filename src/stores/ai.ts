@@ -40,11 +40,17 @@ export const useAiStore = defineStore('ai', () => {
 
     const currentConversation = computed(() => {
         if (!currentConversationId.value) return null
-        return conversations.value.find(c => c.id === currentConversationId.value) || null
+        return (
+            conversations.value.find(
+                (c) => c.id === currentConversationId.value
+            ) || null
+        )
     })
 
     const sortedConversations = computed(() => {
-        return [...conversations.value].sort((a, b) => b.updatedAt - a.updatedAt)
+        return [...conversations.value].sort(
+            (a, b) => b.updatedAt - a.updatedAt
+        )
     })
 
     function persist() {
@@ -53,7 +59,10 @@ export const useAiStore = defineStore('ai', () => {
     }
 
     /** 创建新对话 */
-    function createConversation(provider: ModelProvider, model: string): AiConversation {
+    function createConversation(
+        provider: ModelProvider,
+        model: string
+    ): AiConversation {
         const conversation: AiConversation = {
             id: generateId(),
             title: '新对话',
@@ -71,7 +80,7 @@ export const useAiStore = defineStore('ai', () => {
 
     /** 切换到指定对话 */
     function switchConversation(id: string) {
-        const exists = conversations.value.find(c => c.id === id)
+        const exists = conversations.value.find((c) => c.id === id)
         if (exists) {
             currentConversationId.value = id
             persist()
@@ -80,11 +89,13 @@ export const useAiStore = defineStore('ai', () => {
 
     /** 删除对话 */
     function deleteConversation(id: string) {
-        conversations.value = conversations.value.filter(c => c.id !== id)
+        conversations.value = conversations.value.filter((c) => c.id !== id)
         if (currentConversationId.value === id) {
             // 如果删除的是当前对话，切换到最近的对话或置空
             if (conversations.value.length > 0) {
-                const sorted = [...conversations.value].sort((a, b) => b.updatedAt - a.updatedAt)
+                const sorted = [...conversations.value].sort(
+                    (a, b) => b.updatedAt - a.updatedAt
+                )
                 currentConversationId.value = sorted[0].id
             } else {
                 currentConversationId.value = null
@@ -95,24 +106,29 @@ export const useAiStore = defineStore('ai', () => {
 
     /** 添加消息到当前对话 */
     function addMessage(message: AiMessage) {
-        const conv = conversations.value.find(c => c.id === currentConversationId.value)
+        const conv = conversations.value.find(
+            (c) => c.id === currentConversationId.value
+        )
         if (!conv) return
         conv.messages.push(message)
         conv.updatedAt = Date.now()
         // 用第一条用户消息作为标题（截断到20字）
         if (conv.title === '新对话' && message.role === 'user') {
-            conv.title = message.content.length > 20
-                ? message.content.slice(0, 20) + '...'
-                : message.content
+            conv.title =
+                message.content.length > 20
+                    ? message.content.slice(0, 20) + '...'
+                    : message.content
         }
         persist()
     }
 
     /** 更新指定消息的内容（流式输出时使用） */
     function updateMessage(messageId: string, content: string) {
-        const conv = conversations.value.find(c => c.id === currentConversationId.value)
+        const conv = conversations.value.find(
+            (c) => c.id === currentConversationId.value
+        )
         if (!conv) return
-        const msg = conv.messages.find(m => m.id === messageId)
+        const msg = conv.messages.find((m) => m.id === messageId)
         if (msg) {
             msg.content = content
             conv.updatedAt = Date.now()
@@ -122,7 +138,9 @@ export const useAiStore = defineStore('ai', () => {
 
     /** 更新当前对话的模型信息 */
     function updateConversationModel(provider: ModelProvider, model: string) {
-        const conv = conversations.value.find(c => c.id === currentConversationId.value)
+        const conv = conversations.value.find(
+            (c) => c.id === currentConversationId.value
+        )
         if (conv) {
             conv.provider = provider
             conv.model = model

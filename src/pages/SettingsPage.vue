@@ -68,7 +68,9 @@
 
                                 <div class="models-section">
                                     <div class="models-header">
-                                        <span class="models-label">可用模型</span>
+                                        <span class="models-label"
+                                            >可用模型</span
+                                        >
                                         <n-button
                                             text
                                             size="small"
@@ -84,7 +86,11 @@
                                         <n-tag
                                             v-for="model in currentModels"
                                             :key="model.id"
-                                            :type="model.id === activeModel ? 'warning' : 'default'"
+                                            :type="
+                                                model.id === activeModel
+                                                    ? 'warning'
+                                                    : 'default'
+                                            "
                                             :bordered="false"
                                             closable
                                             size="large"
@@ -93,7 +99,9 @@
                                         >
                                             <div
                                                 class="model-tag-content"
-                                                @click.stop="selectModel(model.id)"
+                                                @click.stop="
+                                                    selectModel(model.id)
+                                                "
                                             >
                                                 <span class="model-tag-name">{{
                                                     model.name
@@ -118,11 +126,7 @@
                         <AddCircleOutline />
                     </n-icon>
                     <span class="card-title">自定义提供商</span>
-                    <n-button
-                        text
-                        size="small"
-                        @click="showAddProvider = true"
-                    >
+                    <n-button text size="small" @click="showAddProvider = true">
                         <template #icon>
                             <n-icon><AddOutline /></n-icon>
                         </template>
@@ -229,7 +233,9 @@
                 <n-button @click="showAddProvider = false">取消</n-button>
                 <n-button
                     type="primary"
-                    :disabled="!newProviderForm.name || !newProviderForm.baseUrl"
+                    :disabled="
+                        !newProviderForm.name || !newProviderForm.baseUrl
+                    "
                     @click="handleAddProvider"
                 >
                     添加
@@ -272,7 +278,7 @@ const systemPrompt = ref(settingsStore.model.systemPrompt)
 
 // 提供商标签页
 const providerTabs = computed(() =>
-    settingsStore.providerOptions.map(opt => ({
+    settingsStore.providerOptions.map((opt) => ({
         key: opt.value as ModelProvider,
         label: opt.label,
     }))
@@ -330,7 +336,7 @@ function handleAddModel() {
 function removeModel(modelId: string) {
     const config = settingsStore.model.providers[activeProvider.value]
     if (!config) return
-    config.models = config.models.filter(m => m.id !== modelId)
+    config.models = config.models.filter((m) => m.id !== modelId)
     message.success('模型已删除')
 }
 
