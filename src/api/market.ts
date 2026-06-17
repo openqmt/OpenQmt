@@ -1,7 +1,7 @@
 /**
  * OpenQmt 行情数据 API 模块
  * 黄金/股票行情：使用 Yun API 获取实时数据
- * 基金排行：使用东方财富 API
+ * 基金排行：使用天天基金条件选基 API
  */
 
 import yunApi from '../api/yun'

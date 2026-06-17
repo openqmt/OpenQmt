@@ -18,7 +18,7 @@
 
             <n-select
                 v-if="pageType === 'fund'"
-                v-model:value="fundType"
+                v-model:value="fundStore.fundType"
                 :options="fundTypeOptions"
                 size="small"
                 class="fund-type-select"
@@ -90,7 +90,6 @@ const pageType = computed(() => {
     return null
 })
 
-const fundType = ref('all')
 let timer: ReturnType<typeof setInterval> | null = null
 
 const fundTypeOptions = [
@@ -114,8 +113,8 @@ function refresh() {
     else if (pageType.value === 'fund') fundStore.loadData()
 }
 
-function onFundTypeChange() {
-    refresh()
+function onFundTypeChange(type: string) {
+    fundStore.setFundType(type)
 }
 
 function clearTimer() {

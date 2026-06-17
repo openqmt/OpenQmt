@@ -31,7 +31,7 @@ export default defineConfig(async () => ({
     proxy: {
       // 浏览器开发模式代理，避免基金排行 API 的 CORS 限制
       "/api/fund": {
-        target: "https://fund.eastmoney.com",
+        target: "https://condition.tiantianfunds.com",
         changeOrigin: true,
         secure: true,
         rewrite: (path) => path.replace(/^\/api\/fund/, ""),
