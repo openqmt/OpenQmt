@@ -36,6 +36,12 @@ export default defineConfig(async () => ({
         secure: true,
         rewrite: (path) => path.replace(/^\/api\/fund/, ""),
       },
+      "/api/fund-detail": {
+        target: "https://dgs.tiantianfunds.com",
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path.replace(/^\/api\/fund-detail/, ""),
+      },
     },
   },
 }));

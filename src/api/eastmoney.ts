@@ -120,7 +120,261 @@ export async function fetchFundRanking(
     }
 }
 
+const FUND_DETAIL_PATH = '/merge/m/api/jjxqy2'
+const FUND_DETAIL_URL = `https://dgs.tiantianfunds.com${FUND_DETAIL_PATH}`
+const FUND_DEVICE_ID = 'a572a34c9d22fb94fc29649b2166a8bb'
+
+function getFundDetailUrl(): string {
+    if (isTauri()) return FUND_DETAIL_URL
+    return `/api/fund-detail${FUND_DETAIL_PATH}`
+}
+
+export interface FundStockHolding {
+    code: string
+    name: string
+    weight: number
+    changeType: string
+    changePct: number
+    industry: string
+    holdQuarters: number
+}
+
+export interface FundSectorItem {
+    name: string
+    weight: number
+    marketValue: string
+    reportDate: string
+}
+
+export interface FundTopicItem {
+    topic: string
+    weight: number
+    reportDate: string
+}
+
+export interface FundAssetItem {
+    reportDate: string
+    stockPct: number
+    cashPct: number
+    bondPct: number
+    otherPct: number
+}
+
+export interface FundScaleItem {
+    reportDate: string
+    netNav: number
+    changePct: number | null
+}
+
+export interface FundBonusItem {
+    exDate: string
+    payDate: string
+    amount: string
+}
+
+export interface FundDetail {
+    code: string
+    reportDate: string
+    aiSummary: string | null
+    holdings: FundStockHolding[]
+    sectors: FundSectorItem[]
+    topics: FundTopicItem[]
+    assetAllocation: FundAssetItem | null
+    scales: FundScaleItem[]
+    bonuses: FundBonusItem[]
+    cashManagementPct: number | null
+}
+
+interface FundDetailStockRaw {
+    GPDM: string
+    GPJC: string
+    JZBL: string
+    PCTNVCHGTYPE: string
+    PCTNVCHG: string
+    INDEXNAME: string
+    HOLDCOUNT: string
+}
+
+interface FundDetailResponse {
+    data?: {
+        expansion?: string
+        fundInverstPosition?: {
+            fundStocks?: FundDetailStockRaw[] | null
+        }
+        fundHoldAiReportInfo?: {
+            data?: Array<{ text_summary?: string }> | null
+        }
+        fundSectorAllocationByDate?: Record<
+            string,
+            Array<{
+                HYMC: string
+                ZJZBL: string
+                SZ: string
+                FSRQ: string
+            }>
+        >
+        fundStockInvestDistriTop?: Record<
+            string,
+            Array<{
+                TOPICCODE: string
+                PCTNV: string
+                REPORTDATE: string
+            }>
+        >
+        fundAssetAllocationByDate?: Record<
+            string,
+            Array<{
+                GP: string
+                HB: string
+                ZQ: string
+                QT: string
+                FSRQ: string
+            }>
+        >
+        fundAssetsList?: Array<{
+            FSRQ: string
+            NETNAV: string
+            CHANGE: string
+        }>
+        fundBonusDetail?: {
+            FHINFO?: Array<{
+                DJR: string
+                FFR: string
+                FHFCZ: string
+            }>
+        }
+        fundInvestMoneyManagement?: {
+            FundAsset?: {
+                MPCTNV?: string
+            }
+        }
+    }
+    success?: boolean
+    errorCode?: number
+}
+
+function parseOptionalNum(val: string | undefined): number | null {
+    if (!val) return null
+    const n = parseFloat(val)
+    return Number.isFinite(n) ? n : null
+}
+
+function getLatestDateKey(
+    map: Record<string, unknown> | null | undefined
+): string | null {
+    if (!map) return null
+    const keys = Object.keys(map).sort()
+    return keys.length ? keys[keys.length - 1]! : null
+}
+
+function mapFundDetail(code: string, raw: FundDetailResponse['data']): FundDetail {
+    const reportDate = raw?.expansion ?? ''
+    const stocks = raw?.fundInverstPosition?.fundStocks ?? []
+    const sectorDate = reportDate || getLatestDateKey(raw?.fundSectorAllocationByDate)
+    const sectorList = sectorDate
+        ? (raw?.fundSectorAllocationByDate?.[sectorDate] ?? [])
+        : []
+    const topicDate = reportDate || getLatestDateKey(raw?.fundStockInvestDistriTop)
+    const topicList = topicDate
+        ? (raw?.fundStockInvestDistriTop?.[topicDate] ?? [])
+        : []
+    const assetDate = reportDate || getLatestDateKey(raw?.fundAssetAllocationByDate)
+    const assetRaw = assetDate
+        ? raw?.fundAssetAllocationByDate?.[assetDate]?.[0]
+        : undefined
+
+    return {
+        code,
+        reportDate,
+        aiSummary: raw?.fundHoldAiReportInfo?.data?.[0]?.text_summary ?? null,
+        holdings: stocks.map((item) => ({
+            code: item.GPDM,
+            name: item.GPJC,
+            weight: parseNum(item.JZBL),
+            changeType: item.PCTNVCHGTYPE,
+            changePct: parseNum(item.PCTNVCHG),
+            industry: item.INDEXNAME,
+            holdQuarters: parseNum(item.HOLDCOUNT),
+        })),
+        sectors: sectorList
+            .filter((item) => item.HYMC !== '合计' && item.ZJZBL)
+            .map((item) => ({
+                name: item.HYMC,
+                weight: parseNum(item.ZJZBL),
+                marketValue: item.SZ,
+                reportDate: item.FSRQ,
+            }))
+            .sort((a, b) => b.weight - a.weight),
+        topics: topicList
+            .map((item) => ({
+                topic: item.TOPICCODE,
+                weight: parseNum(item.PCTNV),
+                reportDate: item.REPORTDATE,
+            }))
+            .sort((a, b) => b.weight - a.weight),
+        assetAllocation: assetRaw
+            ? {
+                  reportDate: assetRaw.FSRQ,
+                  stockPct: parseNum(assetRaw.GP),
+                  cashPct: parseNum(assetRaw.HB),
+                  bondPct: parseNum(assetRaw.ZQ),
+                  otherPct: parseNum(assetRaw.QT),
+              }
+            : null,
+        scales: (raw?.fundAssetsList ?? []).map((item) => ({
+            reportDate: item.FSRQ,
+            netNav: parseNum(item.NETNAV),
+            changePct: parseOptionalNum(item.CHANGE),
+        })),
+        bonuses: (raw?.fundBonusDetail?.FHINFO ?? []).map((item) => ({
+            exDate: item.DJR,
+            payDate: item.FFR,
+            amount: item.FHFCZ,
+        })),
+        cashManagementPct: parseOptionalNum(
+            raw?.fundInvestMoneyManagement?.FundAsset?.MPCTNV
+        ),
+    }
+}
+
+export async function fetchFundDetail(fcode: string): Promise<FundDetail> {
+    const body = new URLSearchParams({
+        deviceid: FUND_DEVICE_ID,
+        version: '9.9.9',
+        appVersion: '6.5.5',
+        product: 'EFund',
+        plat: 'Web',
+        uid: '',
+        fcode,
+    })
+
+    const response = await httpFetch(getFundDetailUrl(), {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json, text/plain, */*',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Origin: 'https://h5.1234567.com.cn',
+            Referer: 'https://h5.1234567.com.cn/',
+            Validmark: FUND_DEVICE_ID,
+        },
+        body,
+    })
+
+    if (!response.ok) {
+        throw new Error(`基金详情请求失败: ${response.status}`)
+    }
+
+    const json: FundDetailResponse = await response.json()
+
+    if (!json.success || json.errorCode !== 0 || !json.data) {
+        throw new Error('基金详情数据获取失败')
+    }
+
+    return mapFundDetail(fcode, json.data)
+}
+
 export default {
     fetchFundRanking,
+    fetchFundDetail,
     fundTypeToRsfType,
 }

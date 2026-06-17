@@ -38,12 +38,12 @@
                     <n-layout-header :bordered="false" class="app-header">
                         <div class="header-left">
                             <n-button
-                                v-if="isInSettingsArea"
+                                v-if="isInSettingsArea || isFundDetailPage"
                                 quaternary
                                 circle
                                 size="small"
                                 class="back-btn"
-                                @click="backToMain"
+                                @click="handleBack"
                             >
                                 <template #icon>
                                     <n-icon size="18"><ArrowBackOutline /></n-icon>
@@ -250,6 +250,8 @@ const isInSettingsArea = computed(() => {
     return ['profile', 'settings', 'notifications'].includes(activeKey.value)
 })
 
+const isFundDetailPage = computed(() => route.path.startsWith('/fund/'))
+
 // ── Naive UI 主题 ──
 const naiveTheme = computed(() => (themeStore.isDark ? darkTheme : null))
 
@@ -442,6 +444,14 @@ function backToMain() {
     router.push('/gold')
 }
 
+function handleBack() {
+    if (isFundDetailPage.value) {
+        router.push('/fund')
+        return
+    }
+    backToMain()
+}
+
 const titleMap: Record<string, string> = {
     gold: '黄金行情',
     stock: '股票行情',
@@ -451,11 +461,18 @@ const titleMap: Record<string, string> = {
     profile: '个人中心',
 }
 
-const currentTitle = computed(() => titleMap[activeKey.value] || '个人中心')
+const currentTitle = computed(() => {
+    if (isFundDetailPage.value) {
+        const name = route.query.name
+        return typeof name === 'string' && name ? name : '基金详情'
+    }
+    return titleMap[activeKey.value] || '个人中心'
+})
 
-const showPageToolbar = computed(() =>
-    ['gold', 'stock', 'fund', 'learn', 'ai'].includes(activeKey.value)
-)
+const showPageToolbar = computed(() => {
+    if (isFundDetailPage.value) return false
+    return ['gold', 'stock', 'fund', 'learn', 'ai'].includes(activeKey.value)
+})
 
 const pageLoading = computed(() => {
     const key = activeKey.value
@@ -481,6 +498,10 @@ watch(
     (path) => {
         if (path.startsWith('/ai')) {
             activeKey.value = 'ai'
+            return
+        }
+        if (path.startsWith('/fund/')) {
+            activeKey.value = 'fund'
             return
         }
         const key = path.replace('/', '') || 'gold'

@@ -12,6 +12,7 @@
                     flex-height
                     style="height: 100%"
                     :row-class-name="rowClassName"
+                    :row-props="rowProps"
                     :pagination="false"
                     class="fund-table"
                     @scroll="onTableScroll"
@@ -30,10 +31,12 @@
 
 <script setup lang="ts">
 import { h, nextTick, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { NDataTable, NTag, type DataTableColumns } from 'naive-ui'
 import { useFundStore } from '../stores/fund'
 import type { FundRankItem } from '../types'
 
+const router = useRouter()
 const store = useFundStore()
 const tableRef = ref<InstanceType<typeof NDataTable> | null>(null)
 
@@ -256,6 +259,19 @@ function getTypeColor(
 
 function rowClassName(): string {
     return 'fund-row'
+}
+
+function rowProps(row: FundRankItem) {
+    return {
+        style: 'cursor: pointer',
+        onClick: () => {
+            router.push({
+                name: 'FundDetail',
+                params: { code: row.code },
+                query: { name: row.name },
+            })
+        },
+    }
 }
 </script>
 

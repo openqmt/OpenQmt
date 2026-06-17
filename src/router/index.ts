@@ -25,6 +25,12 @@ const routes: RouteRecordRaw[] = [
     meta: { title: "基金排行" },
   },
   {
+    path: "/fund/:code",
+    name: "FundDetail",
+    component: () => import("../pages/FundDetailPage.vue"),
+    meta: { title: "基金详情" },
+  },
+  {
     path: "/learn",
     name: "Learn",
     component: () => import("../pages/LearnPage.vue"),
