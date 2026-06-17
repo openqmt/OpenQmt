@@ -1,31 +1,75 @@
 <template>
     <div class="fund-page">
-        <n-spin :show="store.loading">
+        <n-spin :show="store.loading" class="fund-spin">
             <div class="table-scroll-wrap">
                 <n-data-table
+                    ref="tableRef"
                     :columns="columns"
                     :data="store.data"
                     :bordered="false"
                     size="small"
                     :scroll-x="860"
+                    flex-height
+                    style="height: 100%"
                     :row-class-name="rowClassName"
-                    :pagination="pagination"
+                    :pagination="false"
                     class="fund-table"
+                    @scroll="onTableScroll"
                 />
+            </div>
+            <div class="load-more-sentinel">
+                <n-spin v-if="store.loadingMore" size="small" />
+                <span
+                    v-else-if="!store.hasMore && store.data.length"
+                    class="load-more-end"
+                >
+                    已加载全部
+                </span>
             </div>
         </n-spin>
     </div>
 </template>
 
 <script setup lang="ts">
-import { h } from 'vue'
-import { NTag, type DataTableColumns } from 'naive-ui'
+import { h, nextTick, ref, watch } from 'vue'
+import { NDataTable, NTag, type DataTableColumns } from 'naive-ui'
 import { useFundStore } from '../stores/fund'
 import type { FundRankItem } from '../types'
 
 const store = useFundStore()
+const tableRef = ref<InstanceType<typeof NDataTable> | null>(null)
 
-const pagination = { pageSize: 15 }
+function onTableScroll(e: Event): void {
+    const el = e.target as HTMLElement
+    const { scrollHeight, scrollTop, clientHeight } = el
+    if (scrollHeight - scrollTop - clientHeight < 200) {
+        store.loadMore()
+    }
+}
+
+function getScrollContainer(): HTMLElement | null {
+    const root = tableRef.value?.$el as HTMLElement | undefined
+    return root?.querySelector('.n-scrollbar-container') ?? null
+}
+
+/** 内容未撑满表格时无法触发 scroll，需自动补载 */
+function checkAndLoadMore(): void {
+    nextTick(() => {
+        if (!store.hasMore || store.loading || store.loadingMore) return
+        const el = getScrollContainer()
+        if (!el) return
+        if (el.scrollHeight <= el.clientHeight + 100) {
+            store.loadMore()
+        }
+    })
+}
+
+watch(
+    () => [store.data.length, store.loading, store.loadingMore] as const,
+    ([, loading, loadingMore]) => {
+        if (!loading && !loadingMore) checkAndLoadMore()
+    }
+)
 
 const columns: DataTableColumns<FundRankItem> = [
     {
@@ -213,9 +257,33 @@ function rowClassName(): string {
 
 <style scoped>
 .fund-page {
+    height: calc(100vh - var(--header-height) - 2 * var(--content-padding-y));
     max-width: 100%;
     width: 100%;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.fund-spin {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.fund-spin :deep(.n-spin-content) {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.table-scroll-wrap {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
 }
 
 .fund-table {
@@ -223,7 +291,6 @@ function rowClassName(): string {
     border-radius: var(--radius-lg);
     border: 1px solid var(--border-subtle);
     box-shadow: var(--shadow-card);
-    overflow: hidden;
 }
 
 :deep(.fund-row td) {
@@ -249,18 +316,17 @@ function rowClassName(): string {
     background: var(--surface-muted) !important;
 }
 
-:deep(.n-pagination) {
-    margin-top: 14px;
+.load-more-sentinel {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 40px;
+    padding: 8px 0 0;
 }
 
-:deep(.n-pagination .n-pagination-item) {
-    background: var(--bg-card);
-    border-radius: 8px;
-    border: 1px solid var(--border-subtle);
-}
-
-:deep(.n-pagination .n-pagination-item--active) {
-    background: rgba(212, 168, 67, 0.12);
-    border-color: var(--gold-primary);
+.load-more-end {
+    color: var(--text-muted);
+    font-size: 12px;
 }
 </style>

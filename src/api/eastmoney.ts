@@ -26,6 +26,11 @@ interface FundSelectResponse {
     Succeed: boolean
 }
 
+export interface FundRankingResult {
+    items: FundRankItem[]
+    hasMore: boolean
+}
+
 const FUND_SELECT_PATH = '/condition/conditionFund/fundSelect'
 const FUND_SELECT_URL = `https://condition.tiantianfunds.com${FUND_SELECT_PATH}`
 
@@ -73,7 +78,7 @@ export async function fetchFundRanking(
     pageIndex = 1,
     pageNum = 30,
     rsfType: FundRsfType = 0
-): Promise<FundRankItem[]> {
+): Promise<FundRankingResult> {
     const body = new URLSearchParams({
         orderField: '5_1_-1',
         pageIndex: String(pageIndex),
@@ -108,7 +113,11 @@ export async function fetchFundRanking(
     }
 
     const startRank = (pageIndex - 1) * pageNum + 1
-    return (json.Data ?? []).map((item, i) => toFundRankItem(item, startRank + i))
+    const list = json.Data ?? []
+    return {
+        items: list.map((item, i) => toFundRankItem(item, startRank + i)),
+        hasMore: list.length >= pageNum,
+    }
 }
 
 export default {
