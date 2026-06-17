@@ -210,31 +210,6 @@ export interface AiConversation {
     updatedAt: number
 }
 
-/** 东方财富 Push2 API 返回字段 */
-export interface EastMoneyQuoteFields {
-    f43: number // 最新价
-    f44: number // 最高价
-    f45: number // 最低价
-    f46: number // 开盘价
-    f47: number // 成交量
-    f48: number // 成交额
-    f57: string // 代码
-    f58: string // 名称
-    f169: number // 涨跌额
-    f170: number // 涨跌幅
-    f171: number // 涨跌幅（动态）
-}
-
-/** 东方财富 API 响应 */
-export interface EastMoneyResponse {
-    rc: number
-    rt: number
-    svr: number
-    lt: number
-    full: number
-    data: EastMoneyQuoteFields | null
-}
-
 /** 用户信息 */
 export interface UserInfo {
     id: string

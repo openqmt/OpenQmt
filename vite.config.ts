@@ -29,13 +29,7 @@ export default defineConfig(async () => ({
       ignored: ["**/src-tauri/**"],
     },
     proxy: {
-      // 浏览器开发模式代理，避免东方财富 API 的 CORS 限制
-      "/api/eastmoney": {
-        target: "https://push2.eastmoney.com",
-        changeOrigin: true,
-        secure: true,
-        rewrite: (path) => path.replace(/^\/api\/eastmoney/, ""),
-      },
+      // 浏览器开发模式代理，避免基金排行 API 的 CORS 限制
       "/api/fund": {
         target: "https://fund.eastmoney.com",
         changeOrigin: true,

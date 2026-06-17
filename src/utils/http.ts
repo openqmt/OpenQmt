@@ -20,15 +20,6 @@ export async function httpFetch(
     return fetch(input, init)
 }
 
-/** 东方财富 Push2 行情接口 */
-export function getEastMoneyQuoteUrl(params: URLSearchParams): string {
-    const path = `/api/qt/stock/get?${params}`
-    if (isTauri()) {
-        return `https://push2.eastmoney.com${path}`
-    }
-    return `/api/eastmoney${path}`
-}
-
 /** 东方财富基金排行接口 */
 export function getFundRankUrl(params: URLSearchParams): string {
     const path = `/data/rankhandler.aspx?${params}`

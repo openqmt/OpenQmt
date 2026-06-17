@@ -1,12 +1,11 @@
 /**
  * OpenQmt 行情数据 API 模块
- * 黄金行情：使用 Yun API 获取实时数据
- * 股票/基金：使用东方财富 Push2 API
+ * 黄金/股票行情：使用 Yun API 获取实时数据
+ * 基金排行：使用东方财富 API
  */
 
 import {
   httpFetch,
-  getEastMoneyQuoteUrl,
   getFundRankUrl,
 } from "../utils/http";
 import yunApi from "../api/yun";
@@ -18,7 +17,6 @@ import type {
   GoldDataMap,
   StockDataMap,
   FundRankItem,
-  EastMoneyResponse,
   GoldApiResponse,
   GoldPriceItem,
   GoldFetchResult,
@@ -26,12 +24,6 @@ import type {
   StockPriceItem,
   StockFetchResult,
 } from "../types";
-
-const COMMON_PARAMS: Record<string, string> = {
-  ut: "fa5fd1943c7b386f172d6893dbbd1d0c",
-  fltt: "2",
-  fields: "f43,f44,f45,f46,f47,f48,f57,f58,f169,f170,f171",
-};
 
 /** 黄金品种配置 */
 export const GOLD_CONFIG: Record<GoldKey, SymbolConfig> = {
@@ -124,37 +116,6 @@ const MOCK_FUND: FundRankItem[] = [
 
 // ============ 工具函数 ============
 
-/** 解析东方财富 API 返回的数据 */
-function parseQuoteData(data: EastMoneyResponse | null): QuoteData | null {
-  if (!data?.data) return null;
-  const d = data.data;
-  return {
-    current: d.f43 ?? 0,
-    high: d.f44 ?? 0,
-    low: d.f45 ?? 0,
-    open: d.f46 ?? 0,
-    volume: d.f47 ?? 0,
-    amount: d.f48 ?? 0,
-    change: d.f169 ?? 0,
-    changePercent: d.f170 ?? 0,
-    name: d.f58 ?? "",
-  };
-}
-
-/** 获取单个品种行情 */
-async function fetchQuote(secid: string): Promise<QuoteData | null> {
-  try {
-    const params = new URLSearchParams({ ...COMMON_PARAMS, secid });
-    const url = getEastMoneyQuoteUrl(params);
-    const resp = await httpFetch(url);
-    const data: EastMoneyResponse = await resp.json();
-    return parseQuoteData(data);
-  } catch (e) {
-    console.warn(`获取行情失败 [${secid}]:`, e);
-    return null;
-  }
-}
-
 /** 将 yun API 单项数据转为 QuoteData */
 function parseGoldPriceItem(item: GoldPriceItem): QuoteData {
   const price = typeof item.price === "string" ? parseFloat(item.price) : item.price;
@@ -162,8 +123,8 @@ function parseGoldPriceItem(item: GoldPriceItem): QuoteData {
   const closeVal = typeof item.close === "string" ? parseFloat(item.close) : item.close;
   const high = typeof item.high === "string" ? parseFloat(item.high) : item.high;
   const low = typeof item.low === "string" ? parseFloat(item.low) : item.low;
-  const change = price - open;
-  const changePercent = open !== 0 ? (change / open) * 100 : 0;
+  const change = price - closeVal;
+  const changePercent = closeVal !== 0 ? (change / closeVal) * 100 : 0;
   return {
     name: item.name,
     current: price,
@@ -181,10 +142,11 @@ function parseGoldPriceItem(item: GoldPriceItem): QuoteData {
 function parseStockPriceItem(item: StockPriceItem): QuoteData {
   const price = item.price;
   const open = item.open;
+  const closeVal = item.close;
   const high = item.high;
   const low = item.low;
-  const change = price - open;
-  const changePercent = open !== 0 ? (change / open) * 100 : 0;
+  const change = price - closeVal;
+  const changePercent = closeVal !== 0 ? (change / closeVal) * 100 : 0;
   return {
     name: item.name,
     current: price,
