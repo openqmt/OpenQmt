@@ -68,9 +68,9 @@
             />
         </n-space>
 
-        <span v-if="lastUpdate" class="update-time num-mono">{{
+        <!-- <span v-if="lastUpdate" class="update-time num-mono">{{
             lastUpdate
-        }}</span>
+        }}</span> -->
     </div>
 </template>
 
