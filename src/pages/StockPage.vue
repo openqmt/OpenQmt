@@ -8,6 +8,7 @@
           :name="config.name"
           :icon="config.icon"
           unit="点"
+          :decimals="config.decimals"
           :current="store.data[key]?.current ?? 0"
           :open="store.data[key]?.open ?? 0"
           :high="store.data[key]?.high ?? 0"
@@ -31,7 +32,7 @@
               <span class="panel-title">A股市场</span>
             </div>
             <div class="panel-body">
-              <div class="index-row" v-for="key in ['sh000001', 'sz399006']" :key="key">
+              <div class="index-row" v-for="key in ['sh', 'cy']" :key="key">
                 <span class="index-name">{{ stockConfig[key as StockKey]?.name }}</span>
                 <span class="index-price num-mono" :class="priceColor(key as StockKey)">{{ formatVal(store.data[key as StockKey]?.current) }}</span>
                 <span class="index-change num-mono" :class="priceColor(key as StockKey)">{{ formatChange(store.data[key as StockKey]) }}</span>
@@ -46,7 +47,7 @@
               <span class="panel-title">海外市场</span>
             </div>
             <div class="panel-body">
-              <div class="index-row" v-for="key in ['hsi', 'ndx']" :key="key">
+              <div class="index-row" v-for="key in ['hk', 'us']" :key="key">
                 <span class="index-name">{{ stockConfig[key as StockKey]?.name }}</span>
                 <span class="index-price num-mono" :class="priceColor(key as StockKey)">{{ formatVal(store.data[key as StockKey]?.current) }}</span>
                 <span class="index-change num-mono" :class="priceColor(key as StockKey)">{{ formatChange(store.data[key as StockKey]) }}</span>

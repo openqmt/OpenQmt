@@ -128,13 +128,20 @@ function clearTimer() {
 function startAutoRefresh() {
     clearTimer()
     if (pageType.value === 'fund') return
-    // 周末黄金休市，不再自动刷新
+    // 周末休市，不再自动刷新
     if (pageType.value === 'gold' && goldStore.isWeekend) return
-    timer = setInterval(refresh, 2000)
+    if (pageType.value === 'stock' && stockStore.isWeekend) return
+    timer = setInterval(refresh, 10000)
 }
 
 watch(() => goldStore.isWeekend, (isWeekend) => {
     if (isWeekend && pageType.value === 'gold') {
+        clearTimer()
+    }
+})
+
+watch(() => stockStore.isWeekend, (isWeekend) => {
+    if (isWeekend && pageType.value === 'stock') {
         clearTimer()
     }
 })

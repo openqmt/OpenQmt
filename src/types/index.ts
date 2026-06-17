@@ -49,7 +49,29 @@ export interface GoldApiResponse {
 }
 
 /** 股票指数 key */
-export type StockKey = 'sh000001' | 'sz399006' | 'hsi' | 'ndx'
+export type StockKey = 'sh' | 'cy' | 'hk' | 'us'
+
+/** 股票行情单项（yun API 响应字段） */
+export interface StockPriceItem {
+    name: string
+    price: number
+    open: number
+    close: number
+    high: number
+    low: number
+    hands: number
+    quota: number
+    time: number | string
+}
+
+/** 股票行情 API 响应 */
+export interface StockApiResponse {
+    shIndex: StockPriceItem
+    cyIndex: StockPriceItem
+    hkIndex: StockPriceItem
+    usIndex: StockPriceItem
+    isWeekend: boolean
+}
 
 /** 黄金行情数据映射 */
 export type GoldDataMap = Partial<Record<GoldKey, QuoteData>>
@@ -62,6 +84,12 @@ export interface GoldFetchResult {
 
 /** 股票行情数据映射 */
 export type StockDataMap = Partial<Record<StockKey, QuoteData>>
+
+/** 股票行情获取结果 */
+export interface StockFetchResult {
+    data: StockDataMap
+    isWeekend: boolean
+}
 
 /** 基金排行条目 */
 export interface FundRankItem {

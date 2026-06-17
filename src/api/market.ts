@@ -22,6 +22,9 @@ import type {
   GoldApiResponse,
   GoldPriceItem,
   GoldFetchResult,
+  StockApiResponse,
+  StockPriceItem,
+  StockFetchResult,
 } from "../types";
 
 const COMMON_PARAMS: Record<string, string> = {
@@ -58,25 +61,25 @@ export const GOLD_CONFIG: Record<GoldKey, SymbolConfig> = {
 
 /** 股票指数配置 */
 export const STOCK_CONFIG: Record<StockKey, SymbolConfig> = {
-  sh000001: {
+  sh: {
     name: "上证指数",
-    secid: "1.000001",
     icon: "📊",
+    decimals: 2,
   },
-  sz399006: {
+  cy: {
     name: "创业板指",
-    secid: "0.399006",
     icon: "🚀",
+    decimals: 2,
   },
-  hsi: {
+  hk: {
     name: "恒生指数",
-    secid: "100.HSI",
     icon: "🌃",
+    decimals: 2,
   },
-  ndx: {
+  us: {
     name: "纳斯达克",
-    secid: "100.NDX",
     icon: "💻",
+    decimals: 2,
   },
 };
 
@@ -90,10 +93,10 @@ const MOCK_GOLD: GoldDataMap = {
 };
 
 const MOCK_STOCK: StockDataMap = {
-  sh000001: { name: "上证指数", current: 3356.72, open: 3340.15, high: 3370.50, low: 3335.80, change: 16.57, changePercent: 0.50, volume: 32580000, amount: 428500000 },
-  sz399006: { name: "创业板指", current: 2178.35, open: 2165.20, high: 2190.80, low: 2160.50, change: 13.15, changePercent: 0.61, volume: 18950000, amount: 285600000 },
-  hsi: { name: "恒生指数", current: 19625.40, open: 19580.20, high: 19720.60, low: 19550.80, change: 45.20, changePercent: 0.23, volume: 12560000, amount: 856000000 },
-  ndx: { name: "纳斯达克", current: 19850.75, open: 19780.30, high: 19920.40, low: 19750.60, change: 70.45, changePercent: 0.36, volume: 45200000, amount: 2568000000 },
+  sh: { name: "上证指数", current: 4108.08, open: 4074.29, high: 4109.96, low: 4073.73, change: 33.79, changePercent: 0.83, volume: 608077440, amount: 1403146000000 },
+  cy: { name: "创业板指", current: 4167.05, open: 4061.30, high: 4168.16, low: 4058.61, change: 105.75, changePercent: 2.60, volume: 228496370, amount: 821543500000 },
+  hk: { name: "恒生指数", current: 24300.38, open: 24495.85, high: 24560.19, low: 24254.07, change: -195.47, changePercent: -0.80, volume: 11808846000, amount: 237101040000 },
+  us: { name: "纳斯达克", current: 26376.34, open: 26649.97, high: 26788.62, low: 26369.39, change: -273.63, changePercent: -1.03, volume: 10405919700, amount: 0 },
 };
 
 const MOCK_FUND: FundRankItem[] = [
@@ -174,6 +177,27 @@ function parseGoldPriceItem(item: GoldPriceItem): QuoteData {
   };
 }
 
+/** 将 yun API 股票单项数据转为 QuoteData */
+function parseStockPriceItem(item: StockPriceItem): QuoteData {
+  const price = item.price;
+  const open = item.open;
+  const high = item.high;
+  const low = item.low;
+  const change = price - open;
+  const changePercent = open !== 0 ? (change / open) * 100 : 0;
+  return {
+    name: item.name,
+    current: price,
+    open,
+    high,
+    low,
+    change,
+    changePercent,
+    volume: item.hands ?? 0,
+    amount: item.quota ?? 0,
+  };
+}
+
 // ============ 对外接口 ============
 
 /** 获取黄金行情数据 */
@@ -210,25 +234,35 @@ export async function fetchGoldData(): Promise<GoldFetchResult> {
 }
 
 /** 获取股票指数行情数据 */
-export async function fetchStockData(): Promise<StockDataMap> {
-  const results: StockDataMap = {};
-  const entries = Object.entries(STOCK_CONFIG) as [StockKey, SymbolConfig][];
+export async function fetchStockData(): Promise<StockFetchResult> {
+  try {
+    const resp = await yunApi.getQuotes();
+    const raw: StockApiResponse = resp.data;
 
-  const promises = entries.map(async ([key, config]) => {
-    if (!config.secid) return;
-    const data = await fetchQuote(config.secid);
-    if (data && data.current > 0) {
-      results[key] = { ...data, name: config.name };
+    const results: StockDataMap = {};
+    const keyMap: Record<string, StockKey> = {
+      shIndex: "sh",
+      cyIndex: "cy",
+      hkIndex: "hk",
+      usIndex: "us",
+    };
+
+    for (const [apiKey, stockKey] of Object.entries(keyMap)) {
+      const item = raw[apiKey as keyof StockApiResponse];
+      if (item && typeof item === "object" && "price" in item) {
+        results[stockKey] = parseStockPriceItem(item as StockPriceItem);
+      }
     }
-  });
 
-  await Promise.all(promises);
+    if (Object.keys(results).length === 0) {
+      return { data: { ...MOCK_STOCK }, isWeekend: false };
+    }
 
-  if (Object.keys(results).length === 0) {
-    return { ...MOCK_STOCK };
+    return { data: results, isWeekend: raw.isWeekend ?? false };
+  } catch (e) {
+    console.warn("获取股票行情失败:", e);
+    return { data: { ...MOCK_STOCK }, isWeekend: false };
   }
-
-  return results;
 }
 
 /** 获取基金排行数据 */
