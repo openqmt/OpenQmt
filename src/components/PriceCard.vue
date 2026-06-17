@@ -35,6 +35,18 @@
                             formatPrice(open)
                         }}</span>
                     </div>
+                    <div class="detail-item" v-if="volume">
+                        <span class="detail-label">成交量</span>
+                        <span class="detail-value num-mono">{{
+                            formatVolume(volume)
+                        }}</span>
+                    </div>
+                    <div class="detail-item" v-if="amount">
+                        <span class="detail-label">成交额</span>
+                        <span class="detail-value num-mono">{{
+                            formatAmount(amount)
+                        }}</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -107,6 +119,13 @@ function formatPrice(val: number): string {
 }
 
 function formatVolume(val: number): string {
+    if (!val) return '--'
+    if (val >= 100000000) return (val / 100000000).toFixed(2) + '亿'
+    if (val >= 10000) return (val / 10000).toFixed(2) + '万'
+    return val.toString()
+}
+
+function formatAmount(val: number): string {
     if (!val) return '--'
     if (val >= 100000000) return (val / 100000000).toFixed(2) + '亿'
     if (val >= 10000) return (val / 10000).toFixed(2) + '万'
