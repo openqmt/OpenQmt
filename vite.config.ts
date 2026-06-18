@@ -31,13 +31,13 @@ export default defineConfig(async () => ({
     proxy: {
       // 浏览器开发模式代理，避免基金排行 API 的 CORS 限制
       "/api/fund": {
-        target: "https://condition.tiantianfunds.com",
+        target: process.env.VITE_FUND_RANK_BASE_URL || "https://condition.tiantianfunds.com",
         changeOrigin: true,
         secure: true,
         rewrite: (path) => path.replace(/^\/api\/fund/, ""),
       },
       "/api/fund-detail": {
-        target: "https://dgs.tiantianfunds.com",
+        target: process.env.VITE_FUND_DETAIL_BASE_URL || "https://dgs.tiantianfunds.com",
         changeOrigin: true,
         secure: true,
         rewrite: (path) => path.replace(/^\/api\/fund-detail/, ""),
