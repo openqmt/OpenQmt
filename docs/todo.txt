@@ -1,0 +1,560 @@
+基金详情页中，基金档案相关的接口：
+var myHeaders = new Headers();
+myHeaders.append("Accept", "application/json, text/plain, */*");
+myHeaders.append("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8");
+myHeaders.append("Connection", "keep-alive");
+myHeaders.append("Origin", "https://h5.1234567.com.cn");
+myHeaders.append("Referer", "https://h5.1234567.com.cn/");
+myHeaders.append("Sec-Fetch-Dest", "empty");
+myHeaders.append("Sec-Fetch-Mode", "cors");
+myHeaders.append("Sec-Fetch-Site", "cross-site");
+myHeaders.append("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1");
+myHeaders.append("Validmark", "a572a34c9d22fb94fc29649b2166a8bb");
+myHeaders.append("sec-ch-ua", "\"Google Chrome\";v=\"149\", \"Chromium\";v=\"149\", \"Not)A;Brand\";v=\"24\"");
+myHeaders.append("sec-ch-ua-mobile", "?1");
+myHeaders.append("sec-ch-ua-platform", "\"iOS\"");
+myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+
+var urlencoded = new URLSearchParams();
+urlencoded.append("deviceid", "a572a34c9d22fb94fc29649b2166a8bb");
+urlencoded.append("version", "9.9.9");
+urlencoded.append("appVersion", "6.5.5");
+urlencoded.append("product", "EFund");
+urlencoded.append("plat", "Web");
+urlencoded.append("uid", "");
+urlencoded.append("fcode", "016721");
+urlencoded.append("indexfields", "_id,INDEXCODE,BKID,INDEXNAME,INDEXVALUA,NEWINDEXTEXCH,PEP100");
+urlencoded.append("fields", "BENCH,ESTDIFF,INDEXNAME,LINKZSB,INDEXCODE,NEWTEXCH,FTYPE,FCODE,BAGTYPE,RISKLEVEL,TTYPENAME,PTDT_FY,PTDT_TRY,PTDT_TWY,PTDT_Y,DWDT_FY,DWDT_TRY,DWDT_TWY,DWDT_Y,MBDT_FY,MBDT_TRY,MBDT_TWY,MBDT_Y,YDDT_FY,YDDT_TRY,YDDT_TWY,YDDT_Y,BFUNDTYPE,YMATCHCODEA,RLEVEL_SZ,RLEVEL_CX,ESTABDATE,JJGS,JJGSID,ENDNAV,FEGMRQ,SHORTNAME,TTYPE,TJDIN,FUNDEXCHG,LISTTEXCHMARK,FSRQ,ISSBDATE,ISSEDATE,FEATURE,DWJZ,LJJZ,MINRG,RZDF,PERIODNAME,SYL_1N,SYL_LN,SYL_Z,SOURCERATE,RATE,TSRQ,BTYPE,BUY,BENCHCODE,BENCH_CORR,TRKERROR,BENCHRATIO,NEWINDEXTEXCH,BESTDT_STRATEGY,BESTDT_Y,BESTDT_TWY,BESTDT_TRY,BESTDT_FY");
+urlencoded.append("fundUniqueInfo_fIELDS", "FCODE,STDDEV1,STDDEV_1NRANK,STDDEV_1NFSC,STDDEV3,STDDEV_3NRANK,STDDEV_3NFSC,STDDEV5,STDDEV_5NRANK,STDDEV_5NFSC,SHARP1,SHARP_1NRANK,SHARP_1NFSC,SHARP3,SHARP_3NRANK,SHARP_3NFSC,SHARP5,SHARP_5NRANK,SHARP_5NFSC,MAXRETRA1,MAXRETRA_1NRANK,MAXRETRA_1NFSC,MAXRETRA3,MAXRETRA_3NRANK,MAXRETRA_3NFSC,MAXRETRA5,MAXRETRA_5NRANK,MAXRETRA_5NFSC,TRKERROR1,TRKERROR_1NRANK,TRKERROR_1NFSC,TRKERROR3,TRKERROR_3NRANK,TRKERROR_3NFSC,TRKERROR5,TRKERROR_5NRANK,TRKERROR_5NFSC");
+urlencoded.append("fundUniqueInfo_fLFIELDS", "FCODE,BUSINESSTYPE,BUSINESSTEXT,BUSINESSCODE,BUSINESSSUBTYPE,MARK");
+urlencoded.append("cfhFundFInfo_fields", "INVESTMENTIDEAR,INVESTMENTIDEARIMG");
+urlencoded.append("ISRG", "0");
+urlencoded.append("relateThemeFields", "FCODE,SEC_CODE,SEC_NAME,CORR_1Y,OL2TOP");
+
+var requestOptions = {
+   method: 'POST',
+   headers: myHeaders,
+   body: urlencoded,
+   redirect: 'follow'
+};
+
+fetch("https://dgs.tiantianfunds.com/merge/m/api/jjxqy1_2", requestOptions)
+   .then(response => response.text())
+   .then(result => console.log(result))
+   .catch(error => console.log('error', error));
+
+
+返回的数据：
+
+{
+    "data": {
+        "baseInfo": [
+            {
+                "FTYPE": "混合型-灵活",
+                "RLEVEL_CX": "",
+                "DWJZ": 3.539,
+                "ESTDIFF": 0.9032,
+                "FEGMRQ": "2026-03-31",
+                "DWDT_Y": 104.25,
+                "JJGS": "前海开源基金",
+                "BENCH_CORR": "--",
+                "PERIODNAME": "--",
+                "BESTDT_TRY": "",
+                "YDDT_TWY": "",
+                "SYL_LN": 151.17,
+                "ISSBDATE": "2015-03-05",
+                "BENCHCODE": "--",
+                "LISTTEXCHMARK": "--",
+                "ESTABDATE": "2024-12-11",
+                "NEWINDEXTEXCH": "",
+                "SHORTNAME": "前海开源高端装备制造混合C",
+                "MBDT_FY": "",
+                "BESTDT_TWY": "",
+                "MBDT_TRY": "",
+                "DWDT_FY": "",
+                "PTDT_Y": 78.36,
+                "BESTDT_Y": 104.25,
+                "PTDT_TWY": "",
+                "BTYPE": "24",
+                "LINKZSB": "",
+                "MBDT_TWY": "",
+                "FEATURE": "215",
+                "MINRG": 100.0,
+                "DWDT_TWY": "",
+                "SYL_Z": 16.05,
+                "INDEXNAME": "",
+                "JJGSID": "80280038",
+                "ENDNAV": 81086803.43,
+                "ISSEDATE": "2015-03-25",
+                "SOURCERATE": "0.00%",
+                "RATE": "0.00%",
+                "YMATCHCODEA": "--",
+                "YDDT_Y": 54.02,
+                "FCODE": "016721",
+                "TTYPE": "801080",
+                "BESTDT_FY": "",
+                "YDDT_FY": "",
+                "TTYPENAME": "电子",
+                "PTDT_TRY": "",
+                "BESTDT_STRATEGY": "5",
+                "BENCH": "沪深300指数收益率*70%+中证全债指数收益率*30%",
+                "FUNDEXCHG": "1",
+                "MBDT_Y": 62.42,
+                "TSRQ": "",
+                "SYL_1N": 174.96,
+                "DWDT_TRY": "",
+                "INDEXCODE": "",
+                "RISKLEVEL": "4",
+                "BENCHRATIO": "--",
+                "BUY": "--",
+                "BFUNDTYPE": "002",
+                "TRKERROR": "",
+                "RZDF": 1.59,
+                "FSRQ": "2026-06-18",
+                "LJJZ": 3.539,
+                "PTDT_FY": "",
+                "YDDT_TRY": "",
+                "TJDIN": "1",
+                "NEWTEXCH": "",
+                "BAGTYPE": "0",
+                "RLEVEL_SZ": ""
+            }
+        ],
+        "FundXTChangeInfo": {
+            "fundManagerChangeDate": null,
+            "holdDate": "2026-03-31"
+        },
+        "riskInfo": null,
+        "fundBonusPoints": null,
+        "companyInfo": null,
+        "FundPeriodIncrease": [
+            {
+                "sc": "2308",
+                "avg": "4.69",
+                "hs300": "4.64",
+                "syl": "16.05",
+                "index": null,
+                "rank": "174",
+                "title": "Z",
+                "benchmark": "2.71"
+            },
+            {
+                "sc": "2322",
+                "avg": "2.27",
+                "hs300": "2.24",
+                "syl": "19.17",
+                "index": null,
+                "rank": "216",
+                "title": "Y",
+                "benchmark": "1.21"
+            },
+            {
+                "sc": "2320",
+                "avg": "10.41",
+                "hs300": "6.08",
+                "syl": "71.57",
+                "index": null,
+                "rank": "82",
+                "title": "3Y",
+                "benchmark": "4.96"
+            },
+            {
+                "sc": "2309",
+                "avg": "15.74",
+                "hs300": "8.54",
+                "syl": "77.37",
+                "index": null,
+                "rank": "145",
+                "title": "6Y",
+                "benchmark": "6.11"
+            },
+            {
+                "sc": "2275",
+                "avg": "39.11",
+                "hs300": "27.53",
+                "syl": "174.96",
+                "index": null,
+                "rank": "104",
+                "title": "1N",
+                "benchmark": "19.34"
+            },
+            {
+                "sc": "2192",
+                "avg": "51.35",
+                "hs300": "39.37",
+                "syl": "",
+                "index": null,
+                "rank": "",
+                "title": "2N",
+                "benchmark": ""
+            },
+            {
+                "sc": "2089",
+                "avg": "32.89",
+                "hs300": "24.68",
+                "syl": "",
+                "index": null,
+                "rank": "",
+                "title": "3N",
+                "benchmark": ""
+            },
+            {
+                "sc": "1810",
+                "avg": "21.89",
+                "hs300": "-3.15",
+                "syl": "",
+                "index": null,
+                "rank": "",
+                "title": "5N",
+                "benchmark": ""
+            },
+            {
+                "sc": "2312",
+                "avg": "13.54",
+                "hs300": "6.73",
+                "syl": "77.22",
+                "index": null,
+                "rank": "113",
+                "title": "JN",
+                "benchmark": "5.29"
+            },
+            {
+                "sc": "",
+                "avg": "",
+                "hs300": "",
+                "syl": "151.17",
+                "index": null,
+                "rank": "",
+                "title": "LN",
+                "benchmark": "17.68"
+            }
+        ],
+        "rateInfo": {
+            "SSBCFDAY": "2026-06-23",
+            "SALEMARK": "--",
+            "CASHDAY_PRE": "2026-06-22",
+            "PRSVDATE": "",
+            "CURRENTDAYMARK": "今日15:00后",
+            "SALESEXP": "0.40%",
+            "CASHBUY": "1",
+            "DRAWCFMDATA": "3.0",
+            "ispublish": "1",
+            "CASHDAY805": "--",
+            "ISSBDATE": "2015-03-05",
+            "MINDT": "10.0",
+            "DUEDATE": "",
+            "ESTABDATE": "2024-12-11",
+            "CYCLE": "",
+            "TRUSTEXP": "0.20%",
+            "OPENTYPE": "--",
+            "shhd": [],
+            "MAXHOLD": "",
+            "SGZT": "开放申购",
+            "rg": [],
+            "CASHDAY": "2026-06-23",
+            "FEATURE": "215",
+            "CASHDAY805_PRE": "--",
+            "ISNEW": "--",
+            "BUYMARK": "--",
+            "RGEND": "",
+            "MAXSG": "100000000000",
+            "IPEEND1": "--",
+            "SHIPEEND1": "--",
+            "ISSEDATE": "2015-03-25",
+            "rghd": [],
+            "RDMCFMDATA": "1.0",
+            "PRSVPERIOD": "",
+            "SSBCFMDATA": "1.0",
+            "fwflist": [
+                {
+                    "money": "",
+                    "rate": "0.40%",
+                    "time": "",
+                    "source": ""
+                }
+            ],
+            "RDMCFMDATADAY": "2026-06-23",
+            "CASHDAY890_PRE": "2026-06-23",
+            "SALETOCASH": "1",
+            "sg": [
+                {
+                    "money": "",
+                    "rate": "0.00%",
+                    "time": "",
+                    "source": ""
+                }
+            ],
+            "sh": [
+                {
+                    "money": "",
+                    "rate": "1.50%",
+                    "time": "持有期限 < 7天",
+                    "source": ""
+                },
+                {
+                    "money": "",
+                    "rate": "0.50%",
+                    "time": "7天 ≤ 持有期限 < 30天",
+                    "source": ""
+                },
+                {
+                    "money": "",
+                    "rate": "0.00%",
+                    "time": "持有期限 ≥ 30天",
+                    "source": ""
+                }
+            ],
+            "MINSBSG": "10.0",
+            "KFR": "--",
+            "ISBUY": "1",
+            "OPESTART": "--",
+            "STKEXCHG": "1",
+            "MINSG": "10.0",
+            "RGBEGIN": "",
+            "ISNEWSH": "--",
+            "ISFNEW": "0.0",
+            "OPEEND": "--",
+            "DRAWCFMDATADAY": "2026-06-25",
+            "sghd": [],
+            "SHIPESTART1": "--",
+            "CASHDAY890": "2026-06-24",
+            "SHZT": "开放赎回",
+            "DTZT": "1",
+            "STKTOCASH": "1",
+            "MGREXP": "1.20%",
+            "LCYCLE": "",
+            "BAGTYPE": "0",
+            "FUNDEXCHGOUT": "1",
+            "MINSSG": "10.0",
+            "ISSALES": "1",
+            "FUNDTYPE": "002",
+            "IPESTART1": "--"
+        },
+        "fundRelateTheme": [
+            {
+                "CORR_1Y": 89.3068,
+                "OL2TOP": 19.52,
+                "SEC_CODE": "BK000331",
+                "FCODE": "016721",
+                "SEC_NAME": "光刻胶"
+            }
+        ],
+        "fundTag": null,
+        "indexDetail": null,
+        "FundACRateInfoV2": [
+            {
+                "FCODE": "016721",
+                "MATCHCODE": "001060",
+                "TPOINT2": 366,
+                "ISRG": "0",
+                "ACTYPE": "c",
+                "TPOINT1": 0,
+                "BETTER_TYPE": "c",
+                "AFSTMAX": "50万元"
+            },
+            {
+                "FCODE": "016721",
+                "MATCHCODE": "001060",
+                "TPOINT2": null,
+                "ISRG": "0",
+                "ACTYPE": "c",
+                "TPOINT1": 366,
+                "BETTER_TYPE": "a",
+                "AFSTMAX": "50万元"
+            }
+        ],
+        "FundManagerInformation": {
+            "historyManagerInfos": [
+                {
+                    "SINFO": {
+                        "FempDate": "2024-12-11 00:00:00",
+                        "PhotOurl": null,
+                        "IsBuy": null,
+                        "FCode": "016721",
+                        "ShortName": null,
+                        "MABBCNAME": null,
+                        "NewPhotOurl": null,
+                        "MgrName": "魏淳",
+                        "JJGS": null,
+                        "MAXRETRA": -0.236,
+                        "LempDate": null,
+                        "AbbName": null,
+                        "FundType": null,
+                        "Days": 554,
+                        "PenavGrowth": 147.2392,
+                        "JJGSID": null,
+                        "MgrId": "30647253",
+                        "Resume": null
+                    },
+                    "PINFO": [
+                        {
+                            "YIELDSE": 24.9362,
+                            "NEWPHOTOURL": "https://pdf.dfcfw.com/pdf/H8_30647253_1.PNG",
+                            "MFTYPE": "2",
+                            "INVESTMENTIDEAR": "偏好成长行业，聚焦高景气度赛道，精选个股，并在风险与收益上做好平衡。",
+                            "MGRNAME": "魏淳",
+                            "MGRID": "30647253",
+                            "RESUME": "魏淳女士:中国国籍,香港中文大学、北京理工大学硕士。2006年至2011年任职于中兴通讯股份有限公司;2013年6月加盟前海开源基金管理有限公司,历任前海开源基金管理有限公司研究部研究员。现任前海开源基金管理有限公司权益投资本部基金经理。2020年5月11日至2021年6月3日担任前海开源新经济灵活配置混合型证券投资基金基金经理。2019年6月12日至2020年7月23日担任前海开源景鑫灵活配置混合型证券投资基金基金经理。2021年3月16日起担任前海开源人工智能主题灵活配置混合型证券投资基金基金经理。2021年6月1日至2024年04月24日任前海开源沪港深汇鑫灵活配置混合型证券投资基金基金经理。2021年7月29日至2022年10月27日担任前海开源沪港深智慧生活优选灵活配置混合型证券投资基金基金经理。2021年9月28日担任前海开源沪港深乐享生活灵活配置混合型证券投资基金基金经理。2022年11月16日起任前海开源沪港深强国产业灵活配置混合型证券投资基金基金经理。曾任前海开源盛鑫灵活配置混合型证券投资基金基金经理。2023年05月19日担任前海开源高端装备制造灵活配置混合型证券投资基金的基金经理。2024年4月24日至2025年6月3日担任前海开源沪港深景气行业精选灵活配置混合型证券投资基金基金经理。",
+                            "TOTALDAYS": 2717.0,
+                            "JJGS": "前海开源基金",
+                            "JJGSPY": "QHKYJJ"
+                        }
+                    ],
+                    "MGRID": "30647253"
+                }
+            ],
+            "currentManagerInfos": [
+                {
+                    "SINFO": {
+                        "ENDNAV": 81086803.43,
+                        "PENAVGROWTH": 147.2392,
+                        "FCODE": "016721",
+                        "FEMPDATE": "2024-12-11 00:00:00",
+                        "MGRNAME": "魏淳",
+                        "JJGSID": "80280038",
+                        "MGRID": "30647253",
+                        "TOTALDAYS": 554.0
+                    },
+                    "PINFO": [
+                        {
+                            "YIELDSE": 24.9362,
+                            "NEWPHOTOURL": "https://pdf.dfcfw.com/pdf/H8_30647253_1.PNG",
+                            "MFTYPE": "2",
+                            "INVESTMENTIDEAR": "偏好成长行业，聚焦高景气度赛道，精选个股，并在风险与收益上做好平衡。",
+                            "MGRNAME": "魏淳",
+                            "MGRID": "30647253",
+                            "RESUME": "魏淳女士:中国国籍,香港中文大学、北京理工大学硕士。2006年至2011年任职于中兴通讯股份有限公司;2013年6月加盟前海开源基金管理有限公司,历任前海开源基金管理有限公司研究部研究员。现任前海开源基金管理有限公司权益投资本部基金经理。2020年5月11日至2021年6月3日担任前海开源新经济灵活配置混合型证券投资基金基金经理。2019年6月12日至2020年7月23日担任前海开源景鑫灵活配置混合型证券投资基金基金经理。2021年3月16日起担任前海开源人工智能主题灵活配置混合型证券投资基金基金经理。2021年6月1日至2024年04月24日任前海开源沪港深汇鑫灵活配置混合型证券投资基金基金经理。2021年7月29日至2022年10月27日担任前海开源沪港深智慧生活优选灵活配置混合型证券投资基金基金经理。2021年9月28日担任前海开源沪港深乐享生活灵活配置混合型证券投资基金基金经理。2022年11月16日起任前海开源沪港深强国产业灵活配置混合型证券投资基金基金经理。曾任前海开源盛鑫灵活配置混合型证券投资基金基金经理。2023年05月19日担任前海开源高端装备制造灵活配置混合型证券投资基金的基金经理。2024年4月24日至2025年6月3日担任前海开源沪港深景气行业精选灵活配置混合型证券投资基金基金经理。",
+                            "TOTALDAYS": 2717.0,
+                            "JJGS": "前海开源基金",
+                            "JJGSPY": "QHKYJJ"
+                        }
+                    ],
+                    "MGRID": "30647253"
+                }
+            ]
+        },
+        "fundRelateThemeInfo": null,
+        "uniqueInfo": [
+            {
+                "MAXRETRA3": "",
+                "STDDEV_5NRANK": "",
+                "MAXRETRA1": 23.6024,
+                "STDDEV_1NFSC": 2141.0,
+                "STDDEV1": 42.3502,
+                "MAXRETRA_1NRANK": 1926.0,
+                "FCODE": "016721",
+                "MAXRETRA5": "",
+                "TRKERROR_5NRANK": "--",
+                "SHARP1": 3.6346,
+                "SHARP_3NFSC": "",
+                "SHARP_5NRANK": "",
+                "STDDEV_5NFSC": "",
+                "TRKERROR_3NRANK": "--",
+                "MAXRETRA_3NFSC": "",
+                "SHARP5": "",
+                "TRKERROR_3NFSC": "--",
+                "SHARP3": "",
+                "SHARP_5NFSC": "",
+                "MAXRETRA_3NRANK": "",
+                "STDDEV_3NFSC": "",
+                "TRKERROR1": "--",
+                "SHARP_1NRANK": 228.0,
+                "MAXRETRA_5NFSC": "",
+                "TRKERROR3": "--",
+                "STDDEV_1NRANK": 2095.0,
+                "TRKERROR5": "--",
+                "SHARP_1NFSC": 2140.0,
+                "STDDEV_3NRANK": "",
+                "MAXRETRA_1NFSC": 2144.0,
+                "STDDEV5": "",
+                "STDDEV3": "",
+                "TRKERROR_1NFSC": "--",
+                "SHARP_3NRANK": "",
+                "TRKERROR_5NFSC": "--",
+                "MAXRETRA_5NRANK": "",
+                "TRKERROR_1NRANK": "--"
+            }
+        ],
+        "fundHolderStructure": [
+            {
+                "SHARE_INTERVAL_002": "0",
+                "GRBL": "100.0",
+                "JGBL": "",
+                "EMPLOYEHOLD": "1470.6",
+                "ZFE": "24127224.09",
+                "NBBL": "0.0061",
+                "FSRQ": "2025-12-31"
+            }
+        ],
+        "managerIdea": [
+            {
+                "preCode": "004315",
+                "education": "硕士",
+                "combManage": null,
+                "tradeLogic": null,
+                "showPRECode": 1,
+                "customTag": null,
+                "updateTime": "2021-11-18T06:39:35.897+00:00",
+                "managerId": "30647253",
+                "avatar": "https://j7.dfcfw.com/126487/202102/126487202102262220486352.png",
+                "managerName": "魏淳",
+                "investmentMethod": null,
+                "identity": null,
+                "statement": null,
+                "preFundName": "前海开源沪港深新硬件C",
+                "investmentIdea": "偏好成长行业，聚焦高景气度赛道，精选个股，并在风险与收益上做好平衡。",
+                "chooseStockLogic": null,
+                "passportId": "9576376370697304",
+                "status": 1
+            }
+        ],
+        "investStyle": {
+            "investmentImg": "https://j7.dfcfw.com/126487/202606/06040910584672.png",
+            "investmentIdea": null,
+            "fcode": "016721"
+        },
+        "FundPeriodIncreaseExpansion": {
+            "TIME": "2026-06-18",
+            "ISUPDATING": false,
+            "ESTABDATE": "2024-12-11"
+        },
+        "fundACERateInfo": null,
+        "FundACRateInfoV2Expansion": {
+            "IsList": "0",
+            "Discount": 0.0,
+            "ShortName": "前海开源高端装备制造混合C",
+            "Feature": "215",
+            "JJGSPY": "QHKYJJ",
+            "AbbName": "QHKYGDZBZZHHC",
+            "FundType": "002",
+            "TSRQ": null,
+            "EstMarket": null,
+            "JJJL": "魏淳",
+            "JJJLID": "30647253",
+            "FType": "混合型-灵活",
+            "PLTDATE": null,
+            "IsBuy": "1",
+            "IsListTrade": null,
+            "SGZT": "开放申购",
+            "BFUNDTYPE": "002",
+            "BackCode": null,
+            "FAbbName": null,
+            "JjgsID": "80280038",
+            "Dggsjc": "前海开源",
+            "Jjgs": "前海开源基金",
+            "RSBTYPE": "002004",
+            "ListTexch": null,
+            "DIY": null,
+            "BTYPE": "24",
+            "FullName": "前海开源高端装备制造灵活配置混合型证券投资基金",
+            "ISEXCHG": "0",
+            "BZDM": "016721"
+        }
+    },
+    "errorCode": 0,
+    "firstError": null,
+    "success": true,
+    "hasWrongToken": null,
+    "totalCount": 0,
+    "expansion": null
+}
