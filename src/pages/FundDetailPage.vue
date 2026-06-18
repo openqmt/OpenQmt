@@ -31,9 +31,7 @@
                         <h2 v-else class="fund-name">{{ fundName }}</h2>
                     </div>
                     <div v-if="detail.reportDate" class="header-meta">
-                        <n-tag size="small" :bordered="false" type="info" round>
-                            报告期 {{ detail.reportDate }}
-                        </n-tag>
+                        <span class="report-date num-mono">报告期 {{ detail.reportDate }}</span>
                     </div>
                     <p v-if="detail.aiSummary" class="ai-summary">
                         {{ detail.aiSummary }}
@@ -351,6 +349,11 @@ watch(
 
 .header-meta {
     margin-top: 10px;
+}
+
+.report-date {
+    color: var(--text-muted);
+    font-size: 13px;
 }
 
 .ai-summary {
