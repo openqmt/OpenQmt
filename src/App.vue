@@ -595,6 +595,15 @@ onUnmounted(() => {
     transition: background 0.3s ease;
 }
 
+.app-sidebar :deep(.n-layout-toggle-button) {
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+.app-sidebar:hover :deep(.n-layout-toggle-button) {
+    opacity: 1;
+}
+
 .logo-area {
     display: flex;
     align-items: center;
