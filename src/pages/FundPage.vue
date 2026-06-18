@@ -102,6 +102,7 @@ const columns: DataTableColumns<FundRankItem> = [
         title: '代码',
         key: 'code',
         width: 82,
+        align: 'center',
         render(row) {
             return h(
                 'span',
@@ -133,7 +134,8 @@ const columns: DataTableColumns<FundRankItem> = [
     {
         title: '类型',
         key: 'type',
-        width: 96,
+        width: 90,
+        align: 'center',
         render(row) {
             return h(
                 NTag,
@@ -151,7 +153,7 @@ const columns: DataTableColumns<FundRankItem> = [
         title: '净值',
         key: 'nav',
         width: 110,
-        align: 'right',
+        align: 'center',
         render(row) {
             const dateStr = row.jzrq
                 ? (() => {
@@ -202,7 +204,7 @@ const columns: DataTableColumns<FundRankItem> = [
         title: '日涨跌',
         key: 'dayChange',
         width: 84,
-        align: 'right',
+        align: 'center',
         className: 'fund-change-col',
         render(row) {
             return changeCell(row.dayChange)
@@ -212,7 +214,7 @@ const columns: DataTableColumns<FundRankItem> = [
         title: '近一周',
         key: 'weekChange',
         width: 84,
-        align: 'right',
+        align: 'center',
         className: 'fund-change-col',
         render(row) {
             return changeCell(row.weekChange)
@@ -222,7 +224,7 @@ const columns: DataTableColumns<FundRankItem> = [
         title: '近一月',
         key: 'monthChange',
         width: 84,
-        align: 'right',
+        align: 'center',
         className: 'fund-change-col',
         render(row) {
             return changeCell(row.monthChange)
@@ -232,7 +234,7 @@ const columns: DataTableColumns<FundRankItem> = [
         title: '近三月',
         key: 'threeMonthChange',
         width: 84,
-        align: 'right',
+        align: 'center',
         className: 'fund-change-col',
         render(row) {
             return changeCell(row.threeMonthChange)
@@ -242,7 +244,7 @@ const columns: DataTableColumns<FundRankItem> = [
         title: '近一年',
         key: 'yearChange',
         width: 84,
-        align: 'right',
+        align: 'center',
         className: 'fund-change-col',
         render(row) {
             return changeCell(row.yearChange)
