@@ -16,7 +16,19 @@
                 <div class="detail-header surface-card">
                     <div class="header-main">
                         <span class="fund-code num-mono">{{ detail.code }}</span>
-                        <h2 class="fund-name">{{ fundName }}</h2>
+                        <div v-if="detail.topics.length" class="topic-tags">
+                            <n-tag
+                                v-for="item in detail.topics"
+                                :key="item.topic"
+                                size="medium"
+                                :bordered="false"
+                                type="info"
+                                round
+                            >
+                                {{ item.topic }}({{ item.weight.toFixed(2) }}%)
+                            </n-tag>
+                        </div>
+                        <h2 v-else class="fund-name">{{ fundName }}</h2>
                     </div>
                     <div v-if="detail.reportDate" class="header-meta">
                         <n-tag size="small" :bordered="false" type="info" round>
@@ -334,6 +346,13 @@ watch(
 .fund-code {
     color: rgba(212, 168, 67, 0.8);
     font-size: 13px;
+}
+
+.topic-tags {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 .fund-name {
