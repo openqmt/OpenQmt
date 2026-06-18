@@ -136,14 +136,11 @@
                 <template v-if="reviewTab === 'hotNews'">
                     <div class="news-list">
                         <div class="news-item" v-for="item in hotNews" :key="item.id">
-                            <div class="news-header">
-                                <n-tag :type="item.type === 'domestic' ? 'success' : 'warning'" size="tiny" :bordered="false">
-                                    {{ item.type === 'domestic' ? '国内' : '国际' }}
-                                </n-tag>
+                            <div class="news-title">{{ item.title }}</div>
+                            <div class="news-meta">
+                                <span class="news-source">{{ item.source }}</span>
                                 <span class="news-time">{{ item.time }}</span>
                             </div>
-                            <div class="news-title">{{ item.title }}</div>
-                            <div class="news-source">{{ item.source }}</div>
                         </div>
                     </div>
                 </template>
@@ -448,18 +445,6 @@ function goDetail(key: StockKey): void {
     border-bottom: none;
 }
 
-.news-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 6px;
-}
-
-.news-time {
-    font-size: 11px;
-    color: var(--text-muted);
-}
-
 .news-title {
     font-size: 14px;
     font-weight: 500;
@@ -467,8 +452,19 @@ function goDetail(key: StockKey): void {
     line-height: 1.5;
 }
 
-.news-source {
+.news-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     margin-top: 4px;
+}
+
+.news-source {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.news-time {
     font-size: 11px;
     color: var(--text-muted);
 }
