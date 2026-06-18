@@ -38,7 +38,7 @@
                     <n-layout-header :bordered="false" class="app-header">
                         <div class="header-left">
                             <n-button
-                                v-if="isInSettingsArea || isFundDetailPage || isStockDetailPage"
+                                v-if="!isMobile && (isInSettingsArea || isFundDetailPage || isStockDetailPage)"
                                 quaternary
                                 circle
                                 size="small"
