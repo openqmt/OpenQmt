@@ -120,7 +120,6 @@ const columns: DataTableColumns<FundRankItem> = [
                 'span',
                 {
                     style: {
-                        color: 'var(--text-primary)',
                         fontWeight: '500',
                         fontSize: '13px',
                     },

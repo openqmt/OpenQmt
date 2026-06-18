@@ -389,7 +389,7 @@ watch(
 }
 
 .table-card {
-    padding: 4px 0;
+    /* padding: 4px 0; */
     margin-bottom: 8px;
     overflow: hidden;
 }
