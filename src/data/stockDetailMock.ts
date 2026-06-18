@@ -2,6 +2,38 @@ import type { StockKey } from '../types'
 
 export type ChartPeriod = 'intraday' | 'daily' | 'monthly'
 export type SectorTab = 'hot' | 'industry' | 'concept' | 'main'
+export type ReviewTab = 'aShare' | 'usShare' | 'hotNews' | 'dragonTiger'
+
+export interface MarketReview {
+    trend: string
+    temperature: string
+    temperatureScore: number
+    mainSectors: { name: string; reason: string }[]
+    subSectors: { name: string; reason: string }[]
+    positionAdvice: string
+    strategy: string
+    avoidance: string[]
+    negativeFactors: string[]
+}
+
+export interface HotNewsItem {
+    id: number
+    title: string
+    source: string
+    time: string
+    type: 'domestic' | 'international'
+}
+
+export interface DragonTigerItem {
+    rank: number
+    stockName: string
+    stockCode: string
+    buyAmount: number
+    sellAmount: number
+    netBuy: number
+    reason: string
+    department: string
+}
 
 export interface IntradayPoint {
     time: string
@@ -329,4 +361,80 @@ export function getSectorData(key: StockKey, tab: SectorTab): SectorItem[] {
 
 export function isValidStockKey(key: string): key is StockKey {
     return ['sh', 'cy', 'hk', 'us'].includes(key)
+}
+
+// ============ 逻辑复盘 Mock 数据 ============
+
+const MOCK_A_SHARE_REVIEW: MarketReview = {
+    trend: '今日A股三大指数分化明显，上证指数小幅回调，创业板指逆势走强。市场整体呈现缩量调整态势，两市成交额较昨日有所回落，但仍维持在万亿以上水平。盘面上看，成长风格占优，价值板块承压。',
+    temperature: '偏热',
+    temperatureScore: 72,
+    mainSectors: [
+        { name: '人工智能', reason: '受OpenAI发布新一代模型刺激，国内AI概念股集体走强，算力、数据、应用端全面爆发，龙头股封板带动板块情绪' },
+        { name: '半导体', reason: '国产替代逻辑持续强化，设备板块订单超预期，叠加全球芯片库存去化接近尾声，资金持续加仓' },
+        { name: '新能源车', reason: '6月新能源车销量数据超预期，智能化渗透率加速提升，产业链龙头业绩预告向好' },
+    ],
+    subSectors: [
+        { name: '低空经济', reason: '政策催化持续，多地出台低空经济产业规划，eVTOL试飞进展顺利，短期情绪推动明显' },
+        { name: '人形机器人', reason: '特斯拉Optimus量产预期升温，国内厂商加速布局执行器与传感器环节，题材活跃' },
+    ],
+    positionAdvice: '建议仓位6-7成，保持均衡配置，成长方向可适当偏重。关注AI、半导体等主线板块回调后的低吸机会，同时保留部分防御性仓位应对不确定性。',
+    strategy: '逢低布局主线板块龙头，关注中报业绩超预期标的。短线操作以AI+半导体双主线轮动为主，中线可逢低配置新能源车及消费电子方向。注意控制追高风险，优先选择有业绩支撑的品种。',
+    avoidance: ['高位连板股（追高风险大）', '题材退潮期的纯概念股', '业绩预告不达预期的白马股'],
+    negativeFactors: ['美联储议息会议临近，降息预期反复', '北向资金连续净流出，外资情绪偏谨慎', '地缘政治风险升温，避险情绪有所抬头'],
+}
+
+const MOCK_US_SHARE_REVIEW: MarketReview = {
+    trend: '美股三大指数集体收跌，纳斯达克跌幅较大。科技股受AI估值争议影响出现回调，半导体板块领跌。市场等待CPI数据公布，投资者风险偏好下降，VIX指数小幅上行。中概股表现分化，新能源车板块逆势走强。',
+    temperature: '中性偏冷',
+    temperatureScore: 45,
+    mainSectors: [
+        { name: 'AI基础设施', reason: '虽然短期估值承压，但算力需求持续增长，云厂商资本开支指引上调，长期逻辑未破坏' },
+        { name: '新能源车/智能驾驶', reason: '特斯拉FSD V13发布预期升温，自动驾驶立法推进，中国新能源车出口数据强劲' },
+    ],
+    subSectors: [
+        { name: '生物科技', reason: 'GLP-1减肥药赛道持续扩容，多家药企临床数据积极，板块估值修复中' },
+        { name: '网络安全', reason: '近期多起重大数据泄露事件推动安全支出预期上调，政策催化明显' },
+    ],
+    positionAdvice: '建议美股仓位4-5成，适当降低科技股权重。关注防御性板块如必需消费、医疗保健的配置价值。等待宏观不确定性落地后再考虑加仓。',
+    strategy: '短期以防守为主，逢高减仓估值偏高的科技龙头。关注AI基础设施回调后的长期布局机会，以及中概股中业绩确定性高的标的。加密货币相关标的波动加剧，建议规避。',
+    avoidance: ['估值过高的AI概念股', '加密货币相关标的', '高杠杆中小盘股'],
+    negativeFactors: ['CPI数据不确定性，通胀粘性风险', '美债收益率上行压力', '科技巨头反垄断监管加码'],
+}
+
+const MOCK_HOT_NEWS: HotNewsItem[] = [
+    { id: 1, title: 'OpenAI发布GPT-5模型，推理能力实现重大突破', source: '新华网', time: '10:25', type: 'international' },
+    { id: 2, title: '国常会审议通过低空经济产业发展规划', source: '央视新闻', time: '09:30', type: 'domestic' },
+    { id: 3, title: '美联储主席鲍威尔暗示年内可能降息一次', source: '路透社', time: '08:15', type: 'international' },
+    { id: 4, title: '6月新能源车零售销量突破120万辆创新高', source: '证券时报', time: '08:00', type: 'domestic' },
+    { id: 5, title: '欧盟对华电动车加征临时关税正式生效', source: '环球时报', time: '07:45', type: 'international' },
+    { id: 6, title: '上交所调整科创板做市商制度，提升流动性', source: '上海证券报', time: '07:30', type: 'domestic' },
+    { id: 7, title: '日本央行意外加息，日元大幅走强', source: '日经中文网', time: '07:15', type: 'international' },
+    { id: 8, title: '国务院印发关于促进数据要素市场化配置的指导意见', source: '中国政府网', time: '06:50', type: 'domestic' },
+    { id: 9, title: '英伟达市值突破5万亿美元，创半导体公司纪录', source: '华尔街日报', time: '06:30', type: 'international' },
+    { id: 10, title: '沪深交易所优化IPO审核流程，提升市场效率', source: '中国证券报', time: '06:15', type: 'domestic' },
+]
+
+const MOCK_DRAGON_TIGER: DragonTigerItem[] = [
+    { rank: 1, stockName: '中科曙光', stockCode: '603019', buyAmount: 85200, sellAmount: 32400, netBuy: 52800, reason: 'AI算力龙头，机构大额净买入', department: '中信证券上海分公司' },
+    { rank: 2, stockName: '寒武纪', stockCode: '688256', buyAmount: 68900, sellAmount: 28700, netBuy: 40200, reason: 'AI芯片国产替代核心标的', department: '国泰君安上海江苏路' },
+    { rank: 3, stockName: '宁德时代', stockCode: '300750', buyAmount: 54300, sellAmount: 22100, netBuy: 32200, reason: '新能源车销量超预期，龙头受益', department: '华泰证券深圳益田路' },
+    { rank: 4, stockName: '北方华创', stockCode: '002371', buyAmount: 47600, sellAmount: 19800, netBuy: 27800, reason: '半导体设备订单持续高增', department: '招商证券深圳深南东路' },
+    { rank: 5, stockName: '金山办公', stockCode: '688111', buyAmount: 39200, sellAmount: 16500, netBuy: 22700, reason: 'AI办公应用落地加速', department: '东方财富证券拉萨团结路' },
+    { rank: 6, stockName: '汇川技术', stockCode: '300124', buyAmount: 35800, sellAmount: 15200, netBuy: 20600, reason: '人形机器人执行器核心供应商', department: '广发证券上海东方路' },
+    { rank: 7, stockName: '科大讯飞', stockCode: '002230', buyAmount: 31400, sellAmount: 12800, netBuy: 18600, reason: '大模型应用端持续突破', department: '海通证券上海建国西路' },
+    { rank: 8, stockName: '兆易创新', stockCode: '603986', buyAmount: 28700, sellAmount: 11300, netBuy: 17400, reason: '存储芯片周期反转预期', department: '中金公司上海分公司' },
+]
+
+export function getMarketReview(tab: ReviewTab): MarketReview {
+    if (tab === 'usShare') return MOCK_US_SHARE_REVIEW
+    return MOCK_A_SHARE_REVIEW
+}
+
+export function getHotNews(): HotNewsItem[] {
+    return MOCK_HOT_NEWS
+}
+
+export function getDragonTiger(): DragonTigerItem[] {
+    return MOCK_DRAGON_TIGER
 }
