@@ -124,7 +124,16 @@ export async function fetchFundRanking(
 const FUND_DETAIL_PATH = '/merge/m/api/jjxqy2'
 const FUND_DETAIL_BASE = import.meta.env.VITE_FUND_DETAIL
 const FUND_DETAIL_URL = `${FUND_DETAIL_BASE}${FUND_DETAIL_PATH}`
-const FUND_DEVICE_ID = 'a572a34c9d22fb94fc29649b2166a8bb'
+function generateDeviceId(): string {
+    const chars = '0123456789abcdef'
+    let id = ''
+    for (let i = 0; i < 32; i++) {
+        id += chars[Math.floor(Math.random() * 16)]
+    }
+    return id
+}
+
+const FUND_DEVICE_ID = generateDeviceId()
 
 function getFundDetailUrl(): string {
     if (isTauri()) return FUND_DETAIL_URL
