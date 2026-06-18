@@ -39,15 +39,17 @@
                     </div>
                 </div>
 
-                <h3 class="section-title">重仓股票</h3>
+                <h3 class="section-title">主题分布</h3>
                 <div class="surface-card table-card">
                     <n-data-table
-                        :columns="holdingColumns"
-                        :data="detail.holdings"
+                        v-if="detail.topics.length"
+                        :columns="topicColumns"
+                        :data="detail.topics"
                         :bordered="false"
                         size="small"
                         :pagination="false"
                     />
+                    <n-empty v-else description="暂无主题分布数据" />
                 </div>
 
                 <h3 class="section-title">行业配置</h3>
@@ -63,17 +65,15 @@
                     <n-empty v-else description="暂无行业配置数据" />
                 </div>
 
-                <h3 class="section-title">主题分布</h3>
+                <h3 class="section-title">重仓股票</h3>
                 <div class="surface-card table-card">
                     <n-data-table
-                        v-if="detail.topics.length"
-                        :columns="topicColumns"
-                        :data="detail.topics"
+                        :columns="holdingColumns"
+                        :data="detail.holdings"
                         :bordered="false"
                         size="small"
                         :pagination="false"
                     />
-                    <n-empty v-else description="暂无主题分布数据" />
                 </div>
 
                 <h3 class="section-title">规模变化</h3>
