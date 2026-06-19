@@ -136,6 +136,10 @@ function generateDeviceId(): string {
 
 const FUND_DEVICE_ID = generateDeviceId()
 
+function fundUrl(path: string): string {
+    return isTauri() ? `${FUND_DETAIL_BASE}${path}` : `/api/fund-detail${path}`
+}
+
 export interface FundStockHolding {
     code: string
     name: string
@@ -190,6 +194,69 @@ export interface FundDetail {
     scales: FundScaleItem[]
     bonuses: FundBonusItem[]
     cashManagementPct: number | null
+    profile: FundProfile | null
+}
+
+export interface FundPeriodItem {
+    title: string
+    syl: string
+    avg: string
+    hs300: string
+    rank: string
+}
+
+export interface FundManagerBrief {
+    mgrid: string
+    name: string
+    days: number
+    penavGrowth: number
+    maxRetra: number
+    photo: string
+    investmentIdea: string
+}
+
+export interface FundHolderStructure {
+    fsrq: string
+    grbl: string
+    jgbl: string
+    nbbl: string
+    employehold: string
+}
+
+export interface FundRiskMetrics {
+    stddev1: number | null
+    sharp1: number | null
+    maxRetra1: number | null
+    stddev1Rank: number | null
+    sharp1Rank: number | null
+    maxRetra1Rank: number | null
+    stddev1Fsc: number | null
+    sharp1Fsc: number | null
+    maxRetra1Fsc: number | null
+}
+
+export interface FundProfile {
+    shortName: string
+    fullName: string
+    fundType: string
+    industryType: string
+    riskLevel: string
+    companyName: string
+    estabDate: string
+    issbDate: string
+    navDate: string
+    nav: number
+    accNav: number
+    dayChange: number
+    totalNav: number
+    sgzt: string
+    minRg: number
+    purchaseRate: string
+    benchmark: string
+    periods: FundPeriodItem[]
+    managers: FundManagerBrief[]
+    holderStructure: FundHolderStructure | null
+    riskMetrics: FundRiskMetrics | null
 }
 
 interface FundDetailStockRaw {
@@ -347,6 +414,7 @@ function mapFundDetail(
         cashManagementPct: parseOptionalNum(
             raw?.fundInvestMoneyManagement?.FundAsset?.MPCTNV,
         ),
+        profile: null,
     }
 }
 
@@ -361,20 +429,17 @@ export async function fetchFundDetail(fcode: string): Promise<FundDetail> {
         fcode,
     })
 
-    const response = await httpFetch(
-        `${FUND_DETAIL_BASE}$/merge/m/api/jjxqy2`,
-        {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json, text/plain, */*',
-                'Content-Type': 'application/x-www-form-urlencoded',
-                Origin: 'https://h5.1234567.com.cn',
-                Referer: 'https://h5.1234567.com.cn/',
-                Validmark: FUND_DEVICE_ID,
-            },
-            body,
+    const response = await httpFetch(fundUrl('/merge/m/api/jjxqy2'), {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json, text/plain, */*',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Origin: 'https://h5.1234567.com.cn',
+            Referer: 'https://h5.1234567.com.cn/',
+            Validmark: FUND_DEVICE_ID,
         },
-    )
+        body,
+    })
 
     if (!response.ok) {
         throw new Error(`基金详情请求失败: ${response.status}`)
@@ -389,7 +454,58 @@ export async function fetchFundDetail(fcode: string): Promise<FundDetail> {
     return mapFundDetail(fcode, json.data)
 }
 
-export async function fetchFundProfile(fcode: string): Promise<any> {
+function toProfileNum(v: unknown): number | null {
+    if (v == null || v === '' || v === '--') return null
+    const n = Number(v)
+    return Number.isFinite(n) ? n : null
+}
+
+function mapFundProfile(raw: any): FundProfile {
+    const b = raw?.baseInfo?.[0] ?? {}
+    const u = raw?.uniqueInfo?.[0]
+    const h = raw?.fundHolderStructure?.[0]
+    return {
+        shortName: b.SHORTNAME ?? '',
+        fullName: raw?.FundACRateInfoV2Expansion?.FullName ?? b.SHORTNAME ?? '',
+        fundType: b.FTYPE ?? '',
+        industryType: b.TTYPENAME ?? '',
+        riskLevel: b.RISKLEVEL ?? '',
+        companyName: b.JJGS ?? '',
+        estabDate: b.ESTABDATE ?? '',
+        issbDate: b.ISSBDATE ?? '',
+        navDate: b.FSRQ ?? '',
+        nav: b.DWJZ ?? 0,
+        accNav: b.LJJZ ?? 0,
+        dayChange: b.RZDF ?? 0,
+        totalNav: b.ENDNAV ?? 0,
+        sgzt: raw?.rateInfo?.SGZT ?? '',
+        minRg: b.MINRG ?? 0,
+        purchaseRate: b.SOURCERATE ?? '',
+        benchmark: b.BENCH ?? '',
+        periods: (raw?.FundPeriodIncrease ?? []).map((p: any) => ({
+            title: p.title, syl: p.syl, avg: p.avg, hs300: p.hs300, rank: p.rank,
+        })),
+        managers: (raw?.FundManagerInformation?.currentManagerInfos ?? []).map((m: any) => ({
+            mgrid: m.SINFO?.MGRID ?? m.MGRID,
+            name: m.SINFO?.MGRNAME ?? '',
+            days: m.SINFO?.TOTALDAYS ?? 0,
+            penavGrowth: m.SINFO?.PENAVGROWTH ?? 0,
+            maxRetra: m.SINFO?.MAXRETRA ?? 0,
+            photo: m.PINFO?.[0]?.NEWPHOTOURL ?? '',
+            investmentIdea: m.PINFO?.[0]?.INVESTMENTIDEAR ?? '',
+        })),
+        holderStructure: h
+            ? { fsrq: h.FSRQ, grbl: h.GRBL, jgbl: h.JGBL, nbbl: h.NBBL, employehold: h.EMPLOYEHOLD }
+            : null,
+        riskMetrics: u ? {
+            stddev1: toProfileNum(u.STDDEV1), sharp1: toProfileNum(u.SHARP1), maxRetra1: toProfileNum(u.MAXRETRA1),
+            stddev1Rank: toProfileNum(u.STDDEV_1NRANK), sharp1Rank: toProfileNum(u.SHARP_1NRANK), maxRetra1Rank: toProfileNum(u.MAXRETRA_1NRANK),
+            stddev1Fsc: toProfileNum(u.STDDEV_1NFSC), sharp1Fsc: toProfileNum(u.SHARP_1NFSC), maxRetra1Fsc: toProfileNum(u.MAXRETRA_1NFSC),
+        } : null,
+    }
+}
+
+export async function fetchFundProfile(fcode: string): Promise<FundProfile> {
     const body = new URLSearchParams({
         deviceid: FUND_DEVICE_ID,
         version: '9.9.9',
@@ -409,26 +525,21 @@ export async function fetchFundProfile(fcode: string): Promise<any> {
         ISRG: '0',
         relateThemeFields: 'FCODE,SEC_CODE,SEC_NAME,CORR_1Y,OL2TOP',
     })
-    const response = await httpFetch(
-        `${FUND_DETAIL_BASE}/merge/m/api/jjxqy1_2`,
-        {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json, text/plain, */*',
-                'Content-Type': 'application/x-www-form-urlencoded',
-                Origin: 'https://h5.1234567.com.cn',
-                Referer: 'https://h5.1234567.com.cn/',
-                Validmark: FUND_DEVICE_ID,
-            },
-            body,
+    const response = await httpFetch(fundUrl('/merge/m/api/jjxqy1_2'), {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json, text/plain, */*',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Origin: 'https://h5.1234567.com.cn',
+            Referer: 'https://h5.1234567.com.cn/',
+            Validmark: FUND_DEVICE_ID,
         },
-    )
-    if (!response.ok) {
-        throw new Error(`基金档案请求失败: ${response.status}`)
-    }
+        body,
+    })
+    if (!response.ok) throw new Error(`基金档案请求失败: ${response.status}`)
     const json = await response.json()
-    console.log('Fund Profile JSON:', json)
-    return json
+    if (!json.success || json.errorCode !== 0 || !json.data) throw new Error('基金档案数据获取失败')
+    return mapFundProfile(json.data)
 }
 
 export default {
