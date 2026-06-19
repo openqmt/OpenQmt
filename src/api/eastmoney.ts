@@ -483,25 +483,45 @@ function mapFundProfile(raw: any): FundProfile {
         purchaseRate: b.SOURCERATE ?? '',
         benchmark: b.BENCH ?? '',
         periods: (raw?.FundPeriodIncrease ?? []).map((p: any) => ({
-            title: p.title, syl: p.syl, avg: p.avg, hs300: p.hs300, rank: p.rank,
+            title: p.title,
+            syl: p.syl,
+            avg: p.avg,
+            hs300: p.hs300,
+            rank: p.rank,
         })),
-        managers: (raw?.FundManagerInformation?.currentManagerInfos ?? []).map((m: any) => ({
-            mgrid: m.SINFO?.MGRID ?? m.MGRID,
-            name: m.SINFO?.MGRNAME ?? '',
-            days: m.SINFO?.TOTALDAYS ?? 0,
-            penavGrowth: m.SINFO?.PENAVGROWTH ?? 0,
-            maxRetra: m.SINFO?.MAXRETRA ?? 0,
-            photo: m.PINFO?.[0]?.NEWPHOTOURL ?? '',
-            investmentIdea: m.PINFO?.[0]?.INVESTMENTIDEAR ?? '',
-        })),
+        managers: (raw?.FundManagerInformation?.currentManagerInfos ?? []).map(
+            (m: any) => ({
+                mgrid: m.SINFO?.MGRID ?? m.MGRID,
+                name: m.SINFO?.MGRNAME ?? '',
+                days: m.SINFO?.TOTALDAYS ?? 0,
+                penavGrowth: m.SINFO?.PENAVGROWTH ?? 0,
+                maxRetra: m.SINFO?.MAXRETRA ?? 0,
+                photo: m.PINFO?.[0]?.NEWPHOTOURL ?? '',
+                investmentIdea: m.PINFO?.[0]?.INVESTMENTIDEAR ?? '',
+            }),
+        ),
         holderStructure: h
-            ? { fsrq: h.FSRQ, grbl: h.GRBL, jgbl: h.JGBL, nbbl: h.NBBL, employehold: h.EMPLOYEHOLD }
+            ? {
+                  fsrq: h.FSRQ,
+                  grbl: h.GRBL,
+                  jgbl: h.JGBL,
+                  nbbl: h.NBBL,
+                  employehold: h.EMPLOYEHOLD,
+              }
             : null,
-        riskMetrics: u ? {
-            stddev1: toProfileNum(u.STDDEV1), sharp1: toProfileNum(u.SHARP1), maxRetra1: toProfileNum(u.MAXRETRA1),
-            stddev1Rank: toProfileNum(u.STDDEV_1NRANK), sharp1Rank: toProfileNum(u.SHARP_1NRANK), maxRetra1Rank: toProfileNum(u.MAXRETRA_1NRANK),
-            stddev1Fsc: toProfileNum(u.STDDEV_1NFSC), sharp1Fsc: toProfileNum(u.SHARP_1NFSC), maxRetra1Fsc: toProfileNum(u.MAXRETRA_1NFSC),
-        } : null,
+        riskMetrics: u
+            ? {
+                  stddev1: toProfileNum(u.STDDEV1),
+                  sharp1: toProfileNum(u.SHARP1),
+                  maxRetra1: toProfileNum(u.MAXRETRA1),
+                  stddev1Rank: toProfileNum(u.STDDEV_1NRANK),
+                  sharp1Rank: toProfileNum(u.SHARP_1NRANK),
+                  maxRetra1Rank: toProfileNum(u.MAXRETRA_1NRANK),
+                  stddev1Fsc: toProfileNum(u.STDDEV_1NFSC),
+                  sharp1Fsc: toProfileNum(u.SHARP_1NFSC),
+                  maxRetra1Fsc: toProfileNum(u.MAXRETRA_1NFSC),
+              }
+            : null,
     }
 }
 
@@ -538,7 +558,8 @@ export async function fetchFundProfile(fcode: string): Promise<FundProfile> {
     })
     if (!response.ok) throw new Error(`基金档案请求失败: ${response.status}`)
     const json = await response.json()
-    if (!json.success || json.errorCode !== 0 || !json.data) throw new Error('基金档案数据获取失败')
+    if (!json.success || json.errorCode !== 0 || !json.data)
+        throw new Error('基金档案数据获取失败')
     return mapFundProfile(json.data)
 }
 

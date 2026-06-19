@@ -15,7 +15,9 @@
             <template v-else-if="detail">
                 <div class="detail-header surface-card">
                     <div class="header-main">
-                        <span class="fund-code num-mono">{{ detail.code }}</span>
+                        <span class="fund-code num-mono">{{
+                            detail.code
+                        }}</span>
                         <div v-if="detail.topics.length" class="topic-tags">
                             <n-tag
                                 v-for="item in detail.topics"
@@ -31,7 +33,9 @@
                         <h2 v-else class="fund-name">{{ fundName }}</h2>
                     </div>
                     <div v-if="detail.reportDate" class="header-meta">
-                        <span class="report-date num-mono">报告期 {{ detail.reportDate }}</span>
+                        <span class="report-date num-mono"
+                            >报告期 {{ detail.reportDate }}</span
+                        >
                     </div>
                     <p v-if="detail.aiSummary" class="ai-summary">
                         {{ detail.aiSummary }}
@@ -45,7 +49,9 @@
                         class="asset-item surface-card"
                     >
                         <span class="asset-label">{{ item.label }}</span>
-                        <span class="asset-value num-mono">{{ item.value }}</span>
+                        <span class="asset-value num-mono">{{
+                            item.value
+                        }}</span>
                     </div>
                 </div>
 
@@ -86,8 +92,13 @@
                     <n-empty v-else description="暂无规模数据" />
                 </div>
 
-                <h3 v-if="detail.bonuses.length" class="section-title">分红记录</h3>
-                <div v-if="detail.bonuses.length" class="surface-card table-card">
+                <h3 v-if="detail.bonuses.length" class="section-title">
+                    分红记录
+                </h3>
+                <div
+                    v-if="detail.bonuses.length"
+                    class="surface-card table-card"
+                >
                     <n-data-table
                         :columns="bonusColumns"
                         :data="detail.bonuses"
@@ -106,118 +117,347 @@
                             <div class="profile-grid">
                                 <div class="profile-item">
                                     <span class="profile-label">基金全称</span>
-                                    <span class="profile-value">{{ detail.profile.fullName || detail.profile.shortName }}</span>
+                                    <span class="profile-value">{{
+                                        detail.profile.fullName ||
+                                        detail.profile.shortName
+                                    }}</span>
                                 </div>
                                 <div class="profile-item">
                                     <span class="profile-label">基金类型</span>
-                                    <span class="profile-value">{{ detail.profile.fundType }}</span>
+                                    <span class="profile-value">{{
+                                        detail.profile.fundType
+                                    }}</span>
                                 </div>
-                                <div v-if="detail.profile.industryType" class="profile-item">
+                                <div
+                                    v-if="detail.profile.industryType"
+                                    class="profile-item"
+                                >
                                     <span class="profile-label">主题行业</span>
-                                    <span class="profile-value">{{ detail.profile.industryType }}</span>
+                                    <span class="profile-value">{{
+                                        detail.profile.industryType
+                                    }}</span>
                                 </div>
                                 <div class="profile-item">
                                     <span class="profile-label">风险等级</span>
-                                    <span class="profile-value">{{ riskLevelLabel(detail.profile.riskLevel) }}</span>
+                                    <span class="profile-value">{{
+                                        riskLevelLabel(detail.profile.riskLevel)
+                                    }}</span>
                                 </div>
                                 <div class="profile-item">
                                     <span class="profile-label">基金公司</span>
-                                    <span class="profile-value">{{ detail.profile.companyName }}</span>
+                                    <span class="profile-value">{{
+                                        detail.profile.companyName
+                                    }}</span>
                                 </div>
                                 <div class="profile-item">
                                     <span class="profile-label">成立日期</span>
-                                    <span class="profile-value num-mono">{{ detail.profile.estabDate }}</span>
+                                    <span class="profile-value num-mono">{{
+                                        detail.profile.estabDate
+                                    }}</span>
                                 </div>
                                 <div class="profile-item">
                                     <span class="profile-label">净值日期</span>
-                                    <span class="profile-value num-mono">{{ detail.profile.navDate }}</span>
+                                    <span class="profile-value num-mono">{{
+                                        detail.profile.navDate
+                                    }}</span>
                                 </div>
                                 <div class="profile-item">
                                     <span class="profile-label">单位净值</span>
-                                    <span class="profile-value num-mono">{{ detail.profile.nav.toFixed(4) }}</span>
+                                    <span class="profile-value num-mono">{{
+                                        detail.profile.nav.toFixed(4)
+                                    }}</span>
                                 </div>
                                 <div class="profile-item">
                                     <span class="profile-label">累计净值</span>
-                                    <span class="profile-value num-mono">{{ detail.profile.accNav.toFixed(4) }}</span>
+                                    <span class="profile-value num-mono">{{
+                                        detail.profile.accNav.toFixed(4)
+                                    }}</span>
                                 </div>
                                 <div class="profile-item">
                                     <span class="profile-label">日涨跌幅</span>
-                                    <span class="profile-value num-mono" :style="{ color: changeColor(detail.profile.dayChange) }">{{ formatPct(detail.profile.dayChange) }}</span>
+                                    <span
+                                        class="profile-value num-mono"
+                                        :style="{
+                                            color: changeColor(
+                                                detail.profile.dayChange,
+                                            ),
+                                        }"
+                                        >{{
+                                            formatPct(detail.profile.dayChange)
+                                        }}</span
+                                    >
                                 </div>
                                 <div class="profile-item">
                                     <span class="profile-label">基金规模</span>
-                                    <span class="profile-value num-mono">{{ formatNav(detail.profile.totalNav) }} 元</span>
+                                    <span class="profile-value num-mono"
+                                        >{{
+                                            formatNav(detail.profile.totalNav)
+                                        }}
+                                        元</span
+                                    >
                                 </div>
                                 <div class="profile-item">
                                     <span class="profile-label">申购状态</span>
-                                    <span class="profile-value">{{ detail.profile.sgzt }}</span>
+                                    <span class="profile-value">{{
+                                        detail.profile.sgzt
+                                    }}</span>
                                 </div>
                                 <div class="profile-item">
                                     <span class="profile-label">起购金额</span>
-                                    <span class="profile-value num-mono">{{ detail.profile.minRg }} 元</span>
+                                    <span class="profile-value num-mono"
+                                        >{{ detail.profile.minRg }} 元</span
+                                    >
                                 </div>
                                 <div class="profile-item">
                                     <span class="profile-label">申购费率</span>
-                                    <span class="profile-value num-mono">{{ detail.profile.purchaseRate }}</span>
+                                    <span class="profile-value num-mono">{{
+                                        detail.profile.purchaseRate
+                                    }}</span>
                                 </div>
-                                <div v-if="detail.profile.benchmark" class="profile-item profile-item-full">
+                                <div
+                                    v-if="detail.profile.benchmark"
+                                    class="profile-item profile-item-full"
+                                >
                                     <span class="profile-label">业绩基准</span>
-                                    <span class="profile-value">{{ detail.profile.benchmark }}</span>
+                                    <span class="profile-value">{{
+                                        detail.profile.benchmark
+                                    }}</span>
                                 </div>
                             </div>
                         </div>
 
-                        <div v-if="detail.profile.periods.length" class="profile-section">
+                        <div
+                            v-if="detail.profile.periods.length"
+                            class="profile-section"
+                        >
                             <h4 class="profile-sub-title">阶段涨幅</h4>
-                            <n-data-table :columns="periodColumns" :data="detail.profile.periods" :bordered="false" size="small" :pagination="false" />
+                            <n-data-table
+                                :columns="periodColumns"
+                                :data="detail.profile.periods"
+                                :bordered="false"
+                                size="small"
+                                :pagination="false"
+                            />
                         </div>
 
-                        <div v-if="detail.profile.managers.length" class="profile-section">
+                        <div
+                            v-if="detail.profile.managers.length"
+                            class="profile-section"
+                        >
                             <h4 class="profile-sub-title">现任基金经理</h4>
-                            <div v-for="mgr in detail.profile.managers" :key="mgr.mgrid" class="manager-card">
+                            <div
+                                v-for="mgr in detail.profile.managers"
+                                :key="mgr.mgrid"
+                                class="manager-card"
+                            >
                                 <div class="manager-header">
-                                    <img v-if="mgr.photo" :src="mgr.photo" class="manager-avatar" referrerpolicy="no-referrer" />
                                     <div class="manager-info">
-                                        <span class="manager-name">{{ mgr.name }}</span>
+                                        <span class="manager-name">{{
+                                            mgr.name
+                                        }}</span>
                                         <div class="manager-stats">
                                             <span class="stat-item">
-                                                <span class="stat-label">在任天数</span>
-                                                <span class="stat-value num-mono">{{ mgr.days }} 天</span>
+                                                <span class="stat-label"
+                                                    >在任天数</span
+                                                >
+                                                <span
+                                                    class="stat-value num-mono"
+                                                    >{{ mgr.days }} 天</span
+                                                >
                                             </span>
                                             <span class="stat-item">
-                                                <span class="stat-label">任职回报</span>
-                                                <span class="stat-value num-mono" :style="{ color: changeColor(mgr.penavGrowth) }">{{ formatPct(mgr.penavGrowth) }}</span>
+                                                <span class="stat-label"
+                                                    >任职回报</span
+                                                >
+                                                <span
+                                                    class="stat-value num-mono"
+                                                    :style="{
+                                                        color: changeColor(
+                                                            mgr.penavGrowth,
+                                                        ),
+                                                    }"
+                                                    >{{
+                                                        formatPct(
+                                                            mgr.penavGrowth,
+                                                        )
+                                                    }}</span
+                                                >
                                             </span>
-                                            <span v-if="mgr.maxRetra" class="stat-item">
-                                                <span class="stat-label">最大回撤</span>
-                                                <span class="stat-value num-mono color-down">{{ (mgr.maxRetra * 100).toFixed(2) }}%</span>
+                                            <span
+                                                v-if="mgr.maxRetra"
+                                                class="stat-item"
+                                            >
+                                                <span class="stat-label"
+                                                    >最大回撤</span
+                                                >
+                                                <span
+                                                    class="stat-value num-mono color-down"
+                                                    >{{
+                                                        (
+                                                            mgr.maxRetra * 100
+                                                        ).toFixed(2)
+                                                    }}%</span
+                                                >
                                             </span>
                                         </div>
                                     </div>
                                 </div>
-                                <p v-if="mgr.investmentIdea" class="manager-idea">{{ mgr.investmentIdea }}</p>
+                                <p
+                                    v-if="mgr.investmentIdea"
+                                    class="manager-idea"
+                                >
+                                    {{ mgr.investmentIdea }}
+                                </p>
                             </div>
                         </div>
 
-                        <div v-if="detail.profile.holderStructure" class="profile-section">
-                            <h4 class="profile-sub-title">持有人结构（{{ detail.profile.holderStructure.fsrq }}）</h4>
+                        <div
+                            v-if="detail.profile.holderStructure"
+                            class="profile-section"
+                        >
+                            <h4 class="profile-sub-title">
+                                持有人结构（{{
+                                    detail.profile.holderStructure.fsrq
+                                }}）
+                            </h4>
                             <div class="profile-grid">
-                                <div class="profile-item"><span class="profile-label">个人投资者</span><span class="profile-value num-mono">{{ detail.profile.holderStructure.grbl }}%</span></div>
-                                <div class="profile-item"><span class="profile-label">机构投资者</span><span class="profile-value num-mono">{{ detail.profile.holderStructure.jgbl || '--' }}%</span></div>
-                                <div class="profile-item"><span class="profile-label">内部持有</span><span class="profile-value num-mono">{{ detail.profile.holderStructure.nbbl }}%</span></div>
-                                <div class="profile-item"><span class="profile-label">员工持有（万份）</span><span class="profile-value num-mono">{{ detail.profile.holderStructure.employehold }}</span></div>
+                                <div class="profile-item">
+                                    <span class="profile-label">个人投资者</span
+                                    ><span class="profile-value num-mono"
+                                        >{{
+                                            detail.profile.holderStructure.grbl
+                                        }}%</span
+                                    >
+                                </div>
+                                <div class="profile-item">
+                                    <span class="profile-label">机构投资者</span
+                                    ><span class="profile-value num-mono"
+                                        >{{
+                                            detail.profile.holderStructure
+                                                .jgbl || '--'
+                                        }}%</span
+                                    >
+                                </div>
+                                <div class="profile-item">
+                                    <span class="profile-label">内部持有</span
+                                    ><span class="profile-value num-mono"
+                                        >{{
+                                            detail.profile.holderStructure.nbbl
+                                        }}%</span
+                                    >
+                                </div>
+                                <div class="profile-item">
+                                    <span class="profile-label"
+                                        >员工持有（万份）</span
+                                    ><span class="profile-value num-mono">{{
+                                        detail.profile.holderStructure
+                                            .employehold
+                                    }}</span>
+                                </div>
                             </div>
                         </div>
 
-                        <div v-if="detail.profile.riskMetrics" class="profile-section">
+                        <div
+                            v-if="detail.profile.riskMetrics"
+                            class="profile-section"
+                        >
                             <h4 class="profile-sub-title">风险指标（近1年）</h4>
                             <div class="profile-grid">
-                                <div class="profile-item"><span class="profile-label">年化波动率</span><span class="profile-value num-mono">{{ detail.profile.riskMetrics.stddev1 != null ? detail.profile.riskMetrics.stddev1.toFixed(2) + '%' : '--' }}</span></div>
-                                <div class="profile-item"><span class="profile-label">夏普比率</span><span class="profile-value num-mono">{{ detail.profile.riskMetrics.sharp1 != null ? detail.profile.riskMetrics.sharp1.toFixed(4) : '--' }}</span></div>
-                                <div class="profile-item"><span class="profile-label">最大回撤</span><span class="profile-value num-mono color-down">{{ detail.profile.riskMetrics.maxRetra1 != null ? detail.profile.riskMetrics.maxRetra1.toFixed(2) + '%' : '--' }}</span></div>
-                                <div v-if="detail.profile.riskMetrics.stddev1Rank != null" class="profile-item"><span class="profile-label">波动率排名</span><span class="profile-value num-mono">{{ detail.profile.riskMetrics.stddev1Rank }} / {{ detail.profile.riskMetrics.stddev1Fsc }}</span></div>
-                                <div v-if="detail.profile.riskMetrics.sharp1Rank != null" class="profile-item"><span class="profile-label">夏普排名</span><span class="profile-value num-mono">{{ detail.profile.riskMetrics.sharp1Rank }} / {{ detail.profile.riskMetrics.sharp1Fsc }}</span></div>
-                                <div v-if="detail.profile.riskMetrics.maxRetra1Rank != null" class="profile-item"><span class="profile-label">回撤排名</span><span class="profile-value num-mono">{{ detail.profile.riskMetrics.maxRetra1Rank }} / {{ detail.profile.riskMetrics.maxRetra1Fsc }}</span></div>
+                                <div class="profile-item">
+                                    <span class="profile-label">年化波动率</span
+                                    ><span class="profile-value num-mono">{{
+                                        detail.profile.riskMetrics.stddev1 !=
+                                        null
+                                            ? detail.profile.riskMetrics.stddev1.toFixed(
+                                                  2,
+                                              ) + '%'
+                                            : '--'
+                                    }}</span>
+                                </div>
+                                <div class="profile-item">
+                                    <span class="profile-label">夏普比率</span
+                                    ><span class="profile-value num-mono">{{
+                                        detail.profile.riskMetrics.sharp1 !=
+                                        null
+                                            ? detail.profile.riskMetrics.sharp1.toFixed(
+                                                  4,
+                                              )
+                                            : '--'
+                                    }}</span>
+                                </div>
+                                <div class="profile-item">
+                                    <span class="profile-label">最大回撤</span
+                                    ><span
+                                        class="profile-value num-mono color-down"
+                                        >{{
+                                            detail.profile.riskMetrics
+                                                .maxRetra1 != null
+                                                ? detail.profile.riskMetrics.maxRetra1.toFixed(
+                                                      2,
+                                                  ) + '%'
+                                                : '--'
+                                        }}</span
+                                    >
+                                </div>
+                                <div
+                                    v-if="
+                                        detail.profile.riskMetrics
+                                            .stddev1Rank != null
+                                    "
+                                    class="profile-item"
+                                >
+                                    <span class="profile-label">波动率排名</span
+                                    ><span class="profile-value num-mono"
+                                        >{{
+                                            detail.profile.riskMetrics
+                                                .stddev1Rank
+                                        }}
+                                        /
+                                        {{
+                                            detail.profile.riskMetrics
+                                                .stddev1Fsc
+                                        }}</span
+                                    >
+                                </div>
+                                <div
+                                    v-if="
+                                        detail.profile.riskMetrics.sharp1Rank !=
+                                        null
+                                    "
+                                    class="profile-item"
+                                >
+                                    <span class="profile-label">夏普排名</span
+                                    ><span class="profile-value num-mono"
+                                        >{{
+                                            detail.profile.riskMetrics
+                                                .sharp1Rank
+                                        }}
+                                        /
+                                        {{
+                                            detail.profile.riskMetrics.sharp1Fsc
+                                        }}</span
+                                    >
+                                </div>
+                                <div
+                                    v-if="
+                                        detail.profile.riskMetrics
+                                            .maxRetra1Rank != null
+                                    "
+                                    class="profile-item"
+                                >
+                                    <span class="profile-label">回撤排名</span
+                                    ><span class="profile-value num-mono"
+                                        >{{
+                                            detail.profile.riskMetrics
+                                                .maxRetra1Rank
+                                        }}
+                                        /
+                                        {{
+                                            detail.profile.riskMetrics
+                                                .maxRetra1Fsc
+                                        }}</span
+                                    >
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -318,7 +558,7 @@ const holdingColumns: DataTableColumns<FundStockHolding> = [
             return h(
                 NTag,
                 { size: 'tiny', bordered: false, type, round: true },
-                { default: () => row.changeType }
+                { default: () => row.changeType },
             )
         },
     },
@@ -411,34 +651,87 @@ function formatPct(val: number): string {
 }
 
 function changeColor(val: number): string {
-    return val > 0 ? 'var(--color-up)' : val < 0 ? 'var(--color-down)' : 'var(--color-flat)'
+    return val > 0
+        ? 'var(--color-up)'
+        : val < 0
+          ? 'var(--color-down)'
+          : 'var(--color-flat)'
 }
 
 const RISK_LEVEL_MAP: Record<string, string> = {
-    '1': 'R1 低风险', '2': 'R2 中低风险', '3': 'R3 中风险', '4': 'R4 中高风险', '5': 'R5 高风险',
+    '1': 'R1 低风险',
+    '2': 'R2 中低风险',
+    '3': 'R3 中风险',
+    '4': 'R4 中高风险',
+    '5': 'R5 高风险',
 }
 function riskLevelLabel(level: string): string {
     return RISK_LEVEL_MAP[level] ?? `R${level}`
 }
 
 const periodColumns: DataTableColumns<FundPeriodItem> = [
-    { title: '期间', key: 'title', width: 60, render(row) { return h('span', { class: 'num-mono' }, row.title) } },
-    { title: '本基金', key: 'syl', align: 'right', render(row) {
-        if (!row.syl) return h('span', { class: 'num-mono' }, '--')
-        const val = parseFloat(row.syl)
-        return h('span', { class: 'num-mono', style: { color: changeColor(val), fontWeight: '600' } }, `${val > 0 ? '+' : ''}${val.toFixed(2)}%`)
-    }},
-    { title: '同类均值', key: 'avg', align: 'right', render(row) {
-        if (!row.avg) return h('span', { class: 'num-mono' }, '--')
-        const val = parseFloat(row.avg)
-        return h('span', { class: 'num-mono', style: { color: changeColor(val) } }, `${val > 0 ? '+' : ''}${val.toFixed(2)}%`)
-    }},
-    { title: '沪深300', key: 'hs300', align: 'right', render(row) {
-        if (!row.hs300) return h('span', { class: 'num-mono' }, '--')
-        const val = parseFloat(row.hs300)
-        return h('span', { class: 'num-mono', style: { color: changeColor(val) } }, `${val > 0 ? '+' : ''}${val.toFixed(2)}%`)
-    }},
-    { title: '同类排名', key: 'rank', align: 'right', width: 80, render(row) { return h('span', { class: 'num-mono' }, row.rank || '--') } },
+    {
+        title: '期间',
+        key: 'title',
+        width: 60,
+        render(row) {
+            return h('span', { class: 'num-mono' }, row.title)
+        },
+    },
+    {
+        title: '本基金',
+        key: 'syl',
+        align: 'right',
+        render(row) {
+            if (!row.syl) return h('span', { class: 'num-mono' }, '--')
+            const val = parseFloat(row.syl)
+            return h(
+                'span',
+                {
+                    class: 'num-mono',
+                    style: { color: changeColor(val), fontWeight: '600' },
+                },
+                `${val > 0 ? '+' : ''}${val.toFixed(2)}%`,
+            )
+        },
+    },
+    {
+        title: '同类均值',
+        key: 'avg',
+        align: 'right',
+        render(row) {
+            if (!row.avg) return h('span', { class: 'num-mono' }, '--')
+            const val = parseFloat(row.avg)
+            return h(
+                'span',
+                { class: 'num-mono', style: { color: changeColor(val) } },
+                `${val > 0 ? '+' : ''}${val.toFixed(2)}%`,
+            )
+        },
+    },
+    {
+        title: '沪深300',
+        key: 'hs300',
+        align: 'right',
+        render(row) {
+            if (!row.hs300) return h('span', { class: 'num-mono' }, '--')
+            const val = parseFloat(row.hs300)
+            return h(
+                'span',
+                { class: 'num-mono', style: { color: changeColor(val) } },
+                `${val > 0 ? '+' : ''}${val.toFixed(2)}%`,
+            )
+        },
+    },
+    {
+        title: '同类排名',
+        key: 'rank',
+        align: 'right',
+        width: 80,
+        render(row) {
+            return h('span', { class: 'num-mono' }, row.rank || '--')
+        },
+    },
 ]
 
 function changeCell(val: number | null) {
@@ -456,7 +749,7 @@ function changeCell(val: number | null) {
             class: 'num-mono',
             style: { color, fontWeight: '600' },
         },
-        `${sign}${val.toFixed(2)}%`
+        `${sign}${val.toFixed(2)}%`,
     )
 }
 
@@ -469,7 +762,7 @@ watch(
     (code) => {
         if (code) store.loadDetail(code)
     },
-    { immediate: true }
+    { immediate: true },
 )
 </script>
 
@@ -636,15 +929,6 @@ watch(
     gap: 12px;
     align-items: flex-start;
 }
-
-.manager-avatar {
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    object-fit: cover;
-    flex-shrink: 0;
-}
-
 .manager-info {
     display: flex;
     flex-direction: column;
