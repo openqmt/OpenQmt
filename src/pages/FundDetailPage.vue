@@ -524,6 +524,7 @@ const holdingColumns: DataTableColumns<FundStockHolding> = [
         title: '代码',
         key: 'code',
         width: 88,
+        align: 'center',
         render(row) {
             return h('span', { class: 'num-mono' }, row.code)
         },
@@ -532,7 +533,7 @@ const holdingColumns: DataTableColumns<FundStockHolding> = [
         title: '现价',
         key: 'price',
         width: 80,
-        align: 'right',
+        align: 'center',
         render(row) {
             if (row.price == null) return h('span', { class: 'num-mono' }, '--')
             return h('span', { class: 'num-mono' }, row.price.toFixed(2))
@@ -542,7 +543,7 @@ const holdingColumns: DataTableColumns<FundStockHolding> = [
         title: '涨跌幅',
         key: 'changePercent',
         width: 88,
-        align: 'right',
+        align: 'center',
         render(row) {
             return changeCell(row.changePercent)
         },
@@ -551,13 +552,14 @@ const holdingColumns: DataTableColumns<FundStockHolding> = [
         title: '行业',
         key: 'industry',
         width: 110,
+        align: 'center',
         ellipsis: { tooltip: true },
     },
     {
         title: '占净值',
         key: 'weight',
         width: 88,
-        align: 'right',
+        align: 'center',
         render(row) {
             return h('span', { class: 'num-mono' }, `${row.weight.toFixed(2)}%`)
         },
