@@ -18,7 +18,10 @@
                         <span class="fund-code num-mono">{{
                             detail.code
                         }}</span>
-                        <div v-if="detail.topics.length" class="topic-tags">
+                        <div
+                            v-if="detail.topics.length || sectors.length"
+                            class="topic-tags"
+                        >
                             <n-tag
                                 v-for="item in detail.topics"
                                 :key="item.topic"
@@ -28,6 +31,16 @@
                                 round
                             >
                                 {{ item.topic }}({{ item.weight.toFixed(2) }}%)
+                            </n-tag>
+                            <n-tag
+                                v-for="item in sectors"
+                                :key="item.name"
+                                size="medium"
+                                :bordered="false"
+                                type="success"
+                                round
+                            >
+                                {{ item.name }}({{ item.weight.toFixed(2) }}%)
                             </n-tag>
                         </div>
                         <h2 v-else class="fund-name">{{ fundName }}</h2>
@@ -53,19 +66,6 @@
                             item.value
                         }}</span>
                     </div>
-                </div>
-
-                <h3 class="section-title">行业配置</h3>
-                <div class="surface-card table-card">
-                    <n-data-table
-                        v-if="detail.sectors.length"
-                        :columns="sectorColumns"
-                        :data="detail.sectors"
-                        :bordered="false"
-                        size="small"
-                        :pagination="false"
-                    />
-                    <n-empty v-else description="暂无行业配置数据" />
                 </div>
 
                 <h3 class="section-title">重仓股票</h3>
@@ -484,7 +484,6 @@ import type {
     FundBonusItem,
     FundPeriodItem,
     FundScaleItem,
-    FundSectorItem,
     FundStockHolding,
     FundTopicItem,
 } from '../api/eastmoney'
@@ -594,18 +593,9 @@ const holdingColumns: DataTableColumns<FundStockHolding> = [
     },
 ]
 
-const sectorColumns: DataTableColumns<FundSectorItem> = [
-    { title: '行业', key: 'name', ellipsis: { tooltip: true } },
-    {
-        title: '占比',
-        key: 'weight',
-        width: 96,
-        align: 'right',
-        render(row) {
-            return h('span', { class: 'num-mono' }, `${row.weight.toFixed(2)}%`)
-        },
-    },
-]
+const sectors = computed(
+    () => detail.value?.sectors.filter((s) => s.weight > 0) ?? [],
+)
 
 const topicColumns: DataTableColumns<FundTopicItem> = [
     { title: '主题', key: 'topic' },
