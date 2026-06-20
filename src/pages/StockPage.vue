@@ -31,7 +31,12 @@
 
         <div class="stock-detail">
             <div class="detail-panel surface-card review-card">
-                <n-tabs v-model:value="reviewTab" type="line" animated size="small">
+                <n-tabs
+                    v-model:value="reviewTab"
+                    type="line"
+                    animated
+                    size="small"
+                >
                     <n-tab-pane name="macro" tab="宏观视角" />
                     <n-tab-pane name="aShare" tab="A股复盘" />
                     <n-tab-pane name="usShare" tab="美股复盘" />
@@ -45,28 +50,49 @@
                         <div class="review-section">
                             <div class="review-section-header">
                                 <span class="section-icon">🇨🇳</span>
-                                <span class="section-title-text">A股市场主线</span>
+                                <span class="section-title-text"
+                                    >A股市场主线</span
+                                >
                             </div>
-                            <p class="review-text">{{ macroReview.aShareTheme }}</p>
+                            <p class="review-text">
+                                {{ macroReview.aShareTheme }}
+                            </p>
                         </div>
 
                         <div class="review-section">
                             <div class="review-section-header">
                                 <span class="section-icon">🇺🇸</span>
-                                <span class="section-title-text">美股市场主线</span>
+                                <span class="section-title-text"
+                                    >美股市场主线</span
+                                >
                             </div>
-                            <p class="review-text">{{ macroReview.usShareTheme }}</p>
+                            <p class="review-text">
+                                {{ macroReview.usShareTheme }}
+                            </p>
                         </div>
 
                         <div class="review-section">
                             <div class="review-section-header">
                                 <span class="section-icon">🌍</span>
-                                <span class="section-title-text">全球共识长期产业主线</span>
+                                <span class="section-title-text"
+                                    >全球共识长期产业主线</span
+                                >
                             </div>
                             <div class="sector-list">
-                                <div class="sector-item" v-for="(s, i) in macroReview.globalThemes" :key="i">
-                                    <n-tag size="small" :bordered="false" type="warning">{{ s.name }}</n-tag>
-                                    <span class="sector-reason">{{ s.desc }}</span>
+                                <div
+                                    class="sector-item"
+                                    v-for="(s, i) in macroReview.globalThemes"
+                                    :key="i"
+                                >
+                                    <n-tag
+                                        size="small"
+                                        :bordered="false"
+                                        type="warning"
+                                        >{{ s.name }}</n-tag
+                                    >
+                                    <span class="sector-reason">{{
+                                        s.desc
+                                    }}</span>
                                 </div>
                             </div>
                         </div>
@@ -74,23 +100,33 @@
                         <div class="review-section">
                             <div class="review-section-header">
                                 <span class="section-icon">⚖️</span>
-                                <span class="section-title-text">投资配置建议</span>
+                                <span class="section-title-text"
+                                    >投资配置建议</span
+                                >
                             </div>
-                            <p class="review-text">{{ macroReview.allocation }}</p>
+                            <p class="review-text">
+                                {{ macroReview.allocation }}
+                            </p>
                         </div>
 
                         <div class="review-section">
                             <div class="review-section-header">
                                 <span class="section-icon">📋</span>
-                                <span class="section-title-text">长期发展结论</span>
+                                <span class="section-title-text"
+                                    >长期发展结论</span
+                                >
                             </div>
-                            <p class="review-text">{{ macroReview.conclusion }}</p>
+                            <p class="review-text">
+                                {{ macroReview.conclusion }}
+                            </p>
                         </div>
                     </div>
                 </template>
 
                 <!-- A股复盘 / 美股复盘 -->
-                <template v-if="reviewTab === 'aShare' || reviewTab === 'usShare'">
+                <template
+                    v-if="reviewTab === 'aShare' || reviewTab === 'usShare'"
+                >
                     <div class="review-content" v-if="reviewData">
                         <div class="review-section">
                             <div class="review-section-header">
@@ -109,11 +145,23 @@
                                 <div class="temperature-bar">
                                     <div
                                         class="temperature-fill"
-                                        :style="{ width: reviewData.temperatureScore + '%' }"
-                                        :class="tempClass(reviewData.temperatureScore)"
+                                        :style="{
+                                            width:
+                                                reviewData.temperatureScore +
+                                                '%',
+                                        }"
+                                        :class="
+                                            tempClass(
+                                                reviewData.temperatureScore,
+                                            )
+                                        "
                                     />
                                 </div>
-                                <span class="temperature-label">{{ reviewData.temperature }} ({{ reviewData.temperatureScore }}°)</span>
+                                <span class="temperature-label"
+                                    >{{ reviewData.temperature }} ({{
+                                        reviewData.temperatureScore
+                                    }}°)</span
+                                >
                             </div>
                         </div>
 
@@ -123,9 +171,20 @@
                                 <span class="section-title-text">主线板块</span>
                             </div>
                             <div class="sector-list">
-                                <div class="sector-item" v-for="(s, i) in reviewData.mainSectors" :key="i">
-                                    <n-tag size="small" :bordered="false" type="success">{{ s.name }}</n-tag>
-                                    <span class="sector-reason">{{ s.reason }}</span>
+                                <div
+                                    class="sector-item"
+                                    v-for="(s, i) in reviewData.mainSectors"
+                                    :key="i"
+                                >
+                                    <n-tag
+                                        size="small"
+                                        :bordered="false"
+                                        type="success"
+                                        >{{ s.name }}</n-tag
+                                    >
+                                    <span class="sector-reason">{{
+                                        s.reason
+                                    }}</span>
                                 </div>
                             </div>
                         </div>
@@ -136,9 +195,20 @@
                                 <span class="section-title-text">支线板块</span>
                             </div>
                             <div class="sector-list">
-                                <div class="sector-item" v-for="(s, i) in reviewData.subSectors" :key="i">
-                                    <n-tag size="small" :bordered="false" type="info">{{ s.name }}</n-tag>
-                                    <span class="sector-reason">{{ s.reason }}</span>
+                                <div
+                                    class="sector-item"
+                                    v-for="(s, i) in reviewData.subSectors"
+                                    :key="i"
+                                >
+                                    <n-tag
+                                        size="small"
+                                        :bordered="false"
+                                        type="info"
+                                        >{{ s.name }}</n-tag
+                                    >
+                                    <span class="sector-reason">{{
+                                        s.reason
+                                    }}</span>
                                 </div>
                             </div>
                         </div>
@@ -147,16 +217,24 @@
                             <div class="review-section">
                                 <div class="review-section-header">
                                     <span class="section-icon">💰</span>
-                                    <span class="section-title-text">仓位建议</span>
+                                    <span class="section-title-text"
+                                        >仓位建议</span
+                                    >
                                 </div>
-                                <p class="review-text">{{ reviewData.positionAdvice }}</p>
+                                <p class="review-text">
+                                    {{ reviewData.positionAdvice }}
+                                </p>
                             </div>
                             <div class="review-section">
                                 <div class="review-section-header">
                                     <span class="section-icon">🎯</span>
-                                    <span class="section-title-text">投资策略</span>
+                                    <span class="section-title-text"
+                                        >投资策略</span
+                                    >
                                 </div>
-                                <p class="review-text">{{ reviewData.strategy }}</p>
+                                <p class="review-text">
+                                    {{ reviewData.strategy }}
+                                </p>
                             </div>
                         </div>
 
@@ -164,19 +242,37 @@
                             <div class="review-section">
                                 <div class="review-section-header">
                                     <span class="section-icon">🚫</span>
-                                    <span class="section-title-text">回避方向</span>
+                                    <span class="section-title-text"
+                                        >回避方向</span
+                                    >
                                 </div>
                                 <ul class="review-list">
-                                    <li v-for="(item, i) in reviewData.avoidance" :key="i">{{ item }}</li>
+                                    <li
+                                        v-for="(
+                                            item, i
+                                        ) in reviewData.avoidance"
+                                        :key="i"
+                                    >
+                                        {{ item }}
+                                    </li>
                                 </ul>
                             </div>
                             <div class="review-section">
                                 <div class="review-section-header">
                                     <span class="section-icon">⚠️</span>
-                                    <span class="section-title-text">利空因素</span>
+                                    <span class="section-title-text"
+                                        >利空因素</span
+                                    >
                                 </div>
                                 <ul class="review-list">
-                                    <li v-for="(item, i) in reviewData.negativeFactors" :key="i">{{ item }}</li>
+                                    <li
+                                        v-for="(
+                                            item, i
+                                        ) in reviewData.negativeFactors"
+                                        :key="i"
+                                    >
+                                        {{ item }}
+                                    </li>
                                 </ul>
                             </div>
                         </div>
@@ -186,10 +282,16 @@
                 <!-- 热点要闻 -->
                 <template v-if="reviewTab === 'hotNews'">
                     <div class="news-list">
-                        <div class="news-item" v-for="item in hotNews" :key="item.id">
+                        <div
+                            class="news-item"
+                            v-for="item in hotNews"
+                            :key="item.id"
+                        >
                             <div class="news-title">{{ item.title }}</div>
                             <div class="news-meta">
-                                <span class="news-source">{{ item.source }}</span>
+                                <span class="news-source">{{
+                                    item.source
+                                }}</span>
                                 <span class="news-time">{{ item.time }}</span>
                             </div>
                         </div>
@@ -216,7 +318,13 @@ import { computed, h, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStockStore } from '../stores/stock'
 import { useBreakpoint } from '../composables/useBreakpoint'
-import { NTabs, NTabPane, NTag, NDataTable, type DataTableColumns } from 'naive-ui'
+import {
+    NTabs,
+    NTabPane,
+    NTag,
+    NDataTable,
+    type DataTableColumns,
+} from 'naive-ui'
 import PriceCard from '../components/PriceCard.vue'
 import {
     getMarketReview,
@@ -239,7 +347,9 @@ const stockConfig = store.getConfig() as Record<StockKey, SymbolConfig>
 // ── 逻辑复盘 ──
 const reviewTab = ref<ReviewTab>('macro')
 
-const reviewData = computed<MarketReview>(() => getMarketReview(reviewTab.value))
+const reviewData = computed<MarketReview>(() =>
+    getMarketReview(reviewTab.value),
+)
 const macroReview = computed<MacroReview>(() => getMacroReview())
 const hotNews = computed<HotNewsItem[]>(() => getHotNews())
 const dragonTigerData = computed<DragonTigerItem[]>(() => getDragonTiger())
@@ -272,7 +382,11 @@ const dragonTigerColumns: DataTableColumns<DragonTigerItem> = [
         render(row) {
             return h('div', [
                 h('div', { style: 'font-weight:600' }, row.stockName),
-                h('div', { style: 'font-size:11px;color:var(--text-muted)' }, row.stockCode),
+                h(
+                    'div',
+                    { style: 'font-size:11px;color:var(--text-muted)' },
+                    row.stockCode,
+                ),
             ])
         },
     },
@@ -282,7 +396,11 @@ const dragonTigerColumns: DataTableColumns<DragonTigerItem> = [
         width: 80,
         align: 'right',
         render(row) {
-            return h('span', { class: 'num-mono', style: 'color:var(--color-up)' }, formatWan(row.buyAmount))
+            return h(
+                'span',
+                { class: 'num-mono', style: 'color:var(--color-up)' },
+                formatWan(row.buyAmount),
+            )
         },
     },
     {
@@ -291,7 +409,11 @@ const dragonTigerColumns: DataTableColumns<DragonTigerItem> = [
         width: 80,
         align: 'right',
         render(row) {
-            return h('span', { class: 'num-mono', style: 'color:var(--color-down)' }, formatWan(row.sellAmount))
+            return h(
+                'span',
+                { class: 'num-mono', style: 'color:var(--color-down)' },
+                formatWan(row.sellAmount),
+            )
         },
     },
     {
@@ -300,7 +422,14 @@ const dragonTigerColumns: DataTableColumns<DragonTigerItem> = [
         width: 80,
         align: 'right',
         render(row) {
-            return h('span', { class: 'num-mono', style: 'color:var(--color-up);font-weight:600' }, formatWan(row.netBuy))
+            return h(
+                'span',
+                {
+                    class: 'num-mono',
+                    style: 'color:var(--color-up);font-weight:600',
+                },
+                formatWan(row.netBuy),
+            )
         },
     },
     {
