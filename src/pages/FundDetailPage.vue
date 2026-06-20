@@ -680,13 +680,26 @@ function riskLevelLabel(level: string): string {
     return RISK_LEVEL_MAP[level] ?? `R${level}`
 }
 
+const PERIOD_TITLE_MAP: Record<string, string> = {
+    Z: '近一周',
+    Y: '近一个月',
+    '3Y': '近3个月',
+    '6Y': '近6个月',
+    '1N': '近1年',
+    '2N': '近两年',
+    '3N': '近3年',
+    '5N': '近5年',
+    JN: '今年来',
+    LN: '成立来',
+}
+
 const periodColumns: DataTableColumns<FundPeriodItem> = [
     {
         title: '期间',
         key: 'title',
-        width: 60,
+        width: 80,
         render(row) {
-            return h('span', { class: 'num-mono' }, row.title)
+            return h('span', {}, PERIOD_TITLE_MAP[row.title] ?? row.title)
         },
     },
     {
