@@ -19,9 +19,23 @@
                             detail.code
                         }}</span>
                         <div
-                            v-if="detail.topics.length || sectors.length"
+                            v-if="
+                                detail.topics.length ||
+                                relatedThemes.length ||
+                                sectors.length
+                            "
                             class="topic-tags"
                         >
+                            <n-tag
+                                v-for="item in relatedThemes"
+                                :key="item.name"
+                                size="medium"
+                                :bordered="false"
+                                type="warning"
+                                round
+                            >
+                                {{ item.name }}
+                            </n-tag>
                             <n-tag
                                 v-for="item in detail.topics"
                                 :key="item.topic"
@@ -494,6 +508,7 @@ const store = useFundDetailStore()
 const fundCode = computed(() => String(route.params.code ?? ''))
 const fundName = computed(() => String(route.query.name ?? '基金详情'))
 const detail = computed(() => store.detail)
+const relatedThemes = computed(() => detail.value?.profile?.relatedThemes ?? [])
 
 const assetItems = computed(() => {
     const asset = detail.value?.assetAllocation

@@ -166,6 +166,10 @@ export interface FundTopicItem {
     reportDate: string
 }
 
+export interface FundRelateThemeItem {
+    name: string
+}
+
 export interface FundAssetItem {
     reportDate: string
     stockPct: number
@@ -260,6 +264,7 @@ export interface FundProfile {
     managers: FundManagerBrief[]
     holderStructure: FundHolderStructure | null
     riskMetrics: FundRiskMetrics | null
+    relatedThemes: FundRelateThemeItem[]
 }
 
 interface FundDetailStockRaw {
@@ -551,6 +556,9 @@ function mapFundProfile(raw: any): FundProfile {
                   maxRetra1Fsc: toProfileNum(u.MAXRETRA_1NFSC),
               }
             : null,
+        relatedThemes: (raw?.fundRelateTheme ?? [])
+            .map((t: any) => ({ name: t.SEC_NAME ?? '' }))
+            .filter((t: { name: string }) => t.name),
     }
 }
 
