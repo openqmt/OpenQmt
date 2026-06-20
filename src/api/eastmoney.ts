@@ -32,8 +32,9 @@ export interface FundRankingResult {
     hasMore: boolean
 }
 
-const FUND_SELECT_PATH = '/condition/conditionFund/fundSelect'
 const FUND_SELECT_BASE = import.meta.env.VITE_FUND_RANK
+const FUND_STOCK_BASE = import.meta.env.VITE_FUND_STOCK
+const FUND_SELECT_PATH = '/condition/conditionFund/fundSelect'
 const FUND_SELECT_URL = `${FUND_SELECT_BASE}${FUND_SELECT_PATH}`
 
 function getFundSelectUrl(): string {
@@ -525,6 +526,7 @@ function mapFundProfile(raw: any): FundProfile {
     }
 }
 
+// 基金档案
 export async function fetchFundProfile(fcode: string): Promise<FundProfile> {
     const body = new URLSearchParams({
         deviceid: FUND_DEVICE_ID,
@@ -561,6 +563,37 @@ export async function fetchFundProfile(fcode: string): Promise<FundProfile> {
     if (!json.success || json.errorCode !== 0 || !json.data)
         throw new Error('基金档案数据获取失败')
     return mapFundProfile(json.data)
+}
+
+// 持仓股涨跌幅
+export async function fetchFundStock(secids: string) {
+    const body = new URLSearchParams({
+        deviceid: FUND_DEVICE_ID,
+        version: '9.9.9',
+        appVersion: '6.5.5',
+        product: 'EFund',
+        plat: 'Web',
+        secids,
+        wbp2u: '',
+        fields: 'f1,f2,f3,f4,f12,f13,f14,f29,f292',
+        fltt: '2',
+        invt: '2',
+    })
+    const response = await httpFetch(`${FUND_STOCK_BASE}/pi/qt/ulist.np/get`, {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json, text/plain, */*',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Origin: 'https://h5.1234567.com.cn',
+            Referer: 'https://h5.1234567.com.cn/',
+            Validmark: FUND_DEVICE_ID,
+        },
+        body,
+    })
+    if (!response.ok) throw new Error(`基金持仓请求失败: ${response.status}`)
+    const json = await response.json()
+    console.log('基金持仓涨跌幅', json)
+    return json
 }
 
 export default {
