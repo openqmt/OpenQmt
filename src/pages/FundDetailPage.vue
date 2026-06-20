@@ -529,6 +529,25 @@ const holdingColumns: DataTableColumns<FundStockHolding> = [
         },
     },
     {
+        title: '现价',
+        key: 'price',
+        width: 80,
+        align: 'right',
+        render(row) {
+            if (row.price == null) return h('span', { class: 'num-mono' }, '--')
+            return h('span', { class: 'num-mono' }, row.price.toFixed(2))
+        },
+    },
+    {
+        title: '涨跌幅',
+        key: 'changePercent',
+        width: 88,
+        align: 'right',
+        render(row) {
+            return changeCell(row.changePercent)
+        },
+    },
+    {
         title: '行业',
         key: 'industry',
         width: 110,

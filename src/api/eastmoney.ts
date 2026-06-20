@@ -149,6 +149,8 @@ export interface FundStockHolding {
     changePct: number
     industry: string
     holdQuarters: number
+    price: number | null
+    changePercent: number | null
 }
 
 export interface FundSectorItem {
@@ -261,6 +263,7 @@ export interface FundProfile {
 }
 
 interface FundDetailStockRaw {
+    NEWTEXCH: string
     GPDM: string
     GPJC: string
     JZBL: string
@@ -376,6 +379,8 @@ function mapFundDetail(
             changePct: parseNum(item.PCTNVCHG),
             industry: item.INDEXNAME,
             holdQuarters: parseNum(item.HOLDCOUNT),
+            price: null,
+            changePercent: null,
         })),
         sectors: sectorList
             .filter((item) => item.HYMC !== '合计' && item.ZJZBL)
@@ -452,7 +457,30 @@ export async function fetchFundDetail(fcode: string): Promise<FundDetail> {
         throw new Error('基金详情数据获取失败')
     }
 
-    return mapFundDetail(fcode, json.data)
+    const detail = mapFundDetail(fcode, json.data)
+
+    const stocks = json.data.fundInverstPosition?.fundStocks ?? []
+    if (stocks.length) {
+        const secids = stocks.map((s) => `${s.NEWTEXCH}.${s.GPDM}`).join(',')
+        console.log('secids', secids)
+        try {
+            const res = await fetchFundStock(secids)
+            const quoteMap = new Map(
+                (res.data?.diff ?? []).map((d) => [d.f12, d]),
+            )
+            for (const h of detail.holdings) {
+                const q = quoteMap.get(h.code)
+                if (q) {
+                    h.price = q.f2
+                    h.changePercent = q.f3
+                }
+            }
+        } catch (error) {
+            console.log('基金持仓涨跌幅获取失败', error)
+        }
+    }
+
+    return detail
 }
 
 function toProfileNum(v: unknown): number | null {
@@ -566,7 +594,21 @@ export async function fetchFundProfile(fcode: string): Promise<FundProfile> {
 }
 
 // 持仓股涨跌幅
-export async function fetchFundStock(secids: string) {
+interface FundStockQuoteDiff {
+    f2: number
+    f3: number
+    f12: string
+}
+
+interface FundStockQuoteResponse {
+    data?: {
+        diff?: FundStockQuoteDiff[]
+    }
+}
+
+export async function fetchFundStock(
+    secids: string,
+): Promise<FundStockQuoteResponse> {
     const body = new URLSearchParams({
         deviceid: FUND_DEVICE_ID,
         version: '9.9.9',
@@ -579,7 +621,7 @@ export async function fetchFundStock(secids: string) {
         fltt: '2',
         invt: '2',
     })
-    const response = await httpFetch(`${FUND_STOCK_BASE}/pi/qt/ulist.np/get`, {
+    const response = await httpFetch(`${FUND_STOCK_BASE}/api/qt/ulist.np/get`, {
         method: 'POST',
         headers: {
             Accept: 'application/json, text/plain, */*',
