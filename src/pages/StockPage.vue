@@ -32,11 +32,62 @@
         <div class="stock-detail">
             <div class="detail-panel surface-card review-card">
                 <n-tabs v-model:value="reviewTab" type="line" animated size="small">
+                    <n-tab-pane name="macro" tab="宏观视角" />
                     <n-tab-pane name="aShare" tab="A股复盘" />
                     <n-tab-pane name="usShare" tab="美股复盘" />
                     <n-tab-pane name="hotNews" tab="热点要闻" />
                     <n-tab-pane name="dragonTiger" tab="龙虎榜单" />
                 </n-tabs>
+
+                <!-- 宏观视角 -->
+                <template v-if="reviewTab === 'macro'">
+                    <div class="review-content" v-if="macroReview">
+                        <div class="review-section">
+                            <div class="review-section-header">
+                                <span class="section-icon">🇨🇳</span>
+                                <span class="section-title-text">A股市场主线</span>
+                            </div>
+                            <p class="review-text">{{ macroReview.aShareTheme }}</p>
+                        </div>
+
+                        <div class="review-section">
+                            <div class="review-section-header">
+                                <span class="section-icon">🇺🇸</span>
+                                <span class="section-title-text">美股市场主线</span>
+                            </div>
+                            <p class="review-text">{{ macroReview.usShareTheme }}</p>
+                        </div>
+
+                        <div class="review-section">
+                            <div class="review-section-header">
+                                <span class="section-icon">🌍</span>
+                                <span class="section-title-text">全球共识长期产业主线</span>
+                            </div>
+                            <div class="sector-list">
+                                <div class="sector-item" v-for="(s, i) in macroReview.globalThemes" :key="i">
+                                    <n-tag size="small" :bordered="false" type="warning">{{ s.name }}</n-tag>
+                                    <span class="sector-reason">{{ s.desc }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="review-section">
+                            <div class="review-section-header">
+                                <span class="section-icon">⚖️</span>
+                                <span class="section-title-text">投资配置建议</span>
+                            </div>
+                            <p class="review-text">{{ macroReview.allocation }}</p>
+                        </div>
+
+                        <div class="review-section">
+                            <div class="review-section-header">
+                                <span class="section-icon">📋</span>
+                                <span class="section-title-text">长期发展结论</span>
+                            </div>
+                            <p class="review-text">{{ macroReview.conclusion }}</p>
+                        </div>
+                    </div>
+                </template>
 
                 <!-- A股复盘 / 美股复盘 -->
                 <template v-if="reviewTab === 'aShare' || reviewTab === 'usShare'">
@@ -169,10 +220,12 @@ import { NTabs, NTabPane, NTag, NDataTable, type DataTableColumns } from 'naive-
 import PriceCard from '../components/PriceCard.vue'
 import {
     getMarketReview,
+    getMacroReview,
     getHotNews,
     getDragonTiger,
     type ReviewTab,
     type MarketReview,
+    type MacroReview,
     type HotNewsItem,
     type DragonTigerItem,
 } from '../data/stockDetailMock'
@@ -184,9 +237,10 @@ const { isMobile } = useBreakpoint()
 const stockConfig = store.getConfig() as Record<StockKey, SymbolConfig>
 
 // ── 逻辑复盘 ──
-const reviewTab = ref<ReviewTab>('aShare')
+const reviewTab = ref<ReviewTab>('macro')
 
 const reviewData = computed<MarketReview>(() => getMarketReview(reviewTab.value))
+const macroReview = computed<MacroReview>(() => getMacroReview())
 const hotNews = computed<HotNewsItem[]>(() => getHotNews())
 const dragonTigerData = computed<DragonTigerItem[]>(() => getDragonTiger())
 

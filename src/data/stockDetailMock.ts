@@ -2,7 +2,7 @@ import type { StockKey } from '../types'
 
 export type ChartPeriod = 'intraday' | 'daily' | 'monthly'
 export type SectorTab = 'hot' | 'industry' | 'concept' | 'main'
-export type ReviewTab = 'aShare' | 'usShare' | 'hotNews' | 'dragonTiger'
+export type ReviewTab = 'macro' | 'aShare' | 'usShare' | 'hotNews' | 'dragonTiger'
 
 export interface MarketReview {
     trend: string
@@ -14,6 +14,14 @@ export interface MarketReview {
     strategy: string
     avoidance: string[]
     negativeFactors: string[]
+}
+
+export interface MacroReview {
+    aShareTheme: string
+    usShareTheme: string
+    globalThemes: { name: string; desc: string }[]
+    allocation: string
+    conclusion: string
 }
 
 export interface HotNewsItem {
@@ -363,6 +371,39 @@ export function isValidStockKey(key: string): key is StockKey {
     return ['sh', 'cy', 'hk', 'us'].includes(key)
 }
 
+const MOCK_MACRO_REVIEW: MacroReview = {
+    aShareTheme:
+        'A股当前主线聚焦于“科技自立+内需复苏”双轮驱动。人工智能产业链从算力基础设施向端侧应用扩散，半导体国产替代进入设备与材料深水区，叠加新能源车智能化渗透率加速，构成成长方向核心主线。同时，政策端持续发力稳增长，低空经济、数据要素等新质生产力方向反复活跃，消费复苏预期在估值底部区域提供防御支撑。',
+    usShareTheme:
+        '美股主线围绕“AI叙事+降息预期”展开。英伟达等AI算力龙头仍是市场共识度最高的方向，但估值分歧加大，资金开始向AI应用层（软件、广告、云）扩散。降息预期升温推动利率敏感型资产（地产、小盘股）阶段性修复，但通胀粘性使节奏反复。中概股在中国政策转向和估值低位双重驱动下出现结构性机会。',
+    globalThemes: [
+        {
+            name: '人工智能与算力革命',
+            desc: 'GPT级大模型推动全球进入AI基础设施建设周期，GPU/ASIC、高速互联、液冷散热、光模块等环节持续高景气，应用层落地加速从概念走向商业化。',
+        },
+        {
+            name: '能源转型与新型电力系统',
+            desc: '光伏、风电装机持续增长，储能经济性拐点临近，电网升级与特高压建设加速，全球电气化趋势不可逆转。',
+        },
+        {
+            name: '半导体国产化与先进制程',
+            desc: '地缘博弈加速全球半导体供应链重构，中国设备/材料/EDA国产替代进入放量期，先进封装（CoWoS/HBM）成为性能提升关键路径。',
+        },
+        {
+            name: '人口老龄化与生物医药创新',
+            desc: 'GLP-1药物开启代谢疾病治疗新纪元，ADC、基因治疗、AI制药等前沿方向持续突破，全球医疗支出长期增长趋势确定。',
+        },
+        {
+            name: '地缘重构与供应链安全',
+            desc: '逆全球化趋势下，关键矿产、军工航天、网络安全等“安全资产”价值重估，资源国与制造国博弈加剧。',
+        },
+    ],
+    allocation:
+        '全球配置应以“科技成长+资源安全”为双核心。权益方面，超配AI算力链、半导体设备、新能源储能等确定成长方向，标配消费医药等防御资产，低配传统周期股。区域上，A股聚焦科技自主可控与内需复苏，美股关注AI应用层扩散与降息受益板块，港股关注互联网平台估值修复。固收方面，利用美债高位锁定长期收益，逐步增加新兴市场债券配置。另类资产方面，黄金作为地缘对冲与货币贬值双重保险维持战略配置。',
+    conclusion:
+        '当前全球宏观处于“技术革命加速+地缘格局重构+货币周期转换”三重叠加期。AI驱动的生产力跃升正在重塑全球产业格局，半导体、能源转型、生物医药构成未来5-10年最具确定性的长期产业主线。逆全球化趋势要求投资者重视供应链安全与资源自主可控。货币政策方面，全球利率中枢长期下移但过程曲折，结构性机会多于趋势性机会。建议投资者以全球视野配置核心产业主线，用时间换取产业成长红利，同时在组合中保留足够的安全垫应对地缘与政策的不确定性。',
+}
+
 // ============ 逻辑复盘 Mock 数据 ============
 
 const MOCK_A_SHARE_REVIEW: MarketReview = {
@@ -425,6 +466,10 @@ const MOCK_DRAGON_TIGER: DragonTigerItem[] = [
     { rank: 7, stockName: '科大讯飞', stockCode: '002230', buyAmount: 31400, sellAmount: 12800, netBuy: 18600, reason: '大模型应用端持续突破', department: '海通证券上海建国西路' },
     { rank: 8, stockName: '兆易创新', stockCode: '603986', buyAmount: 28700, sellAmount: 11300, netBuy: 17400, reason: '存储芯片周期反转预期', department: '中金公司上海分公司' },
 ]
+
+export function getMacroReview(): MacroReview {
+    return MOCK_MACRO_REVIEW
+}
 
 export function getMarketReview(tab: ReviewTab): MarketReview {
     if (tab === 'usShare') return MOCK_US_SHARE_REVIEW
