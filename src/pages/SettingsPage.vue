@@ -281,12 +281,12 @@ const providerTabs = computed(() =>
     settingsStore.providerOptions.map((opt) => ({
         key: opt.value as ModelProvider,
         label: opt.label,
-    }))
+    })),
 )
 
 // 当前提供商配置
 const currentConfig = computed(
-    () => settingsStore.model.providers[activeProvider.value]
+    () => settingsStore.model.providers[activeProvider.value],
 )
 
 const currentModels = computed(() => currentConfig.value?.models || [])
@@ -307,7 +307,7 @@ watch(
             providerForm.baseUrl = config.baseUrl
         }
     },
-    { immediate: true }
+    { immediate: true },
 )
 
 // 自定义提供商列表
@@ -534,7 +534,6 @@ function handleReset() {
 .model-tag-id {
     font-size: 11px;
     color: var(--text-muted);
-    font-family: 'JetBrains Mono', monospace;
 }
 
 /* 自定义提供商 */
@@ -570,7 +569,6 @@ function handleReset() {
 .provider-url {
     font-size: 12px;
     color: var(--text-muted);
-    font-family: 'JetBrains Mono', monospace;
 }
 
 .empty-state {

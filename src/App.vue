@@ -30,7 +30,9 @@
                         :collapsed="collapsed"
                         :collapsed-width="64"
                         :collapsed-icon-size="20"
-                        :options="isInSettingsArea ? settingsMenuOptions : menuOptions"
+                        :options="
+                            isInSettingsArea ? settingsMenuOptions : menuOptions
+                        "
                         :indent="20"
                     />
                 </n-layout-sider>
@@ -38,7 +40,12 @@
                     <n-layout-header :bordered="false" class="app-header">
                         <div class="header-left">
                             <n-button
-                                v-if="!isMobile && (isInSettingsArea || isFundDetailPage || isStockDetailPage)"
+                                v-if="
+                                    !isMobile &&
+                                    (isInSettingsArea ||
+                                        isFundDetailPage ||
+                                        isStockDetailPage)
+                                "
                                 quaternary
                                 circle
                                 size="small"
@@ -46,7 +53,9 @@
                                 @click="handleBack"
                             >
                                 <template #icon>
-                                    <n-icon size="18"><ArrowBackOutline /></n-icon>
+                                    <n-icon size="18"
+                                        ><ArrowBackOutline
+                                    /></n-icon>
                                 </template>
                             </n-button>
                             <n-button
@@ -174,7 +183,9 @@
                     <div class="sidebar-divider"></div>
                     <n-menu
                         v-model:value="activeKey"
-                        :options="isInSettingsArea ? settingsMenuOptions : menuOptions"
+                        :options="
+                            isInSettingsArea ? settingsMenuOptions : menuOptions
+                        "
                         :indent="20"
                     />
                 </div>
@@ -334,7 +345,7 @@ const lightThemeOverrides: GlobalThemeOverrides = {
 }
 
 const currentThemeOverrides = computed(() =>
-    themeStore.isDark ? darkThemeOverrides : lightThemeOverrides
+    themeStore.isDark ? darkThemeOverrides : lightThemeOverrides,
 )
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -349,7 +360,7 @@ const renderLabelWithLock = (label: string, requiresAuth: boolean) => {
                 h(
                     NIcon,
                     { size: 12, color: 'var(--text-muted)' },
-                    { default: () => h(LockClosedOutline) }
+                    { default: () => h(LockClosedOutline) },
                 ),
             ])
     }
@@ -375,30 +386,43 @@ const menuOptions = computed<MenuOption[]>(() => [
                 key: 'ai-new',
                 icon: renderIcon(AddOutline),
             },
-            ...aiStore.sortedConversations.map(conv => ({
-                label: () => h('div', {
-                    style: 'display:flex;align-items:center;justify-content:space-between;width:100%;gap:4px',
-                    onClick: (e: MouseEvent) => {
-                        e.stopPropagation()
-                    },
-                }, [
-                    h('span', {
-                        style: 'overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0',
-                        onClick: () => {
-                            aiStore.switchConversation(conv.id)
-                            router.push(`/ai/${conv.id}`)
+            ...aiStore.sortedConversations.map((conv) => ({
+                label: () =>
+                    h(
+                        'div',
+                        {
+                            style: 'display:flex;align-items:center;justify-content:space-between;width:100%;gap:4px',
+                            onClick: (e: MouseEvent) => {
+                                e.stopPropagation()
+                            },
                         },
-                    }, conv.title),
-                    h(NIcon, {
-                        size: 14,
-                        color: 'var(--text-muted)',
-                        style: 'flex-shrink:0;cursor:pointer;',
-                        onClick: (e: MouseEvent) => {
-                            e.stopPropagation()
-                            aiStore.deleteConversation(conv.id)
-                        },
-                    }, { default: () => h(CloseOutline) }),
-                ]),
+                        [
+                            h(
+                                'span',
+                                {
+                                    style: 'overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0',
+                                    onClick: () => {
+                                        aiStore.switchConversation(conv.id)
+                                        router.push(`/ai/${conv.id}`)
+                                    },
+                                },
+                                conv.title,
+                            ),
+                            h(
+                                NIcon,
+                                {
+                                    size: 14,
+                                    color: 'var(--text-muted)',
+                                    style: 'flex-shrink:0;cursor:pointer;',
+                                    onClick: (e: MouseEvent) => {
+                                        e.stopPropagation()
+                                        aiStore.deleteConversation(conv.id)
+                                    },
+                                },
+                                { default: () => h(CloseOutline) },
+                            ),
+                        ],
+                    ),
                 key: `ai-conv-${conv.id}`,
                 icon: renderIcon(ChatbubbleOutline),
             })),
@@ -518,11 +542,22 @@ watch(
             return
         }
         const key = path.replace('/', '') || 'gold'
-        if (['gold', 'stock', 'fund', 'learn', 'ai', 'profile', 'settings', 'notifications'].includes(key)) {
+        if (
+            [
+                'gold',
+                'stock',
+                'fund',
+                'learn',
+                'ai',
+                'profile',
+                'settings',
+                'notifications',
+            ].includes(key)
+        ) {
             activeKey.value = key
         }
     },
-    { immediate: true }
+    { immediate: true },
 )
 
 watch(activeKey, (key) => {
@@ -561,7 +596,7 @@ watch(
             showAuthDialog.value = true
         }
     },
-    { immediate: true }
+    { immediate: true },
 )
 
 watch(
@@ -573,7 +608,7 @@ watch(
             router.push(target)
             showAuthDialog.value = false
         }
-    }
+    },
 )
 
 onMounted(async () => {
@@ -789,7 +824,8 @@ onUnmounted(() => {
     padding: 4px 10px 4px 4px;
     border-radius: 100px;
     border: 1px solid var(--border-subtle);
-    transition: background var(--transition-fast),
+    transition:
+        background var(--transition-fast),
         border-color var(--transition-fast);
 }
 
@@ -820,7 +856,7 @@ onUnmounted(() => {
 .header-time {
     color: var(--text-muted);
     font-size: 12px;
-    font-family: 'JetBrains Mono', monospace;
+
     letter-spacing: 0.02em;
     white-space: nowrap;
     padding: 4px 10px;

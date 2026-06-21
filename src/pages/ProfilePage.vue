@@ -271,7 +271,7 @@ async function handleUpdatePassword() {
     passwordLoading.value = true
     const result = await authStore.updatePassword(
         passwordForm.oldPassword,
-        passwordForm.newPassword
+        passwordForm.newPassword,
     )
     passwordLoading.value = false
     if (result.success) {
@@ -386,7 +386,7 @@ async function handleUpdatePassword() {
 .credits-value {
     font-size: 44px;
     font-weight: 600;
-    font-family: 'JetBrains Mono', monospace;
+
     color: var(--gold-primary);
     line-height: 1;
     letter-spacing: -0.03em;
@@ -422,7 +422,8 @@ async function handleUpdatePassword() {
     padding: 14px 12px;
     text-align: center;
     cursor: pointer;
-    transition: border-color var(--transition-fast),
+    transition:
+        border-color var(--transition-fast),
         background var(--transition-fast);
     position: relative;
 }
@@ -440,7 +441,7 @@ async function handleUpdatePassword() {
 .recharge-amount {
     font-size: 20px;
     font-weight: 700;
-    font-family: 'JetBrains Mono', monospace;
+
     color: var(--text-primary);
     display: block;
 }
@@ -490,7 +491,6 @@ async function handleUpdatePassword() {
 }
 
 .num-mono {
-    font-family: 'JetBrains Mono', monospace;
 }
 
 /* 响应式 */

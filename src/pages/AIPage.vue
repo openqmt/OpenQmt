@@ -191,7 +191,7 @@ async function handleSend(): Promise<void> {
         message.error(error.message || '请求失败')
         aiStore.updateMessage(
             aiMessageId,
-            `❌ 请求失败: ${error.message || '未知错误'}`
+            `❌ 请求失败: ${error.message || '未知错误'}`,
         )
     } finally {
         isLoading.value = false
@@ -201,7 +201,7 @@ async function handleSend(): Promise<void> {
 
 async function callAIStream(
     userMessage: string,
-    messageId: string
+    messageId: string,
 ): Promise<void> {
     const config = settingsStore.model.providers[selectedProvider.value]
     if (!config) throw new Error('模型配置不存在')
@@ -388,7 +388,9 @@ async function callAIStream(
     border-radius: 100px;
     font-size: 13px;
     font-weight: 500;
-    transition: background var(--transition-fast), color var(--transition-fast),
+    transition:
+        background var(--transition-fast),
+        color var(--transition-fast),
         border-color var(--transition-fast);
 }
 
@@ -461,7 +463,7 @@ async function callAIStream(
     background: var(--bg-card);
     padding: 2px 6px;
     border-radius: 4px;
-    font-family: 'JetBrains Mono', monospace;
+
     font-size: 13px;
 }
 
@@ -528,7 +530,8 @@ async function callAIStream(
     color: var(--text-primary);
     font-size: 14px;
     outline: none;
-    transition: border-color var(--transition-fast),
+    transition:
+        border-color var(--transition-fast),
         box-shadow var(--transition-fast);
 }
 
@@ -550,7 +553,9 @@ async function callAIStream(
     border: none;
     font-size: 16px;
     cursor: pointer;
-    transition: opacity var(--transition-fast), transform var(--transition-fast);
+    transition:
+        opacity var(--transition-fast),
+        transform var(--transition-fast);
     display: flex;
     align-items: center;
     justify-content: center;
