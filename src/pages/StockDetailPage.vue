@@ -6,61 +6,88 @@
                     <span class="stock-icon">{{ info.icon }}</span>
                     <div class="header-names">
                         <h2 class="stock-name">{{ info.name }}</h2>
-                        <span class="stock-code num-mono">{{ info.code }} · {{ info.market }}</span>
+                        <span class="stock-code num-mono"
+                            >{{ info.code }} · {{ info.market }}</span
+                        >
                     </div>
                     <div class="header-price">
-                        <span class="price-value num-mono" :class="priceClass">{{
-                            info.current.toFixed(2)
-                        }}</span>
-                        <span class="price-change num-mono" :class="priceClass">{{
-                            changeStr
-                        }}</span>
+                        <span
+                            class="price-value num-mono"
+                            :class="priceClass"
+                            >{{ info.current.toFixed(2) }}</span
+                        >
+                        <span
+                            class="price-change num-mono"
+                            :class="priceClass"
+                            >{{ changeStr }}</span
+                        >
                     </div>
                 </div>
                 <div class="info-grid">
                     <div class="info-item">
                         <span class="info-label">今开</span>
-                        <span class="info-value num-mono">{{ info.open.toFixed(2) }}</span>
+                        <span class="info-value num-mono">{{
+                            info.open.toFixed(2)
+                        }}</span>
                     </div>
                     <div class="info-item">
                         <span class="info-label">最高</span>
-                        <span class="info-value num-mono up">{{ info.high.toFixed(2) }}</span>
+                        <span class="info-value num-mono up">{{
+                            info.high.toFixed(2)
+                        }}</span>
                     </div>
                     <div class="info-item">
                         <span class="info-label">最低</span>
-                        <span class="info-value num-mono down">{{ info.low.toFixed(2) }}</span>
+                        <span class="info-value num-mono down">{{
+                            info.low.toFixed(2)
+                        }}</span>
                     </div>
                     <div class="info-item">
                         <span class="info-label">振幅</span>
-                        <span class="info-value num-mono">{{ info.amplitude }}%</span>
+                        <span class="info-value num-mono"
+                            >{{ info.amplitude }}%</span
+                        >
                     </div>
                     <div class="info-item">
                         <span class="info-label">成交量</span>
-                        <span class="info-value num-mono">{{ formatVolume(info.volume) }}</span>
+                        <span class="info-value num-mono">{{
+                            formatVolume(info.volume)
+                        }}</span>
                     </div>
                     <div class="info-item">
                         <span class="info-label">成交额</span>
-                        <span class="info-value num-mono">{{ formatAmount(info.amount) }}</span>
+                        <span class="info-value num-mono">{{
+                            formatAmount(info.amount)
+                        }}</span>
                     </div>
                     <div class="info-item">
                         <span class="info-label">换手率</span>
-                        <span class="info-value num-mono">{{ info.turnover }}%</span>
+                        <span class="info-value num-mono"
+                            >{{ info.turnover }}%</span
+                        >
                     </div>
                     <div class="info-item">
                         <span class="info-label">PE / PB</span>
-                        <span class="info-value num-mono">{{ info.pe }} / {{ info.pb }}</span>
+                        <span class="info-value num-mono"
+                            >{{ info.pe }} / {{ info.pb }}</span
+                        >
                     </div>
                 </div>
             </div>
 
-            <h3 class="section-title">K 线图</h3>
+            <!-- <h3 class="section-title">K 线图</h3>
             <div class="surface-card chart-card">
                 <StockChart v-if="stockKey" :stock-key="stockKey" />
-            </div>
+            </div> -->
 
             <h3 class="section-title">板块统计</h3>
             <div class="surface-card sector-card">
-                <n-tabs v-model:value="sectorTab" type="line" animated size="small">
+                <n-tabs
+                    v-model:value="sectorTab"
+                    type="line"
+                    animated
+                    size="small"
+                >
                     <n-tab-pane
                         v-for="tab in sectorTabs"
                         :key="tab.value"
@@ -79,9 +106,16 @@
             </div>
         </template>
 
-        <n-result v-else status="404" title="未找到该指数" description="请从股票行情页选择有效的大盘指数">
+        <n-result
+            v-else
+            status="404"
+            title="未找到该指数"
+            description="请从股票行情页选择有效的大盘指数"
+        >
             <template #footer>
-                <n-button type="primary" @click="router.push('/stock')">返回行情</n-button>
+                <n-button type="primary" @click="router.push('/stock')"
+                    >返回行情</n-button
+                >
             </template>
         </n-result>
     </div>
@@ -98,7 +132,7 @@ import {
     NTabPane,
     type DataTableColumns,
 } from 'naive-ui'
-import StockChart from '../components/StockChart.vue'
+// import StockChart from '../components/StockChart.vue'
 import {
     getStockDetailInfo,
     getSectorData,
@@ -126,11 +160,11 @@ const stockKey = computed<StockKey | null>(() => {
 })
 
 const info = computed(() =>
-    stockKey.value ? getStockDetailInfo(stockKey.value) : null
+    stockKey.value ? getStockDetailInfo(stockKey.value) : null,
 )
 
 const sectorData = computed(() =>
-    stockKey.value ? getSectorData(stockKey.value, sectorTab.value) : []
+    stockKey.value ? getSectorData(stockKey.value, sectorTab.value) : [],
 )
 
 const priceClass = computed(() => {
@@ -203,7 +237,7 @@ function changeCell(val: number) {
     return h(
         'span',
         { class: 'num-mono', style: { color, fontWeight: '600' } },
-        `${sign}${val.toFixed(2)}%`
+        `${sign}${val.toFixed(2)}%`,
     )
 }
 
