@@ -200,6 +200,7 @@ import {
 } from 'naive-ui'
 import { useAuthStore } from '../stores/auth'
 import type { FormInst, FormRules } from 'naive-ui'
+import { LockClosedOutline, MailOutline } from '@vicons/ionicons5'
 
 const props = defineProps<{ show: boolean }>()
 const emit = defineEmits<{ 'update:show': [value: boolean] }>()
