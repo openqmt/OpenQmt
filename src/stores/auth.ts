@@ -69,6 +69,75 @@ export const useAuthStore = defineStore('auth', () => {
 
     const isAuthenticated = computed(() => !!user.value && !!token.value)
 
+    /** 邮箱登录或自动注册（账号不存在则自动创建） */
+    async function loginOrRegister(
+        email: string,
+        password: string,
+    ): Promise<AuthResult & { isNew?: boolean }> {
+        loading.value = true
+        await new Promise((r) => setTimeout(r, 500))
+        try {
+            if (!email.includes('@') || !email.includes('.')) {
+                return {
+                    success: false,
+                    message: '邮箱格式不正确',
+                    user: null,
+                    token: null,
+                }
+            }
+            if (password.length < 6) {
+                return {
+                    success: false,
+                    message: '密码至少6位',
+                    user: null,
+                    token: null,
+                }
+            }
+            const users = loadMockUsers()
+            let found = users.find((u) => u.email === email)
+            let isNew = false
+
+            if (!found) {
+                // 账号不存在，自动注册
+                found = {
+                    id: generateId(),
+                    email,
+                    password,
+                    nickname: email.split('@')[0],
+                    avatar_url: null,
+                    github_id: null,
+                    credits: 100,
+                    created_at: new Date().toISOString(),
+                }
+                users.push(found)
+                saveMockUsers(users)
+                isNew = true
+            } else if (found.password !== password) {
+                return {
+                    success: false,
+                    message: '密码错误',
+                    user: null,
+                    token: null,
+                }
+            }
+
+            const tk = generateToken()
+            const info = userToInfo(found)
+            user.value = info
+            token.value = tk
+            saveSession({ userId: found.id, token: tk })
+            return {
+                success: true,
+                message: isNew ? '注册并登录成功' : '登录成功',
+                user: info,
+                token: tk,
+                isNew,
+            }
+        } finally {
+            loading.value = false
+        }
+    }
+
     /** 邮箱登录 */
     async function login(email: string, password: string): Promise<AuthResult> {
         loading.value = true
@@ -99,7 +168,7 @@ export const useAuthStore = defineStore('auth', () => {
     /** 邮箱注册 */
     async function register(
         email: string,
-        password: string
+        password: string,
     ): Promise<AuthResult> {
         loading.value = true
         await new Promise((r) => setTimeout(r, 500))
@@ -196,6 +265,49 @@ export const useAuthStore = defineStore('auth', () => {
         }
     }
 
+    /** Google 登录 (mock) */
+    async function googleLogin(): Promise<AuthResult> {
+        loading.value = true
+        await new Promise((r) => setTimeout(r, 800))
+        try {
+            const googleId = 'gg_' + generateId()
+            const email = `google_${googleId}@openqmt.local`
+            const users = loadMockUsers()
+
+            let found = users.find((u) => u.email === email)
+            if (!found) {
+                found = {
+                    id: generateId(),
+                    email,
+                    password: '',
+                    nickname: 'Google用户',
+                    avatar_url:
+                        'https://api.dicebear.com/7.x/identicon/svg?seed=' +
+                        googleId,
+                    github_id: null,
+                    credits: 100,
+                    created_at: new Date().toISOString(),
+                }
+                users.push(found)
+                saveMockUsers(users)
+            }
+
+            const tk = generateToken()
+            const info = userToInfo(found)
+            user.value = info
+            token.value = tk
+            saveSession({ userId: found.id, token: tk })
+            return {
+                success: true,
+                message: 'Google 登录成功',
+                user: info,
+                token: tk,
+            }
+        } finally {
+            loading.value = false
+        }
+    }
+
     /** 退出登录 */
     async function logout() {
         user.value = null
@@ -252,7 +364,7 @@ export const useAuthStore = defineStore('auth', () => {
     /** 修改密码 */
     async function updatePassword(
         oldPassword: string,
-        newPassword: string
+        newPassword: string,
     ): Promise<AuthResult> {
         if (!user.value)
             return {
@@ -343,9 +455,11 @@ export const useAuthStore = defineStore('auth', () => {
         loading,
         pendingAuthRoute,
         isAuthenticated,
+        loginOrRegister,
         login,
         register,
         githubLogin,
+        googleLogin,
         logout,
         checkAuth,
         updateNickname,
