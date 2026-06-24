@@ -1,8 +1,9 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { UserInfo, AuthResult } from '../types'
+import * as storage from '../utils/storage'
 
-// ── Mock 用户数据库 (localStorage) ──
+// ── Mock 用户数据库 (tauri-plugin-store / localStorage) ──
 
 interface MockUser {
     id: string
@@ -19,24 +20,23 @@ const USERS_KEY = 'openqmt_mock_users'
 const SESSION_KEY = 'openqmt_mock_session'
 
 function loadMockUsers(): MockUser[] {
-    const data = localStorage.getItem(USERS_KEY)
-    return data ? JSON.parse(data) : []
+    const data = storage.getSync<MockUser[]>(USERS_KEY)
+    return data ?? []
 }
 
 function saveMockUsers(users: MockUser[]) {
-    localStorage.setItem(USERS_KEY, JSON.stringify(users))
+    storage.set(USERS_KEY, users)
 }
 
 function loadSession(): { userId: string; token: string } | null {
-    const data = localStorage.getItem(SESSION_KEY)
-    return data ? JSON.parse(data) : null
+    return storage.getSync<{ userId: string; token: string }>(SESSION_KEY)
 }
 
 function saveSession(session: { userId: string; token: string } | null) {
     if (session) {
-        localStorage.setItem(SESSION_KEY, JSON.stringify(session))
+        storage.set(SESSION_KEY, session)
     } else {
-        localStorage.removeItem(SESSION_KEY)
+        storage.remove(SESSION_KEY)
     }
 }
 

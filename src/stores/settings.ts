@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import type { ModelProvider, ModelSettings, ModelOption, ProviderConfig, MenuItemConfig } from "../types";
+import * as storage from "../utils/storage";
 
 const SETTINGS_KEY = "openqmt_model_settings";
 const MENU_SETTINGS_KEY = "openqmt_menu_settings";
@@ -122,9 +123,8 @@ const DEFAULT_SETTINGS: ModelSettings = {
 
 function loadSettings(): ModelSettings {
   try {
-    const raw = localStorage.getItem(SETTINGS_KEY);
-    if (!raw) return { ...DEFAULT_SETTINGS, providers: { ...DEFAULT_SETTINGS.providers } };
-    const parsed = JSON.parse(raw) as Partial<ModelSettings>;
+    const parsed = storage.getSync<Partial<ModelSettings>>(SETTINGS_KEY);
+    if (!parsed) return { ...DEFAULT_SETTINGS, providers: { ...DEFAULT_SETTINGS.providers } };
     
     // 合并默认设置,确保新增字段有默认值
     const settings: ModelSettings = {
@@ -226,7 +226,7 @@ export const useSettingsStore = defineStore("settings", () => {
 
   function save(settings: ModelSettings) {
     model.value = { ...settings };
-    localStorage.setItem(SETTINGS_KEY, JSON.stringify(model.value));
+    storage.set(SETTINGS_KEY, model.value);
   }
 
   function saveCurrentConfig() {
@@ -238,20 +238,19 @@ export const useSettingsStore = defineStore("settings", () => {
       config.baseUrl = model.value.baseUrl;
       config.activeModel = model.value.model;
     }
-    localStorage.setItem(SETTINGS_KEY, JSON.stringify(model.value));
+    storage.set(SETTINGS_KEY, model.value);
   }
 
   function reset() {
     model.value = { ...DEFAULT_SETTINGS, providers: { ...DEFAULT_SETTINGS.providers } };
-    localStorage.setItem(SETTINGS_KEY, JSON.stringify(model.value));
+    storage.set(SETTINGS_KEY, model.value);
   }
 
   // ── 菜单配置 ──
   function loadMenuConfig(): MenuItemConfig[] {
     try {
-      const raw = localStorage.getItem(MENU_SETTINGS_KEY);
-      if (!raw) return DEFAULT_MENU_ITEMS.map(m => ({ ...m }));
-      const saved = JSON.parse(raw) as MenuItemConfig[];
+      const saved = storage.getSync<MenuItemConfig[]>(MENU_SETTINGS_KEY);
+      if (!saved) return DEFAULT_MENU_ITEMS.map(m => ({ ...m }));
       // Merge: add new items, remove obsolete items
       const savedKeys = new Set(saved.map(m => m.key));
       const result: MenuItemConfig[] = saved.map(m => ({ ...m }));
@@ -294,7 +293,7 @@ export const useSettingsStore = defineStore("settings", () => {
   }
 
   function saveMenuConfig() {
-    localStorage.setItem(MENU_SETTINGS_KEY, JSON.stringify(menuConfig.value));
+    storage.set(MENU_SETTINGS_KEY, menuConfig.value);
   }
 
   function resetMenuConfig() {

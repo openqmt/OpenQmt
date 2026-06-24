@@ -1,19 +1,20 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import { getCurrentWindow } from "@tauri-apps/api/window";
+import * as storage from "../utils/storage";
 
 export type ThemeMode = "dark" | "light";
 
 const THEME_KEY = "openqmt_theme";
 
 export const useThemeStore = defineStore("theme", () => {
-  const mode = ref<ThemeMode>((localStorage.getItem(THEME_KEY) as ThemeMode) || "dark");
+  const mode = ref<ThemeMode>((storage.getSync<string>(THEME_KEY) as ThemeMode) || "dark");
 
   const isDark = computed(() => mode.value === "dark");
 
   async function toggle() {
     mode.value = mode.value === "dark" ? "light" : "dark";
-    localStorage.setItem(THEME_KEY, mode.value);
+    storage.set(THEME_KEY, mode.value);
     applyTheme();
     await setTauriTheme();
   }

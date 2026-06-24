@@ -11,7 +11,11 @@
         <p class="settings-subtitle">配置 AI 分析使用的模型提供商</p>
       </div>
 
-      <n-form class="settings-form" label-placement="top" :show-feedback="false">
+      <n-form
+        class="settings-form"
+        label-placement="top"
+        :show-feedback="false"
+      >
         <n-form-item label="模型提供商">
           <n-select
             v-model:value="form.provider"
@@ -40,10 +44,7 @@
         </n-form-item>
 
         <n-form-item label="模型名称">
-          <n-input
-            v-model:value="form.model"
-            :placeholder="modelPlaceholder"
-          />
+          <n-input v-model:value="form.model" :placeholder="modelPlaceholder" />
         </n-form-item>
       </n-form>
 
@@ -57,7 +58,15 @@
 
 <script setup lang="ts">
 import { reactive, watch, computed } from "vue";
-import { NModal, NForm, NFormItem, NSelect, NInput, NButton, useMessage } from "naive-ui";
+import {
+  NModal,
+  NForm,
+  NFormItem,
+  NSelect,
+  NInput,
+  NButton,
+  useMessage,
+} from "naive-ui";
 import { useSettingsStore, PROVIDER_DEFAULTS } from "../stores/settings";
 import type { ModelProvider } from "../types";
 
@@ -75,7 +84,9 @@ const form = reactive({
 });
 
 const modelPlaceholder = computed(
-  () => PROVIDER_DEFAULTS[form.provider as ModelProvider]?.model || "输入模型名称"
+  () =>
+    PROVIDER_DEFAULTS[form.provider as ModelProvider]?.models?.[0]?.name ||
+    "输入模型名称",
 );
 
 watch(
@@ -86,7 +97,7 @@ watch(
     form.baseUrl = val.baseUrl;
     form.model = val.model;
   },
-  { deep: true }
+  { deep: true },
 );
 
 function onProviderChange(provider: ModelProvider) {
@@ -96,12 +107,11 @@ function onProviderChange(provider: ModelProvider) {
 }
 
 function handleSave() {
-  settingsStore.save({
-    provider: form.provider,
-    apiKey: form.apiKey.trim(),
-    baseUrl: form.baseUrl.trim(),
-    model: form.model.trim(),
-  });
+  settingsStore.model.provider = form.provider;
+  settingsStore.model.apiKey = form.apiKey.trim();
+  settingsStore.model.baseUrl = form.baseUrl.trim();
+  settingsStore.model.model = form.model.trim();
+  settingsStore.saveCurrentConfig();
   message.success("设置已保存");
   emit("update:show", false);
 }

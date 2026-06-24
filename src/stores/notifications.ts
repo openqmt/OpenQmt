@@ -7,6 +7,7 @@ import type {
   NotificationTypeConfig,
   PushNotificationSettings,
 } from "../types";
+import * as storage from "../utils/storage";
 
 const NOTIFICATIONS_KEY = "openqmt_notifications";
 
@@ -85,9 +86,8 @@ const DEFAULT_SETTINGS: PushNotificationSettings = {
 
 function loadSettings(): PushNotificationSettings {
   try {
-    const raw = localStorage.getItem(NOTIFICATIONS_KEY);
-    if (!raw) return { ...DEFAULT_SETTINGS, notifications: [...DEFAULT_NOTIFICATIONS] };
-    const parsed = JSON.parse(raw) as Partial<PushNotificationSettings>;
+    const parsed = storage.getSync<Partial<PushNotificationSettings>>(NOTIFICATIONS_KEY);
+    if (!parsed) return { ...DEFAULT_SETTINGS, notifications: [...DEFAULT_NOTIFICATIONS] };
     return {
       channels: parsed.channels ?? [],
       notifications: parsed.notifications ?? [...DEFAULT_NOTIFICATIONS],
@@ -166,7 +166,7 @@ export const useNotificationStore = defineStore("notifications", () => {
   }
 
   function save() {
-    localStorage.setItem(NOTIFICATIONS_KEY, JSON.stringify(settings.value));
+    storage.set(NOTIFICATIONS_KEY, settings.value);
   }
 
   function reset() {
@@ -174,7 +174,7 @@ export const useNotificationStore = defineStore("notifications", () => {
       ...DEFAULT_SETTINGS,
       notifications: [...DEFAULT_NOTIFICATIONS],
     };
-    localStorage.setItem(NOTIFICATIONS_KEY, JSON.stringify(settings.value));
+    storage.set(NOTIFICATIONS_KEY, settings.value);
   }
 
   return {

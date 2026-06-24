@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { AiConversation, AiMessage, ModelProvider } from '../types'
+import * as storage from '../utils/storage'
 
 const CONVERSATIONS_KEY = 'openqmt_ai_conversations'
 const CURRENT_CONVERSATION_KEY = 'openqmt_ai_current_conversation'
@@ -11,26 +12,25 @@ function generateId(): string {
 
 function loadConversations(): AiConversation[] {
     try {
-        const raw = localStorage.getItem(CONVERSATIONS_KEY)
-        return raw ? JSON.parse(raw) : []
+        return storage.getSync<AiConversation[]>(CONVERSATIONS_KEY) ?? []
     } catch {
         return []
     }
 }
 
 function saveConversations(conversations: AiConversation[]) {
-    localStorage.setItem(CONVERSATIONS_KEY, JSON.stringify(conversations))
+    storage.set(CONVERSATIONS_KEY, conversations)
 }
 
 function loadCurrentId(): string | null {
-    return localStorage.getItem(CURRENT_CONVERSATION_KEY)
+    return storage.getSync<string>(CURRENT_CONVERSATION_KEY)
 }
 
 function saveCurrentId(id: string | null) {
     if (id) {
-        localStorage.setItem(CURRENT_CONVERSATION_KEY, id)
+        storage.set(CURRENT_CONVERSATION_KEY, id)
     } else {
-        localStorage.removeItem(CURRENT_CONVERSATION_KEY)
+        storage.remove(CURRENT_CONVERSATION_KEY)
     }
 }
 
