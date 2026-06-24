@@ -73,6 +73,19 @@
                 :class="{ 'header-time--compact': isMobile }"
                 >{{ currentTime }}</span
               >
+              <!-- AI 页面助手 -->
+              <n-button
+                quaternary
+                circle
+                size="small"
+                @click="showAiAssistant = true"
+                class="ai-assistant-btn"
+                title="AI 页面助手"
+              >
+                <template #icon>
+                  <n-icon size="18"><SparklesOutline /></n-icon>
+                </template>
+              </n-button>
               <!-- 主题切换 -->
               <n-button
                 quaternary
@@ -177,6 +190,7 @@
       <AuthDialog v-model:show="showAuthDialog" />
       <SettingsDialog v-model:show="showSettingsDialog" />
       <AboutDialog v-model:show="showAboutDialog" />
+      <AiAssistantOverlay v-model:show="showAiAssistant" />
     </n-message-provider>
   </n-config-provider>
 </template>
@@ -221,6 +235,7 @@ import AuthDialog from "./components/AuthDialog.vue";
 import SettingsDialog from "./components/SettingsDialog.vue";
 import AboutDialog from "./components/AboutDialog.vue";
 import PageToolbar from "./components/PageToolbar.vue";
+import AiAssistantOverlay from "./components/AiAssistantOverlay.vue";
 
 const route = useRoute();
 const goldStore = useGoldStore();
@@ -238,6 +253,7 @@ const currentTime = ref("");
 const showAuthDialog = ref(false);
 const showSettingsDialog = ref(false);
 const showAboutDialog = ref(false);
+const showAiAssistant = ref(false);
 let timer: ReturnType<typeof setInterval> | null = null;
 
 // Compute the first visible menu key from settings store
@@ -837,6 +853,18 @@ onUnmounted(() => {
 
 .theme-toggle-btn:hover {
   color: var(--gold-primary) !important;
+}
+
+.ai-assistant-btn {
+  color: var(--text-muted) !important;
+  transition:
+    color 0.2s,
+    background 0.2s;
+}
+
+.ai-assistant-btn:hover {
+  color: var(--gold-primary) !important;
+  background: rgba(212, 168, 67, 0.08) !important;
 }
 
 .login-btn {
