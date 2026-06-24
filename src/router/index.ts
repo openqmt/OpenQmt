@@ -4,7 +4,17 @@ import { useAuthStore } from "../stores/auth";
 const routes: RouteRecordRaw[] = [
   {
     path: "/",
-    redirect: "/gold",
+    redirect: () => {
+      // Read first visible key from settings store
+      try {
+        const raw = JSON.parse(localStorage.getItem("openqmt_menu_settings") || "null");
+        if (Array.isArray(raw)) {
+          const visible = [...raw].filter((m: any) => m.visible).sort((a: any, b: any) => a.order - b.order);
+          if (visible.length > 0) return `/${visible[0].key}`;
+        }
+      } catch {}
+      return "/gold";
+    },
   },
   {
     path: "/gold",
@@ -91,7 +101,7 @@ router.beforeEach((to, _from, next) => {
     const authStore = useAuthStore();
     if (!authStore.isAuthenticated) {
       authStore.pendingAuthRoute = to.fullPath;
-      next({ path: "/gold", query: { auth: "required" } });
+      next({ path: "/", query: { auth: "required" } });
     } else {
       next();
     }

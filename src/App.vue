@@ -231,7 +231,7 @@ const themeStore = useThemeStore();
 const aiStore = useAiStore();
 const settingsStore = useSettingsStore();
 const { isMobile } = useBreakpoint();
-const activeKey = ref<string>("gold");
+const activeKey = ref<string>("");
 const collapsed = ref(false);
 const mobileSidebarOpen = ref(false);
 const currentTime = ref("");
@@ -239,6 +239,14 @@ const showAuthDialog = ref(false);
 const showSettingsDialog = ref(false);
 const showAboutDialog = ref(false);
 let timer: ReturnType<typeof setInterval> | null = null;
+
+// Compute the first visible menu key from settings store
+const firstVisibleKey = computed(() => {
+  const visible = settingsStore.sortedMenuItems.find(
+    (m: { visible: boolean }) => m.visible,
+  );
+  return visible?.key ?? "gold";
+});
 
 // 设置区域菜单状态
 const isInSettingsArea = computed(() => {
@@ -481,7 +489,7 @@ async function handleUserDropdown(key: string) {
 }
 
 function backToMain() {
-  router.push("/gold");
+  router.push(`/${firstVisibleKey.value}`);
 }
 
 function handleBack() {
@@ -557,7 +565,7 @@ watch(
       activeKey.value = "stock";
       return;
     }
-    const key = path.replace("/", "") || "gold";
+    const key = path.replace("/", "") || firstVisibleKey.value;
     if (
       [
         "gold",
@@ -572,6 +580,8 @@ watch(
       ].includes(key)
     ) {
       activeKey.value = key;
+    } else {
+      activeKey.value = firstVisibleKey.value;
     }
   },
   { immediate: true },
