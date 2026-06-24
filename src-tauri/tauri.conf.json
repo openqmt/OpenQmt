@@ -12,7 +12,7 @@
     "app": {
         "windows": [
             {
-                "title": "OpenQmt - 金融信息查看",
+                "title": "OpenQmt",
                 "width": 1280,
                 "height": 860,
                 "minWidth": 100,
