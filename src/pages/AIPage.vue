@@ -25,7 +25,7 @@
         </div>
 
         <div
-          v-for="msg in messages"
+          v-for="msg in displayMessages"
           :key="msg.id"
           :class="[
             'chat-bubble',
@@ -99,6 +99,21 @@ const { selectedProvider, selectedModel, currentProviderLabel } =
   useAiModelSelection();
 
 const messages = computed(() => aiStore.currentConversation?.messages || []);
+
+/** Filter out the loading placeholder (empty assistant message while streaming) */
+const displayMessages = computed(() => {
+  const all = messages.value;
+  if (
+    isLoading.value &&
+    all.length > 0 &&
+    all[all.length - 1].role === "assistant" &&
+    all[all.length - 1].content === ""
+  ) {
+    return all.slice(0, -1);
+  }
+  return all;
+});
+
 const inputText = ref("");
 const isLoading = ref(false);
 const messagesRef = ref<HTMLElement | null>(null);
