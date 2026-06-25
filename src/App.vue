@@ -64,20 +64,40 @@
                   <n-icon size="20"><MenuOutline /></n-icon>
                 </template>
               </n-button>
-              <span class="header-title">{{ currentTitle }}</span>
+              <span v-if="!isMobile" class="header-title">{{
+                currentTitle
+              }}</span>
               <PageToolbar v-if="showPageToolbar" />
-              <n-input
-                v-if="showSearchBox"
-                v-model:value="searchQuery"
-                :placeholder="searchPlaceholder"
-                size="small"
-                clearable
-                class="header-search-input"
-              >
-                <template #prefix>
-                  <n-icon :component="SearchOutline" />
-                </template>
-              </n-input>
+              <!-- 搜索框：移动端点击展开 -->
+              <template v-if="showSearchBox">
+                <n-button
+                  v-if="isMobile && !searchExpanded"
+                  quaternary
+                  circle
+                  size="small"
+                  class="search-toggle-btn"
+                  @click="searchExpanded = true"
+                >
+                  <template #icon>
+                    <n-icon size="18"><SearchOutline /></n-icon>
+                  </template>
+                </n-button>
+                <n-input
+                  v-else
+                  ref="searchInputRef"
+                  v-model:value="searchQuery"
+                  :placeholder="searchPlaceholder"
+                  size="small"
+                  clearable
+                  class="header-search-input"
+                  :class="{ 'header-search-input--mobile': isMobile }"
+                  @blur="onSearchBlur"
+                >
+                  <template #prefix>
+                    <n-icon :component="SearchOutline" />
+                  </template>
+                </n-input>
+              </template>
             </div>
             <div class="header-right">
               <span
@@ -208,7 +228,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, h, onMounted, onUnmounted, watch } from "vue";
+import { ref, computed, h, onMounted, onUnmounted, watch, nextTick } from "vue";
 import { useRoute } from "vue-router";
 import { darkTheme, NIcon, NInput, type GlobalThemeOverrides } from "naive-ui";
 import type { MenuOption, DropdownOption } from "naive-ui";
@@ -568,6 +588,8 @@ const showPageToolbar = computed(() => {
 
 // ── 搜索框 ──
 const searchQuery = ref("");
+const searchExpanded = ref(false);
+const searchInputRef = ref<InstanceType<typeof NInput> | null>(null);
 const showSearchBox = computed(() =>
   ["gold", "stock", "fund"].includes(activeKey.value),
 );
@@ -578,6 +600,18 @@ const searchPlaceholder = computed(() => {
     fund: "搜索基金...",
   };
   return map[activeKey.value] || "搜索...";
+});
+
+function onSearchBlur() {
+  if (isMobile.value && !searchQuery.value) {
+    searchExpanded.value = false;
+  }
+}
+
+watch(searchExpanded, (expanded) => {
+  if (expanded) {
+    nextTick(() => searchInputRef.value?.focus());
+  }
 });
 
 const updateTime = () => {
@@ -631,6 +665,7 @@ watch(
 watch(activeKey, (key) => {
   // 切换页面时清空搜索
   searchQuery.value = "";
+  searchExpanded.value = false;
   // AI 子菜单的特殊处理
   if (key === "ai-new") {
     aiStore.currentConversationId = null;
@@ -809,14 +844,29 @@ onUnmounted(() => {
   flex-shrink: 0;
 }
 
+.header-search-input--mobile {
+  flex: 1;
+  min-width: 0;
+  width: auto;
+}
+
 @media (max-width: 768px) {
-  .header-search-input {
+  .header-search-input:not(.header-search-input--mobile) {
     width: 140px;
   }
 }
 
 .header-search-input :deep(.n-input) {
   border-radius: 20px !important;
+}
+
+.search-toggle-btn {
+  color: var(--text-muted) !important;
+  flex-shrink: 0;
+}
+
+.search-toggle-btn:hover {
+  color: var(--gold-primary) !important;
 }
 
 .back-btn {
