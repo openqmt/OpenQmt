@@ -553,14 +553,6 @@ const showPageToolbar = computed(() => {
   return ["gold", "stock", "fund", "learn", "ai"].includes(activeKey.value);
 });
 
-const pageLoading = computed(() => {
-  const key = activeKey.value;
-  if (key === "gold") return goldStore.loading;
-  if (key === "stock") return stockStore.loading;
-  if (key === "fund") return fundStore.loading;
-  return false;
-});
-
 const updateTime = () => {
   const now = new Date();
   currentTime.value = now.toLocaleString("zh-CN", {
