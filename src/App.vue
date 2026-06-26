@@ -16,9 +16,7 @@
           class="app-sidebar"
         >
           <div class="logo-area" @click="backToMain">
-            <div class="logo-icon-wrap">
-              <span class="logo-letter">Q</span>
-            </div>
+            <img class="logo-icon" :src="logoImg" alt="logo" />
             <div class="logo-text-wrap" v-show="!collapsed">
               <span class="logo-text">OpenQmt</span>
               <span class="logo-sub">一切从简的投资助手</span>
@@ -204,9 +202,7 @@
       >
         <div class="mobile-drawer-inner">
           <div class="logo-area" @click="backToMain">
-            <div class="logo-icon-wrap">
-              <span class="logo-letter">Q</span>
-            </div>
+            <img class="logo-icon" :src="logoImg" alt="logo" />
             <div class="logo-text-wrap">
               <span class="logo-text">OpenQmt</span>
               <span class="logo-sub">一切从简的投资助手</span>
@@ -260,13 +256,11 @@ import {
 } from "@vicons/ionicons5";
 import router from "./router";
 import { useBreakpoint } from "./composables/useBreakpoint";
-import { useGoldStore } from "./stores/gold";
-import { useStockStore } from "./stores/stock";
-import { useFundStore } from "./stores/fund";
 import { useAuthStore } from "./stores/auth";
 import { useThemeStore } from "./stores/theme";
 import { useAiStore } from "./stores/ai";
 import { useSettingsStore } from "./stores/settings";
+import logoImg from "./assets/images/logo.png";
 import AuthDialog from "./components/AuthDialog.vue";
 import SettingsDialog from "./components/SettingsDialog.vue";
 import AboutDialog from "./components/AboutDialog.vue";
@@ -274,9 +268,6 @@ import PageToolbar from "./components/PageToolbar.vue";
 import AiAssistantOverlay from "./components/AiAssistantOverlay.vue";
 
 const route = useRoute();
-const goldStore = useGoldStore();
-const stockStore = useStockStore();
-const fundStore = useFundStore();
 const authStore = useAuthStore();
 const themeStore = useThemeStore();
 const aiStore = useAiStore();
@@ -771,23 +762,12 @@ onUnmounted(() => {
   background: var(--user-hover-bg);
 }
 
-.logo-icon-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.logo-icon {
   width: 36px;
   height: 36px;
-  background: var(--gold-primary);
   border-radius: var(--radius-sm);
+  object-fit: contain;
   flex-shrink: 0;
-}
-
-.logo-letter {
-  color: #fff;
-  font-size: 20px;
-  font-weight: 800;
-  font-family: "Inter", sans-serif;
-  letter-spacing: -1px;
 }
 
 .logo-text-wrap {
