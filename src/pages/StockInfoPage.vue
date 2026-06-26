@@ -222,40 +222,24 @@
 
       <!-- 利润趋势 -->
       <h4 class="sub-title">利润趋势</h4>
-      <div class="profit-chart">
-        <div
-          v-for="p in data.profile.profitTrend"
-          :key="p.period"
-          class="profit-col"
-        >
-          <span class="profit-val num-mono">{{ fmtAmt(p.profit) }}</span>
-          <div class="profit-bar-outer">
-            <div
-              class="profit-bar"
-              :style="{ height: profitBarH(p.profit) + '%' }"
-              :class="p.growth >= 0 ? 'bar-up' : 'bar-down'"
-            ></div>
-          </div>
-          <span class="profit-growth num-mono" :class="changeClass(p.growth)"
-            >{{ p.growth >= 0 ? "+" : "" }}{{ p.growth.toFixed(1) }}%</span
-          >
-          <span class="profit-period">{{ p.period }}</span>
-        </div>
-      </div>
+      <div ref="profitChartRef" class="profit-chart"></div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref, watch, onMounted, onUnmounted, nextTick } from "vue";
 import { useRoute } from "vue-router";
 import { NTag } from "naive-ui";
+import * as echarts from "echarts";
+import { useThemeStore } from "../stores/theme";
 import {
   getIndividualStock,
   type DiagnosisScoreItem,
 } from "../data/stockDetailMock";
 
 const route = useRoute();
+const themeStore = useThemeStore();
 const code = computed(() => String(route.params.code ?? ""));
 const data = computed(() => getIndividualStock(code.value));
 
@@ -302,11 +286,85 @@ const scoreItems = computed<DiagnosisScoreItem[]>(() => {
   return [d.fundamentals, d.technicals, d.capitalFlow, d.news, d.industryView];
 });
 
-// 利润柱高度（相对最大值百分比）
-function profitBarH(profit: number): number {
-  const max = Math.max(...data.value.profile.profitTrend.map((p) => p.profit));
-  return max > 0 ? (profit / max) * 100 : 0;
+// 利润趋势 ECharts
+const profitChartRef = ref<HTMLElement | null>(null);
+let profitChart: echarts.ECharts | null = null;
+
+function buildProfitChartOption() {
+  const trend = data.value.profile.profitTrend;
+  const isDark = themeStore.isDark;
+  return {
+    tooltip: {
+      trigger: "axis",
+      formatter: (params: any) => {
+        const p = params[0];
+        const g = trend[p.dataIndex].growth;
+        const sign = g >= 0 ? "+" : "";
+        return `${p.name}<br/>净利润: ${fmtAmt(p.value)}<br/>环比: ${sign}${g.toFixed(2)}%`;
+      },
+    },
+    grid: { left: 50, right: 16, top: 16, bottom: 30 },
+    xAxis: {
+      type: "category",
+      data: trend.map((t) => t.period),
+      axisLine: {
+        lineStyle: {
+          color: isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)",
+        },
+      },
+      axisLabel: { color: isDark ? "#636d83" : "#9ca3af", fontSize: 11 },
+    },
+    yAxis: {
+      type: "value",
+      axisLabel: {
+        color: isDark ? "#636d83" : "#9ca3af",
+        fontSize: 11,
+        formatter: (v: number) => fmtAmt(v),
+      },
+      splitLine: {
+        lineStyle: {
+          color: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.04)",
+        },
+      },
+    },
+    series: [
+      {
+        type: "bar",
+        data: trend.map((t) => ({
+          value: t.profit,
+          itemStyle: { color: t.growth >= 0 ? "#ef4444" : "#22c55e" },
+        })),
+        barMaxWidth: 32,
+        barMinWidth: 12,
+      },
+    ],
+  };
 }
+
+function initProfitChart() {
+  if (!profitChartRef.value) return;
+  if (profitChart) profitChart.dispose();
+  profitChart = echarts.init(profitChartRef.value);
+  profitChart.setOption(buildProfitChartOption());
+}
+
+onMounted(() => nextTick(initProfitChart));
+onUnmounted(() => {
+  profitChart?.dispose();
+  profitChart = null;
+});
+
+// 重新渲染图表当路由或主题变化
+watch(
+  () => code.value,
+  () => nextTick(initProfitChart),
+);
+watch(
+  () => themeStore.isDark,
+  () => {
+    profitChart?.setOption(buildProfitChartOption());
+  },
+);
 
 // 格式化
 function fmtVol(v: number): string {
@@ -644,56 +702,10 @@ function fmtAmt(v: number): string {
   color: var(--text-primary);
 }
 
-/* 利润趋势柱状图 */
+/* 利润趋势 ECharts 容器 */
 .profit-chart {
-  display: flex;
-  gap: 6px;
-  align-items: flex-end;
-  height: 180px;
-  padding-top: 8px;
-}
-.profit-col {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  height: 100%;
-}
-.profit-val {
-  font-size: 10px;
-  color: var(--text-muted);
-  white-space: nowrap;
-}
-.profit-bar-outer {
-  flex: 1;
   width: 100%;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-}
-.profit-bar {
-  width: 60%;
-  min-width: 12px;
-  max-width: 32px;
-  border-radius: 3px 3px 0 0;
-  transition: height 0.4s ease;
-}
-.bar-up {
-  background: var(--color-up);
-  opacity: 0.85;
-}
-.bar-down {
-  background: var(--color-down);
-  opacity: 0.85;
-}
-.profit-growth {
-  font-size: 10px;
-  font-weight: 600;
-}
-.profit-period {
-  font-size: 10px;
-  color: var(--text-muted);
+  height: 200px;
 }
 
 @media (max-width: 768px) {
