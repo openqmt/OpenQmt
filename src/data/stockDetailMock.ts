@@ -724,3 +724,180 @@ export function getHotNews(): HotNewsItem[] {
 export function getDragonTiger(): DragonTigerItem[] {
     return MOCK_DRAGON_TIGER
 }
+
+// ============ 个股详情 Mock 数据 ============
+
+/** 个股基本信息 */
+export interface IndividualStockInfo {
+    code: string
+    name: string
+    current: number
+    changePercent: number
+    open: number
+    high: number
+    low: number
+    volume: number
+    totalMarketCap: number
+    amount: number
+    volumeRatio: number
+    turnoverRate: number
+    pb: number
+    pe: number
+    sector: string
+    industry: string
+    intro: string
+    highlights: string
+}
+
+/** 诊评分数项 */
+export interface DiagnosisScoreItem {
+    label: string
+    score: number
+    desc: string
+}
+
+/** 综合诊股 */
+export interface StockDiagnosis {
+    totalScore: number
+    sectorType: '主线' | '支线' | '非主线'
+    popularityRank: number
+    resistance: number
+    support: number
+    fairValue: number
+    action: '买入' | '增持' | '中性' | '减持' | '卖出'
+    shortTrend: string
+    midTrend: string
+    longTrend: string
+    fundamentals: DiagnosisScoreItem
+    technicals: DiagnosisScoreItem
+    capitalFlow: DiagnosisScoreItem
+    news: DiagnosisScoreItem
+    industryView: DiagnosisScoreItem
+}
+
+/** 收入构成项 */
+export interface RevenueItem {
+    source: string
+    percent: number
+}
+
+/** 利润趋势项 */
+export interface ProfitItem {
+    period: string
+    profit: number
+    growth: number
+}
+
+/** 公司概要 */
+export interface CompanyProfile {
+    intro: string
+    revenueBreakdown: RevenueItem[]
+    yoyRevenue: number
+    netProfit: number
+    yoyProfit: number
+    profitTrend: ProfitItem[]
+    roe: number
+    grossMargin: number
+    debtRatio: number
+    totalShares: number
+    floatShares: number
+}
+
+/** 根据股票代码生成 mock 个股详情 */
+export function getIndividualStock(code: string): {
+    info: IndividualStockInfo
+    diagnosis: StockDiagnosis
+    profile: CompanyProfile
+} {
+    const rand = seededRandom(hashCode(code))
+    const base = 20 + rand() * 80
+    const change = (rand() - 0.45) * base * 0.05
+    const current = base + change
+
+    const stockMap: Record<string, { name: string; sector: string; industry: string; intro: string; highlights: string }> = {
+        '603019': { name: '中科曙光', sector: '计算机', industry: 'AI算力', intro: '中科曙光是中国领先的高性能计算和服务器厂商，深度参与国产算力基础设施建设。', highlights: 'AI算力龙头，国产替代核心标的，受益信创与智算中心建设浪潮' },
+        '688256': { name: '寒武纪', sector: '半导体', industry: 'AI芯片', intro: '寒武纪是国内AI芯片设计龙头，产品覆盖云端推理与边缘计算场景。', highlights: 'AI芯片国产替代先锋，多款芯片进入量产阶段' },
+        '300750': { name: '宁德时代', sector: '电力设备', industry: '锂电池', intro: '宁德时代是全球动力电池龙头，市占率持续领先，技术储备深厚。', highlights: '全球动力电池市占率第一，固态电池布局前瞻' },
+        '002371': { name: '北方华创', sector: '半导体', industry: '半导体设备', intro: '北方华创是国内半导体设备龙头，覆盖刻蚀、薄膜沉积等核心工艺。', highlights: '国产半导体设备绝对龙头，受益晶圆厂扩产周期' },
+        '688111': { name: '金山办公', sector: '计算机', industry: '办公软件', intro: '金山办公旗下WPS是国内领先的办公软件，AI功能持续赋能产品升级。', highlights: 'AI办公应用标杆，订阅收入高增长' },
+    }
+
+    const meta = stockMap[code] || {
+        name: `股票${code}`,
+        sector: '科技',
+        industry: '信息技术',
+        intro: '该公司是国内领先的科技企业，专注于核心技术自主研发。',
+        highlights: '技术壁垒高，成长空间大',
+    }
+
+    const info: IndividualStockInfo = {
+        code,
+        name: meta.name,
+        current: Number(current.toFixed(2)),
+        changePercent: Number(((change / base) * 100).toFixed(2)),
+        open: Number((base + (rand() - 0.5) * base * 0.02).toFixed(2)),
+        high: Number((Math.max(current, base) + rand() * base * 0.01).toFixed(2)),
+        low: Number((Math.min(current, base) - rand() * base * 0.01).toFixed(2)),
+        volume: Math.floor(rand() * 500000000 + 50000000),
+        totalMarketCap: Math.floor(rand() * 500000000000 + 50000000000),
+        amount: Math.floor(rand() * 20000000000 + 1000000000),
+        volumeRatio: Number((rand() * 3 + 0.5).toFixed(2)),
+        turnoverRate: Number((rand() * 8 + 0.5).toFixed(2)),
+        pb: Number((rand() * 8 + 1).toFixed(2)),
+        pe: Number((rand() * 60 + 10).toFixed(2)),
+        sector: meta.sector,
+        industry: meta.industry,
+        intro: meta.intro,
+        highlights: meta.highlights,
+    }
+
+    const diagnosis: StockDiagnosis = {
+        totalScore: Math.floor(rand() * 30 + 60),
+        sectorType: rand() > 0.5 ? '主线' : rand() > 0.3 ? '支线' : '非主线',
+        popularityRank: Math.floor(rand() * 50 + 1),
+        resistance: Number((current * (1 + rand() * 0.1)).toFixed(2)),
+        support: Number((current * (1 - rand() * 0.1)).toFixed(2)),
+        fairValue: Number((current * (0.9 + rand() * 0.3)).toFixed(2)),
+        action: (['买入', '增持', '中性', '减持', '卖出'] as const)[Math.floor(rand() * 3)],
+        shortTrend: rand() > 0.5 ? '偏多' : '震荡',
+        midTrend: rand() > 0.4 ? '向上' : '横盘',
+        longTrend: rand() > 0.5 ? '看多' : '中性',
+        fundamentals: { label: '基本面', score: Math.floor(rand() * 30 + 60), desc: '公司盈利能力稳健，营收持续增长，ROE处于行业较高水平，现金流充裕。' },
+        technicals: { label: '技术面', score: Math.floor(rand() * 30 + 55), desc: '短期均线多头排列，MACD金叉信号出现，成交量温和放大，技术形态偏强。' },
+        capitalFlow: { label: '资金面', score: Math.floor(rand() * 30 + 50), desc: '主力资金净流入明显，北向资金持续加仓，融资余额稳步上升。' },
+        news: { label: '消息面', score: Math.floor(rand() * 30 + 55), desc: '近期利好消息密集，行业政策催化不断，机构研报评级积极。' },
+        industryView: { label: '行业面', score: Math.floor(rand() * 30 + 58), desc: '所处行业景气度持续上行，产业政策支持力度加大，行业竞争格局优化。' },
+    }
+
+    const profile: CompanyProfile = {
+        intro: meta.intro + '公司坚持自主研发创新，在核心技术领域拥有深厚积累，产品覆盖国内外多个市场。',
+        revenueBreakdown: [
+            { source: '主营产品', percent: Number((rand() * 30 + 40).toFixed(1)) },
+            { source: '技术服务', percent: Number((rand() * 20 + 15).toFixed(1)) },
+            { source: '海外业务', percent: Number((rand() * 15 + 10).toFixed(1)) },
+            { source: '其他', percent: Number((rand() * 10 + 5).toFixed(1)) },
+        ],
+        yoyRevenue: Number((rand() * 40 + 5).toFixed(2)),
+        netProfit: Math.floor(rand() * 5000000000 + 500000000),
+        yoyProfit: Number((rand() * 50 - 10).toFixed(2)),
+        profitTrend: Array.from({ length: 8 }, (_, i) => ({
+            period: `2024Q${(i % 4) + 1}`,
+            profit: Math.floor(rand() * 1500000000 + 200000000),
+            growth: Number((rand() * 60 - 15).toFixed(2)),
+        })),
+        roe: Number((rand() * 20 + 5).toFixed(2)),
+        grossMargin: Number((rand() * 30 + 20).toFixed(2)),
+        debtRatio: Number((rand() * 40 + 10).toFixed(2)),
+        totalShares: Math.floor(rand() * 5000000000 + 500000000),
+        floatShares: Math.floor(rand() * 4000000000 + 400000000),
+    }
+
+    return { info, diagnosis, profile }
+}
+
+/** 简单字符串哈希 */
+function hashCode(s: string): number {
+    let h = 0
+    for (let i = 0; i < s.length; i++) h = (Math.imul(31, h) + s.charCodeAt(i)) | 0
+    return Math.abs(h) || 1
+}

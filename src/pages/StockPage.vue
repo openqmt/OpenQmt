@@ -318,14 +318,26 @@ const dragonTigerColumns: DataTableColumns<DragonTigerItem> = [
     key: "stockName",
     width: 90,
     render(row) {
-      return h("div", [
-        h("div", { style: "font-weight:600" }, row.stockName),
-        h(
-          "div",
-          { style: "font-size:11px;color:var(--text-muted)" },
-          row.stockCode,
-        ),
-      ]);
+      return h(
+        "div",
+        {
+          style: "cursor:pointer",
+          onClick: () =>
+            router.push({ name: "StockInfo", params: { code: row.stockCode } }),
+        },
+        [
+          h(
+            "div",
+            { style: "font-weight:600;color:var(--gold-primary)" },
+            row.stockName,
+          ),
+          h(
+            "div",
+            { style: "font-size:11px;color:var(--text-muted)" },
+            row.stockCode,
+          ),
+        ],
+      );
     },
   },
   {

@@ -365,7 +365,7 @@
 
 <script setup lang="ts">
 import { computed, h, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import {
   NButton,
   NDataTable,
@@ -385,6 +385,7 @@ import type {
 } from "../api/eastmoney";
 
 const route = useRoute();
+const router = useRouter();
 const store = useFundDetailStore();
 
 const fundCode = computed(() => String(route.params.code ?? ""));
@@ -417,14 +418,38 @@ const assetItems = computed(() => {
 });
 
 const holdingColumns: DataTableColumns<FundStockHolding> = [
-  { title: "股票", key: "name", ellipsis: { tooltip: true } },
+  {
+    title: "股票",
+    key: "name",
+    ellipsis: { tooltip: true },
+    render(row) {
+      return h(
+        "span",
+        {
+          style: "cursor:pointer;color:var(--gold-primary);font-weight:600",
+          onClick: () =>
+            router.push({ name: "StockInfo", params: { code: row.code } }),
+        },
+        row.name,
+      );
+    },
+  },
   {
     title: "代码",
     key: "code",
     width: 88,
     align: "center",
     render(row) {
-      return h("span", { class: "num-mono" }, row.code);
+      return h(
+        "span",
+        {
+          class: "num-mono",
+          style: "cursor:pointer;color:var(--gold-primary)",
+          onClick: () =>
+            router.push({ name: "StockInfo", params: { code: row.code } }),
+        },
+        row.code,
+      );
     },
   },
   {
