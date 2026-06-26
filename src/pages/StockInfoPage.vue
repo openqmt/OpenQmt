@@ -206,19 +206,21 @@
 
       <!-- 收入构成 -->
       <h4 class="sub-title">收入构成</h4>
-      <div class="revenue-list">
-        <div
-          v-for="r in data.profile.revenueBreakdown"
-          :key="r.source"
-          class="revenue-row"
+      <div class="revenue-tabs">
+        <span
+          class="revenue-tab"
+          :class="{ active: revenueTab === 'product' }"
+          @click="revenueTab = 'product'"
+          >按产品</span
         >
-          <span class="revenue-name">{{ r.source }}</span>
-          <div class="revenue-bar-wrap">
-            <div class="revenue-bar" :style="{ width: r.percent + '%' }"></div>
-          </div>
-          <span class="revenue-pct num-mono">{{ r.percent }}%</span>
-        </div>
+        <span
+          class="revenue-tab"
+          :class="{ active: revenueTab === 'industry' }"
+          @click="revenueTab = 'industry'"
+          >按行业</span
+        >
       </div>
+      <div ref="revenueChartRef" class="revenue-chart"></div>
 
       <!-- 利润趋势 -->
       <h4 class="sub-title">利润趋势</h4>
@@ -233,6 +235,7 @@ import { useRoute } from "vue-router";
 import { NTag } from "naive-ui";
 import * as echarts from "echarts";
 import { useThemeStore } from "../stores/theme";
+import type { RevenueItem } from "../data/stockDetailMock";
 import {
   getIndividualStock,
   type DiagnosisScoreItem,
@@ -348,21 +351,78 @@ function initProfitChart() {
   profitChart.setOption(buildProfitChartOption());
 }
 
-onMounted(() => nextTick(initProfitChart));
+// 收入构成饼图
+const revenueTab = ref<"product" | "industry">("product");
+const revenueChartRef = ref<HTMLElement | null>(null);
+let revenueChart: echarts.ECharts | null = null;
+
+function buildRevenuePieOption(): echarts.EChartsOption {
+  const items: RevenueItem[] =
+    revenueTab.value === "product"
+      ? data.value.profile.revenueBreakdown
+      : data.value.profile.industryBreakdown;
+  const isDark = themeStore.isDark;
+  return {
+    tooltip: { trigger: "item", formatter: "{b}: {d}%" },
+    legend: {
+      bottom: 0,
+      textStyle: { color: isDark ? "#9198a3" : "#4b5563", fontSize: 11 },
+    },
+    series: [
+      {
+        type: "pie",
+        radius: ["40%", "70%"],
+        center: ["50%", "45%"],
+        avoidLabelOverlap: true,
+        label: {
+          color: isDark ? "#9198a3" : "#4b5563",
+          fontSize: 11,
+          formatter: "{b}\n{d}%",
+        },
+        data: items.map((r) => ({ name: r.source, value: r.percent })),
+      },
+    ],
+  };
+}
+
+function initRevenueChart() {
+  if (!revenueChartRef.value) return;
+  if (revenueChart) revenueChart.dispose();
+  revenueChart = echarts.init(revenueChartRef.value);
+  revenueChart.setOption(buildRevenuePieOption());
+}
+
+watch(revenueTab, () => {
+  revenueChart?.setOption(buildRevenuePieOption());
+});
+
+onMounted(() =>
+  nextTick(() => {
+    initProfitChart();
+    initRevenueChart();
+  }),
+);
 onUnmounted(() => {
   profitChart?.dispose();
   profitChart = null;
+  revenueChart?.dispose();
+  revenueChart = null;
 });
 
 // 重新渲染图表当路由或主题变化
 watch(
   () => code.value,
-  () => nextTick(initProfitChart),
+  () =>
+    nextTick(() => {
+      initProfitChart();
+      initRevenueChart();
+    }),
 );
 watch(
   () => themeStore.isDark,
   () => {
     profitChart?.setOption(buildProfitChartOption());
+    revenueChart?.setOption(buildRevenuePieOption());
   },
 );
 
@@ -667,39 +727,30 @@ function fmtAmt(v: number): string {
   border-top: 1px solid var(--border-subtle);
 }
 
-.revenue-list {
-  margin-bottom: 16px;
-}
-.revenue-row {
+/* 收入构成饼图 */
+.revenue-tabs {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  gap: 12px;
   margin-bottom: 8px;
 }
-.revenue-name {
-  width: 64px;
+.revenue-tab {
   font-size: 12px;
-  color: var(--text-secondary);
-  flex-shrink: 0;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px 0;
+  border-bottom: 2px solid transparent;
+  transition:
+    color 0.2s,
+    border-color 0.2s;
 }
-.revenue-bar-wrap {
-  flex: 1;
-  height: 8px;
-  background: var(--surface-muted);
-  border-radius: 4px;
-  overflow: hidden;
+.revenue-tab.active {
+  color: var(--gold-primary);
+  border-bottom-color: var(--gold-primary);
+  font-weight: 600;
 }
-.revenue-bar {
-  height: 100%;
-  border-radius: 4px;
-  background: var(--gold-primary);
-  transition: width 0.4s ease;
-}
-.revenue-pct {
-  width: 48px;
-  text-align: right;
-  font-size: 12px;
-  color: var(--text-primary);
+.revenue-chart {
+  width: 100%;
+  height: 220px;
 }
 
 /* 利润趋势 ECharts 容器 */

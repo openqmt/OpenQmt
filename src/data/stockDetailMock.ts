@@ -792,6 +792,7 @@ export interface ProfitItem {
 export interface CompanyProfile {
     intro: string
     revenueBreakdown: RevenueItem[]
+    industryBreakdown: RevenueItem[]
     yoyRevenue: number
     netProfit: number
     yoyProfit: number
@@ -876,6 +877,12 @@ export function getIndividualStock(code: string): {
             { source: '技术服务', percent: Number((rand() * 20 + 15).toFixed(1)) },
             { source: '海外业务', percent: Number((rand() * 15 + 10).toFixed(1)) },
             { source: '其他', percent: Number((rand() * 10 + 5).toFixed(1)) },
+        ],
+        industryBreakdown: [
+            { source: '国内市场', percent: Number((rand() * 20 + 45).toFixed(1)) },
+            { source: '东南亚', percent: Number((rand() * 15 + 10).toFixed(1)) },
+            { source: '欧美', percent: Number((rand() * 15 + 10).toFixed(1)) },
+            { source: '其他地区', percent: Number((rand() * 10 + 5).toFixed(1)) },
         ],
         yoyRevenue: Number((rand() * 40 + 5).toFixed(2)),
         netProfit: Math.floor(rand() * 5000000000 + 500000000),
