@@ -86,8 +86,8 @@
           <span class="score-lbl">综合评分</span>
         </div>
         <div class="diag-meta">
-          <n-tag :type="sectorTagType" size="small" round :bordered="false"
-            >{{ data.diagnosis.sectorType }}板块
+          <n-tag :type="sectorTagType" size="small" round :bordered="false">
+            {{ data.diagnosis.sectorType }}板块
           </n-tag>
           <span class="meta-item"
             >人气排名
