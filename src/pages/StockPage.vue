@@ -505,7 +505,7 @@ function goDetail(key: StockKey): void {
 
 /* ── 逻辑复盘 ── */
 .review-card {
-    padding: 8px 0 4px;
+    padding: 8px 0 0px;
     overflow: hidden;
 }
 

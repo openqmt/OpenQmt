@@ -7,7 +7,7 @@
             class="toolbar-actions"
         >
             <n-tag
-                v-if="pageType === 'gold' && goldStore.isWeekend"
+                v-if="goldStore.isWeekend"
                 size="small"
                 :bordered="false"
                 type="warning"
@@ -15,7 +15,6 @@
             >
                 周末休市
             </n-tag>
-
             <n-select
                 v-if="pageType === 'fund'"
                 v-model:value="fundStore.fundType"
@@ -59,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onUnmounted } from 'vue'
+import { computed, watch, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { NSpace, NSelect, NTag } from 'naive-ui'
 import { useGoldStore } from '../stores/gold'
@@ -133,17 +132,23 @@ function startAutoRefresh() {
     timer = setInterval(refresh, 10000)
 }
 
-watch(() => goldStore.isWeekend, (isWeekend) => {
-    if (isWeekend && pageType.value === 'gold') {
-        clearTimer()
-    }
-})
+watch(
+    () => goldStore.isWeekend,
+    (isWeekend) => {
+        if (isWeekend && pageType.value === 'gold') {
+            clearTimer()
+        }
+    },
+)
 
-watch(() => stockStore.isWeekend, (isWeekend) => {
-    if (isWeekend && pageType.value === 'stock') {
-        clearTimer()
-    }
-})
+watch(
+    () => stockStore.isWeekend,
+    (isWeekend) => {
+        if (isWeekend && pageType.value === 'stock') {
+            clearTimer()
+        }
+    },
+)
 
 watch(
     pageType,
@@ -155,7 +160,7 @@ watch(
         refresh()
         startAutoRefresh()
     },
-    { immediate: true }
+    { immediate: true },
 )
 
 onUnmounted(clearTimer)
