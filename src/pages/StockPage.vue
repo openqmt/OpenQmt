@@ -409,7 +409,7 @@ const dragonTigerColumns: DataTableColumns<DragonTigerItem> = [
         title: '买入额',
         key: 'buyAmount',
         width: 80,
-        align: 'right',
+        align: 'center',
         render(row) {
             return h(
                 'span',
@@ -422,7 +422,7 @@ const dragonTigerColumns: DataTableColumns<DragonTigerItem> = [
         title: '卖出额',
         key: 'sellAmount',
         width: 80,
-        align: 'right',
+        align: 'center',
         render(row) {
             return h(
                 'span',
@@ -435,7 +435,7 @@ const dragonTigerColumns: DataTableColumns<DragonTigerItem> = [
         title: '净买入',
         key: 'netBuy',
         width: 80,
-        align: 'right',
+        align: 'center',
         render(row) {
             return h(
                 'span',
@@ -455,7 +455,7 @@ const dragonTigerColumns: DataTableColumns<DragonTigerItem> = [
     {
         title: '营业部',
         key: 'department',
-        width: 140,
+        width: 180,
         ellipsis: { tooltip: true },
     },
 ]
