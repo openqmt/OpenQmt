@@ -19,7 +19,7 @@
                         <img class="logo-icon" :src="logoImg" alt="logo" />
                         <div class="logo-text-wrap" v-show="!collapsed">
                             <span class="logo-text">OpenQmt</span>
-                            <span class="logo-sub">简单的投资助手</span>
+                            <span class="logo-sub">简单的Ai投资助手</span>
                         </div>
                     </div>
                     <div class="sidebar-divider"></div>
@@ -225,7 +225,7 @@
                         <img class="logo-icon" :src="logoImg" alt="logo" />
                         <div class="logo-text-wrap">
                             <span class="logo-text">OpenQmt</span>
-                            <span class="logo-sub">简单的投资助手</span>
+                            <span class="logo-sub">简单的Ai投资助手</span>
                         </div>
                     </div>
                     <div class="sidebar-divider"></div>
