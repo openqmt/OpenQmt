@@ -110,15 +110,15 @@
                     >
                         {{ data.diagnosis.sectorType }}板块
                     </n-tag>
-                    <span class="meta-item"
-                        >人气排名
+                    <span class="meta-item">
+                        人气排名
                         <strong class="num-mono">{{
                             data.diagnosis.popularityRank
                         }}</strong></span
                     >
                 </div>
                 <div class="action-badge" :class="actionClass">
-                    {{ data.diagnosis.action }}
+                    持仓建议：{{ data.diagnosis.action }}
                 </div>
             </div>
 
