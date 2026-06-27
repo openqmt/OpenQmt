@@ -473,7 +473,7 @@ const MOCK_MACRO_REVIEW: MacroReview = {
 // ============ 逻辑复盘 Mock 数据 ============
 
 const MOCK_A_SHARE_REVIEW: MarketReview = {
-    trend: '今日A股三大指数分化明显，上证指数小幅回调，创业板指逆势走强。市场整体呈现缩量调整态势，两市成交额较昨日有所回落，但仍维持在万亿以上水平。盘面上看，成长风格占优，价值板块承压。',
+    trend: '今日A股成交额3.55万亿元，属于牛市中后期了，5万亿的时候就该跑了，因为大家都把钱从银行拿出来放股市里了，就没有更多的钱进来了。三大指数分化明显，上证指数小幅回调，创业板指逆势走强。市场整体呈现缩量调整态势，两市成交额较昨日有所回落，但仍维持在万亿以上水平。盘面上看，成长风格占优，价值板块承压。',
     temperature: '偏热',
     temperatureScore: 72,
     mainSectors: [
@@ -815,12 +815,52 @@ export function getIndividualStock(code: string): {
     const change = (rand() - 0.45) * base * 0.05
     const current = base + change
 
-    const stockMap: Record<string, { name: string; sector: string; industry: string; intro: string; highlights: string }> = {
-        '603019': { name: '中科曙光', sector: '计算机', industry: 'AI算力', intro: '中科曙光是中国领先的高性能计算和服务器厂商，深度参与国产算力基础设施建设。', highlights: 'AI算力龙头，国产替代核心标的，受益信创与智算中心建设浪潮' },
-        '688256': { name: '寒武纪', sector: '半导体', industry: 'AI芯片', intro: '寒武纪是国内AI芯片设计龙头，产品覆盖云端推理与边缘计算场景。', highlights: 'AI芯片国产替代先锋，多款芯片进入量产阶段' },
-        '300750': { name: '宁德时代', sector: '电力设备', industry: '锂电池', intro: '宁德时代是全球动力电池龙头，市占率持续领先，技术储备深厚。', highlights: '全球动力电池市占率第一，固态电池布局前瞻' },
-        '002371': { name: '北方华创', sector: '半导体', industry: '半导体设备', intro: '北方华创是国内半导体设备龙头，覆盖刻蚀、薄膜沉积等核心工艺。', highlights: '国产半导体设备绝对龙头，受益晶圆厂扩产周期' },
-        '688111': { name: '金山办公', sector: '计算机', industry: '办公软件', intro: '金山办公旗下WPS是国内领先的办公软件，AI功能持续赋能产品升级。', highlights: 'AI办公应用标杆，订阅收入高增长' },
+    const stockMap: Record<
+        string,
+        {
+            name: string
+            sector: string
+            industry: string
+            intro: string
+            highlights: string
+        }
+    > = {
+        '603019': {
+            name: '中科曙光',
+            sector: '计算机',
+            industry: 'AI算力',
+            intro: '中科曙光是中国领先的高性能计算和服务器厂商，深度参与国产算力基础设施建设。',
+            highlights:
+                'AI算力龙头，国产替代核心标的，受益信创与智算中心建设浪潮',
+        },
+        '688256': {
+            name: '寒武纪',
+            sector: '半导体',
+            industry: 'AI芯片',
+            intro: '寒武纪是国内AI芯片设计龙头，产品覆盖云端推理与边缘计算场景。',
+            highlights: 'AI芯片国产替代先锋，多款芯片进入量产阶段',
+        },
+        '300750': {
+            name: '宁德时代',
+            sector: '电力设备',
+            industry: '锂电池',
+            intro: '宁德时代是全球动力电池龙头，市占率持续领先，技术储备深厚。',
+            highlights: '全球动力电池市占率第一，固态电池布局前瞻',
+        },
+        '002371': {
+            name: '北方华创',
+            sector: '半导体',
+            industry: '半导体设备',
+            intro: '北方华创是国内半导体设备龙头，覆盖刻蚀、薄膜沉积等核心工艺。',
+            highlights: '国产半导体设备绝对龙头，受益晶圆厂扩产周期',
+        },
+        '688111': {
+            name: '金山办公',
+            sector: '计算机',
+            industry: '办公软件',
+            intro: '金山办公旗下WPS是国内领先的办公软件，AI功能持续赋能产品升级。',
+            highlights: 'AI办公应用标杆，订阅收入高增长',
+        },
     }
 
     const meta = stockMap[code] || {
@@ -837,8 +877,12 @@ export function getIndividualStock(code: string): {
         current: Number(current.toFixed(2)),
         changePercent: Number(((change / base) * 100).toFixed(2)),
         open: Number((base + (rand() - 0.5) * base * 0.02).toFixed(2)),
-        high: Number((Math.max(current, base) + rand() * base * 0.01).toFixed(2)),
-        low: Number((Math.min(current, base) - rand() * base * 0.01).toFixed(2)),
+        high: Number(
+            (Math.max(current, base) + rand() * base * 0.01).toFixed(2),
+        ),
+        low: Number(
+            (Math.min(current, base) - rand() * base * 0.01).toFixed(2),
+        ),
         volume: Math.floor(rand() * 500000000 + 50000000),
         totalMarketCap: Math.floor(rand() * 500000000000 + 50000000000),
         amount: Math.floor(rand() * 20000000000 + 1000000000),
@@ -859,30 +903,72 @@ export function getIndividualStock(code: string): {
         resistance: Number((current * (1 + rand() * 0.1)).toFixed(2)),
         support: Number((current * (1 - rand() * 0.1)).toFixed(2)),
         fairValue: Number((current * (0.9 + rand() * 0.3)).toFixed(2)),
-        action: (['买入', '增持', '中性', '减持', '卖出'] as const)[Math.floor(rand() * 3)],
+        action: (['买入', '增持', '中性', '减持', '卖出'] as const)[
+            Math.floor(rand() * 3)
+        ],
         shortTrend: rand() > 0.5 ? '偏多' : '震荡',
         midTrend: rand() > 0.4 ? '向上' : '横盘',
         longTrend: rand() > 0.5 ? '看多' : '中性',
-        fundamentals: { label: '基本面', score: Math.floor(rand() * 30 + 60), desc: '公司盈利能力稳健，营收持续增长，ROE处于行业较高水平，现金流充裕。' },
-        technicals: { label: '技术面', score: Math.floor(rand() * 30 + 55), desc: '短期均线多头排列，MACD金叉信号出现，成交量温和放大，技术形态偏强。' },
-        capitalFlow: { label: '资金面', score: Math.floor(rand() * 30 + 50), desc: '主力资金净流入明显，北向资金持续加仓，融资余额稳步上升。' },
-        news: { label: '消息面', score: Math.floor(rand() * 30 + 55), desc: '近期利好消息密集，行业政策催化不断，机构研报评级积极。' },
-        industryView: { label: '行业面', score: Math.floor(rand() * 30 + 58), desc: '所处行业景气度持续上行，产业政策支持力度加大，行业竞争格局优化。' },
+        fundamentals: {
+            label: '基本面',
+            score: Math.floor(rand() * 30 + 60),
+            desc: '公司盈利能力稳健，营收持续增长，ROE处于行业较高水平，现金流充裕。',
+        },
+        technicals: {
+            label: '技术面',
+            score: Math.floor(rand() * 30 + 55),
+            desc: '短期均线多头排列，MACD金叉信号出现，成交量温和放大，技术形态偏强。',
+        },
+        capitalFlow: {
+            label: '资金面',
+            score: Math.floor(rand() * 30 + 50),
+            desc: '主力资金净流入明显，北向资金持续加仓，融资余额稳步上升。',
+        },
+        news: {
+            label: '消息面',
+            score: Math.floor(rand() * 30 + 55),
+            desc: '近期利好消息密集，行业政策催化不断，机构研报评级积极。',
+        },
+        industryView: {
+            label: '行业面',
+            score: Math.floor(rand() * 30 + 58),
+            desc: '所处行业景气度持续上行，产业政策支持力度加大，行业竞争格局优化。',
+        },
     }
 
     const profile: CompanyProfile = {
-        intro: meta.intro + '公司坚持自主研发创新，在核心技术领域拥有深厚积累，产品覆盖国内外多个市场。',
+        intro:
+            meta.intro +
+            '公司坚持自主研发创新，在核心技术领域拥有深厚积累，产品覆盖国内外多个市场。',
         revenueBreakdown: [
-            { source: '主营产品', percent: Number((rand() * 30 + 40).toFixed(1)) },
-            { source: '技术服务', percent: Number((rand() * 20 + 15).toFixed(1)) },
-            { source: '海外业务', percent: Number((rand() * 15 + 10).toFixed(1)) },
+            {
+                source: '主营产品',
+                percent: Number((rand() * 30 + 40).toFixed(1)),
+            },
+            {
+                source: '技术服务',
+                percent: Number((rand() * 20 + 15).toFixed(1)),
+            },
+            {
+                source: '海外业务',
+                percent: Number((rand() * 15 + 10).toFixed(1)),
+            },
             { source: '其他', percent: Number((rand() * 10 + 5).toFixed(1)) },
         ],
         industryBreakdown: [
-            { source: '国内市场', percent: Number((rand() * 20 + 45).toFixed(1)) },
-            { source: '东南亚', percent: Number((rand() * 15 + 10).toFixed(1)) },
+            {
+                source: '国内市场',
+                percent: Number((rand() * 20 + 45).toFixed(1)),
+            },
+            {
+                source: '东南亚',
+                percent: Number((rand() * 15 + 10).toFixed(1)),
+            },
             { source: '欧美', percent: Number((rand() * 15 + 10).toFixed(1)) },
-            { source: '其他地区', percent: Number((rand() * 10 + 5).toFixed(1)) },
+            {
+                source: '其他地区',
+                percent: Number((rand() * 10 + 5).toFixed(1)),
+            },
         ],
         yoyRevenue: Number((rand() * 40 + 5).toFixed(2)),
         netProfit: Math.floor(rand() * 5000000000 + 500000000),
@@ -905,6 +991,7 @@ export function getIndividualStock(code: string): {
 /** 简单字符串哈希 */
 function hashCode(s: string): number {
     let h = 0
-    for (let i = 0; i < s.length; i++) h = (Math.imul(31, h) + s.charCodeAt(i)) | 0
+    for (let i = 0; i < s.length; i++)
+        h = (Math.imul(31, h) + s.charCodeAt(i)) | 0
     return Math.abs(h) || 1
 }
