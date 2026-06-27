@@ -563,19 +563,7 @@ function backToMain() {
 }
 
 function handleBack() {
-    if (isFundDetailPage.value) {
-        router.push('/fund')
-        return
-    }
-    if (isStockDetailPage.value || isStockInfoPage.value) {
-        router.push('/stock')
-        return
-    }
-    if (isSectorDetailPage.value) {
-        router.back()
-        return
-    }
-    backToMain()
+    router.back()
 }
 
 const titleMap: Record<string, string> = {
