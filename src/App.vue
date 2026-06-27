@@ -629,7 +629,7 @@ const showSearchBox = computed(() =>
 const searchPlaceholder = computed(() => {
     const map: Record<string, string> = {
         gold: '搜索黄金品种...',
-        stock: '搜索股票/指数...',
+        stock: '搜索股票/基金...',
         fund: '搜索基金...',
     }
     return map[activeKey.value] || '搜索...'
@@ -866,7 +866,7 @@ onUnmounted(() => {
 }
 
 .header-search-input {
-    width: 180px;
+    width: 200px;
     flex-shrink: 0;
 }
 

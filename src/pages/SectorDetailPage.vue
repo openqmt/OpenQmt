@@ -3,10 +3,9 @@
         <!-- 基本信息 -->
         <div class="detail-header surface-card">
             <div class="header-top">
-                <span class="sector-icon">📈</span>
                 <div class="header-names">
                     <h2 class="sector-name">{{ info.name }}</h2>
-                    <span class="sector-code num-mono">{{ info.code }}</span>
+                    <span class="sector-code num-mono">{{ info.code }} </span>
                 </div>
                 <div class="header-price">
                     <span class="price-value num-mono" :class="priceClass">
@@ -423,6 +422,15 @@ const constituentColumns: DataTableColumns<ConstituentStock> = [
 /** 相关基金列定义 */
 const fundColumns: DataTableColumns<RelatedFund> = [
     {
+        title: '序号',
+        key: 'rank',
+        width: 44,
+        align: 'center',
+        render(_row, index) {
+            return h('span', { class: 'num-mono' }, String(index + 1))
+        },
+    },
+    {
         title: '基金',
         key: 'name',
         render(row) {
@@ -664,7 +672,7 @@ const fundColumns: DataTableColumns<RelatedFund> = [
 
 /* Tabs */
 .tabs-card {
-    padding: 8px 0 4px;
+    padding: 8px 0 0px;
     margin-bottom: 8px;
     overflow: hidden;
 }

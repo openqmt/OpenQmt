@@ -400,7 +400,7 @@ watch(stockKey, () => {
 }
 
 .sector-card {
-    padding: 8px 0 4px;
+    padding: 8px 0 0px;
     margin-bottom: 8px;
     overflow: hidden;
 }
