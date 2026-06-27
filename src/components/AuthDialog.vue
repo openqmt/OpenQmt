@@ -361,7 +361,6 @@ function resetForm() {
     align-items: center;
     justify-content: center;
     gap: 4px;
-    margin-top: 10px;
     font-size: 12px;
     color: var(--text-muted);
 }
