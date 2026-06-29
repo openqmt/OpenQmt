@@ -82,9 +82,10 @@ export async function fetchFundRanking(
     pageIndex = 1,
     pageNum = 30,
     rsfType: FundRsfType = 0,
+    orderField = '5_1_-1',
 ): Promise<FundRankingResult> {
     const body = new URLSearchParams({
-        orderField: '5_1_-1',
+        orderField,
         pageIndex: String(pageIndex),
         pageNum: String(pageNum),
         pageType: '5',

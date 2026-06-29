@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { h, nextTick, ref, watch } from 'vue'
+import { computed, h, nextTick, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { NDataTable, NTag, type DataTableColumns } from 'naive-ui'
 import { useFundStore } from '../stores/fund'
@@ -41,6 +41,53 @@ import type { FundRankItem } from '../types'
 const router = useRouter()
 const store = useFundStore()
 const tableRef = ref<InstanceType<typeof NDataTable> | null>(null)
+
+/** 当前排序状态：从 orderField 解析出字段前缀和方向 */
+const sortInfo = computed(() => {
+    const parts = store.orderField.split('_')
+    // orderField 格式: '5_1_-1' → prefix='5_1', dir='-1'|'1'
+    const dir = parts[parts.length - 1]
+    const prefix = parts.slice(0, -1).join('_')
+    return { prefix, dir }
+})
+
+/** 列字段前缀与 orderField 前缀的映射 */
+const SORT_FIELD_MAP: Record<string, string> = {
+    dayChange: '5_1',
+    weekChange: '5_2',
+    monthChange: '5_3',
+    threeMonthChange: '5_4',
+    yearChange: '5_6',
+}
+
+/** 渲染可排序列表头：标题 + 排序箭头 */
+function renderSortHeader(title: string, colKey: string) {
+    const fieldPrefix = SORT_FIELD_MAP[colKey]
+    const active = sortInfo.value.prefix === fieldPrefix
+    const asc = active && sortInfo.value.dir === '-1'
+    const desc = active && sortInfo.value.dir === '1'
+    return h(
+        'span',
+        {
+            class: 'sort-header',
+            onClick: (e: Event) => {
+                e.stopPropagation()
+                store.setSort(fieldPrefix)
+            },
+        },
+        [
+            h('span', { class: 'sort-header-title' }, title),
+            h('span', { class: ['sort-arrows', { active }] }, [
+                h('span', { class: ['sort-arrow-up', { active: asc }] }, '▲'),
+                h(
+                    'span',
+                    { class: ['sort-arrow-down', { active: desc }] },
+                    '▼',
+                ),
+            ]),
+        ],
+    )
+}
 
 function onTableScroll(e: Event): void {
     const el = e.target as HTMLElement
@@ -74,7 +121,7 @@ function checkAndLoadMore(): void {
 //     },
 // )
 
-const columns: DataTableColumns<FundRankItem> = [
+const columns = computed<DataTableColumns<FundRankItem>>(() => [
     {
         title: '排名',
         key: 'rank',
@@ -205,56 +252,56 @@ const columns: DataTableColumns<FundRankItem> = [
         },
     },
     {
-        title: '日涨跌',
+        title: () => renderSortHeader('日涨跌', 'dayChange'),
         key: 'dayChange',
         width: 84,
         align: 'center',
-        className: 'fund-change-col',
+        className: 'fund-change-col fund-sort-col',
         render(row) {
             return changeCell(row.dayChange)
         },
     },
     {
-        title: '近一周',
+        title: () => renderSortHeader('近一周', 'weekChange'),
         key: 'weekChange',
         width: 84,
         align: 'center',
-        className: 'fund-change-col',
+        className: 'fund-change-col fund-sort-col',
         render(row) {
             return changeCell(row.weekChange)
         },
     },
     {
-        title: '近一月',
+        title: () => renderSortHeader('近一月', 'monthChange'),
         key: 'monthChange',
         width: 84,
         align: 'center',
-        className: 'fund-change-col',
+        className: 'fund-change-col fund-sort-col',
         render(row) {
             return changeCell(row.monthChange)
         },
     },
     {
-        title: '近三月',
+        title: () => renderSortHeader('近三月', 'threeMonthChange'),
         key: 'threeMonthChange',
         width: 84,
         align: 'center',
-        className: 'fund-change-col',
+        className: 'fund-change-col fund-sort-col',
         render(row) {
             return changeCell(row.threeMonthChange)
         },
     },
     {
-        title: '近一年',
+        title: () => renderSortHeader('近一年', 'yearChange'),
         key: 'yearChange',
         width: 84,
         align: 'center',
-        className: 'fund-change-col',
+        className: 'fund-change-col fund-sort-col',
         render(row) {
             return changeCell(row.yearChange)
         },
     },
-]
+])
 
 function changeCell(val: number) {
     const sign = val > 0 ? '+' : ''
@@ -398,5 +445,46 @@ function rowProps(row: FundRankItem) {
 .load-more-end {
     color: var(--text-muted);
     font-size: 12px;
+}
+
+/* ── 可排序列表头 ── */
+:deep(.fund-sort-col .n-data-table-th__title) {
+    width: 100%;
+}
+
+:deep(.sort-header) {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    cursor: pointer;
+    user-select: none;
+}
+
+:deep(.sort-header-title) {
+    font-size: 11px;
+}
+
+:deep(.sort-arrows) {
+    display: inline-flex;
+    flex-direction: column;
+    line-height: 1;
+    gap: 0;
+}
+
+:deep(.sort-arrow-up),
+:deep(.sort-arrow-down) {
+    font-size: 7px;
+    line-height: 1;
+    color: var(--text-muted);
+    opacity: 0.35;
+    transition:
+        opacity 0.15s,
+        color 0.15s;
+}
+
+:deep(.sort-arrow-up.active),
+:deep(.sort-arrow-down.active) {
+    opacity: 1;
+    color: var(--gold-primary);
 }
 </style>
