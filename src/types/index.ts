@@ -107,12 +107,26 @@ export interface FundRankItem {
     nav: number
     accNav: number
     jzrq: number
+    /** 日收益率 daySyl */
     dayChange: number
+    /** 近一周 weekSyl */
     weekChange: number
+    /** 近一月 monthSyl */
     monthChange: number
+    /** 近三月 qsyl */
     threeMonthChange: number
+    /** 近六月 hySyl */
     sixMonthChange: number
+    /** 今年来 sySyl */
+    thisYearChange: number
+    /** 近一年 yearSyl */
     yearChange: number
+    /** 近两年 twySyl */
+    twoYearChange: number
+    /** 近三年 trySyl */
+    threeYearChange: number
+    /** 成立来 lnSyl */
+    incepChange: number
 }
 
 /** 学习难度 */

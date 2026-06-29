@@ -14,9 +14,13 @@ interface TiantianFundItem {
     daySyl: string
     weekSyl: string
     monthSyl: string
-    quarterReturn: string
+    qsyl: string
     hySyl: string
+    sySyl: string
     yearSyl: string
+    twySyl: string
+    trySyl: string
+    lnSyl: string
     jzrq: string
 }
 
@@ -60,9 +64,13 @@ function toFundRankItem(item: TiantianFundItem, rank: number): FundRankItem {
         dayChange: parseNum(item.daySyl),
         weekChange: parseNum(item.weekSyl),
         monthChange: parseNum(item.monthSyl),
-        threeMonthChange: parseNum(item.quarterReturn),
+        threeMonthChange: parseNum(item.qsyl),
         sixMonthChange: parseNum(item.hySyl),
+        thisYearChange: parseNum(item.sySyl),
         yearChange: parseNum(item.yearSyl),
+        twoYearChange: parseNum(item.twySyl),
+        threeYearChange: parseNum(item.trySyl),
+        incepChange: parseNum(item.lnSyl),
     }
 }
 
