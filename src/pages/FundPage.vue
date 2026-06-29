@@ -8,7 +8,6 @@
           :data="store.data"
           :bordered="false"
           size="small"
-          :scroll-x="1600"
           flex-height
           style="height: 100%"
           :row-class-name="rowClassName"
