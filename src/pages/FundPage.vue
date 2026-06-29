@@ -34,10 +34,12 @@ import { computed, h, nextTick, ref } from "vue";
 import { useRouter } from "vue-router";
 import { NDataTable, NTag, type DataTableColumns } from "naive-ui";
 import { useFundStore } from "../stores/fund";
+import { useSettingsStore } from "../stores/settings";
 import type { FundRankItem } from "../types";
 
 const router = useRouter();
 const store = useFundStore();
+const settingsStore = useSettingsStore();
 const tableRef = ref<InstanceType<typeof NDataTable> | null>(null);
 
 /** 当前排序状态：从 orderField 解析出字段前缀和方向 */
@@ -120,7 +122,7 @@ function checkAndLoadMore(): void {
 //     },
 // )
 
-const columns = computed<DataTableColumns<FundRankItem>>(() => [
+const baseColumns: DataTableColumns<FundRankItem> = [
   {
     title: "排名",
     key: "rank",
@@ -349,7 +351,17 @@ const columns = computed<DataTableColumns<FundRankItem>>(() => [
       return changeCell(row.incepChange);
     },
   },
-]);
+];
+
+const columns = computed<DataTableColumns<FundRankItem>>(() =>
+  baseColumns.filter((col) => {
+    const key = (col as { key?: string }).key;
+    if (key && key in settingsStore.fundColumns) {
+      return settingsStore.fundColumns[key];
+    }
+    return true;
+  }),
+);
 
 function changeCell(val: number) {
   const sign = val > 0 ? "+" : "";

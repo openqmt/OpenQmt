@@ -63,8 +63,41 @@
         </div>
       </div>
 
+      <div class="settings-card surface-card surface-card--flat">
+        <div class="card-header">
+          <n-icon size="20" color="var(--gold-primary)">
+            <TrendingUpOutline />
+          </n-icon>
+          <span class="card-title">基金列表收益率列</span>
+        </div>
+        <div class="card-body">
+          <div class="fund-columns-grid">
+            <div
+              v-for="col in fundYieldColumns"
+              :key="col.key"
+              class="fund-column-item"
+            >
+              <n-switch
+                :value="settingsStore.fundColumns[col.key] ?? true"
+                @update:value="settingsStore.toggleFundColumn(col.key)"
+                size="small"
+              />
+              <span
+                class="fund-column-label"
+                :class="{
+                  'fund-column-label--disabled': !(
+                    settingsStore.fundColumns[col.key] ?? true
+                  ),
+                }"
+                >{{ col.label }}</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="fc-actions">
-        <n-button quaternary @click="resetMenuConfig">恢复默认</n-button>
+        <n-button quaternary @click="resetAll">恢复默认</n-button>
       </div>
     </div>
   </div>
@@ -77,13 +110,15 @@ import {
   GridOutline,
   ChevronUpOutline,
   ChevronDownOutline,
+  TrendingUpOutline,
 } from "@vicons/ionicons5";
-import { useSettingsStore } from "../stores/settings";
+import { useSettingsStore, FUND_YIELD_COLUMNS } from "../stores/settings";
 
 const settingsStore = useSettingsStore();
 const message = useMessage();
 
 const sortedMenuItems = computed(() => settingsStore.sortedMenuItems);
+const fundYieldColumns = FUND_YIELD_COLUMNS;
 
 function toggleMenuItem(key: string) {
   settingsStore.toggleMenuItem(key);
@@ -93,9 +128,10 @@ function moveMenuItem(key: string, direction: "up" | "down") {
   settingsStore.moveMenuItem(key, direction);
 }
 
-function resetMenuConfig() {
+function resetAll() {
   settingsStore.resetMenuConfig();
-  message.success("已恢复默认菜单配置");
+  settingsStore.resetFundColumns();
+  message.success("已恢复默认配置");
 }
 </script>
 
@@ -206,6 +242,33 @@ function resetMenuConfig() {
   display: flex;
   justify-content: flex-end;
   padding: 8px 0;
+}
+
+.fund-columns-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.fund-column-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--surface-muted);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.fund-column-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  transition: color var(--transition-fast);
+}
+
+.fund-column-label--disabled {
+  color: var(--text-muted);
 }
 
 @media (max-width: 768px) {

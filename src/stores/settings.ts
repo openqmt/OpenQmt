@@ -11,6 +11,7 @@ import * as storage from '../utils/storage'
 
 const SETTINGS_KEY = 'openqmt_model_settings'
 const MENU_SETTINGS_KEY = 'openqmt_menu_settings'
+const FUND_COLUMNS_KEY = 'openqmt_fund_columns'
 
 export const DEFAULT_MENU_ITEMS: MenuItemConfig[] = [
     { key: 'gold', label: '黄金行情', visible: true, order: 0 },
@@ -18,6 +19,20 @@ export const DEFAULT_MENU_ITEMS: MenuItemConfig[] = [
     { key: 'fund', label: '基金排行', visible: true, order: 2 },
     { key: 'learn', label: '认知学习', visible: true, order: 3 },
     { key: 'ai', label: 'AI 分析', visible: true, order: 4 },
+]
+
+/** 基金列表可控制的收益率列 */
+export const FUND_YIELD_COLUMNS: Array<{ key: string; label: string }> = [
+    { key: 'dayChange', label: '日涨跌' },
+    { key: 'weekChange', label: '近一周' },
+    { key: 'monthChange', label: '近一月' },
+    { key: 'threeMonthChange', label: '近三月' },
+    { key: 'sixMonthChange', label: '近六月' },
+    { key: 'thisYearChange', label: '今年来' },
+    { key: 'yearChange', label: '近一年' },
+    { key: 'twoYearChange', label: '近两年' },
+    { key: 'threeYearChange', label: '近三年' },
+    { key: 'incepChange', label: '成立来' },
 ]
 
 export const PROVIDER_LABELS: Record<ModelProvider, string> = {
@@ -349,6 +364,41 @@ export const useSettingsStore = defineStore('settings', () => {
         saveMenuConfig()
     }
 
+    // ── 基金收益率列配置 ──
+    function loadFundColumns(): Record<string, boolean> {
+        try {
+            const saved = storage.getSync<Record<string, boolean>>(FUND_COLUMNS_KEY)
+            if (saved && typeof saved === 'object') {
+                // 合并默认值，确保新增字段默认为 true
+                const result: Record<string, boolean> = {}
+                for (const col of FUND_YIELD_COLUMNS) {
+                    result[col.key] = saved[col.key] ?? true
+                }
+                return result
+            }
+        } catch {}
+        // 默认全部显示
+        return Object.fromEntries(FUND_YIELD_COLUMNS.map((c) => [c.key, true]))
+    }
+
+    const fundColumns = ref<Record<string, boolean>>(loadFundColumns())
+
+    function toggleFundColumn(key: string) {
+        fundColumns.value[key] = !fundColumns.value[key]
+        saveFundColumns()
+    }
+
+    function resetFundColumns() {
+        fundColumns.value = Object.fromEntries(
+            FUND_YIELD_COLUMNS.map((c) => [c.key, true]),
+        )
+        saveFundColumns()
+    }
+
+    function saveFundColumns() {
+        storage.set(FUND_COLUMNS_KEY, fundColumns.value)
+    }
+
     return {
         model,
         providerLabel,
@@ -368,5 +418,8 @@ export const useSettingsStore = defineStore('settings', () => {
         toggleMenuItem,
         moveMenuItem,
         resetMenuConfig,
+        fundColumns,
+        toggleFundColumn,
+        resetFundColumns,
     }
 })
