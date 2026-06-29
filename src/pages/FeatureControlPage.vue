@@ -68,7 +68,7 @@
           <n-icon size="20" color="var(--gold-primary)">
             <TrendingUpOutline />
           </n-icon>
-          <span class="card-title">基金列表收益率列</span>
+          <span class="card-title">基金收益率</span>
         </div>
         <div class="card-body">
           <div class="fund-columns-grid">
