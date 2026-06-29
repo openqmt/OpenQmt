@@ -209,7 +209,11 @@
                         class="app-content"
                         :class="{ 'app-content--fill': activeKey === 'ai' }"
                     >
-                        <router-view />
+                        <router-view v-slot="{ Component }">
+                            <keep-alive :include="['FundPage']">
+                                <component :is="Component" />
+                            </keep-alive>
+                        </router-view>
                     </n-layout-content>
                 </n-layout>
             </n-layout>
