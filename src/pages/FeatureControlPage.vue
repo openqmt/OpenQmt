@@ -161,8 +161,8 @@ const learnLayoutOptions: Array<{
   icon: any;
 }> = [
   { value: "masonry", label: "瀑布流", icon: AppsOutline },
-  { value: "list", label: "列表", icon: ListOutline },
-  { value: "card", label: "卡片", icon: CopyOutline },
+  { value: "list", label: "带图列表", icon: ListOutline },
+  { value: "card", label: "卡片网格", icon: CopyOutline },
   { value: "compact", label: "无图列表", icon: DocumentTextOutline },
 ];
 
