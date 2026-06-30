@@ -254,6 +254,7 @@ import {
   MenuOutline,
   SettingsOutline,
   CubeOutline,
+  OptionsOutline,
   InformationCircleOutline,
   NotificationsOutline,
   ArrowBackOutline,
@@ -517,7 +518,7 @@ const settingsMenuOptions = computed<MenuOption[]>(() => [
   {
     label: "功能控制",
     key: "feature-control",
-    icon: renderIcon(SettingsOutline),
+    icon: renderIcon(OptionsOutline),
   },
 ]);
 
