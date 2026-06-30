@@ -523,7 +523,7 @@ const settingsMenuOptions = computed<MenuOption[]>(() => [
 
 const userDropdownOptions: DropdownOption[] = [
   { label: "个人中心", key: "profile", icon: renderIcon(PersonOutline) },
-  { label: "系统设置", key: "settings", icon: renderIcon(CubeOutline) },
+  { label: "系统设置", key: "settings", icon: renderIcon(SettingsOutline) },
   {
     label: "关于我们",
     key: "about",
