@@ -186,7 +186,7 @@ const baseColumns: DataTableColumns<FundRankItem> = [
     {
         title: '类型',
         key: 'type',
-        width: 30,
+        width: 36,
         align: 'center',
         render(row) {
             return h(
