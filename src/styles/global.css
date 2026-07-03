@@ -76,6 +76,24 @@
     --sidebar-border: rgba(255, 255, 255, 0.06);
     --user-hover-bg: rgba(255, 255, 255, 0.06);
     --surface-muted: rgba(255, 255, 255, 0.04);
+    /* AI 助手弹窗 — 全半透明磨砂 */
+    --ai-overlay-bg: rgba(0, 0, 0, 0.06);
+    --ai-grid-color: rgba(212, 168, 67, 0.05);
+    --ai-scanline-color: rgba(0, 0, 0, 0.02);
+    --ai-panel-bg: rgba(40, 44, 52, 0.32);
+    --ai-panel-border: rgba(212, 168, 67, 0.18);
+    --ai-panel-shadow: 0 0 40px rgba(212, 168, 67, 0.04), 0 8px 32px rgba(0, 0, 0, 0.15);
+    --ai-panel-header-bg: rgba(255, 255, 255, 0.03);
+    --ai-panel-divider: rgba(212, 168, 67, 0.1);
+    --ai-surface: rgba(255, 255, 255, 0.04);
+    --ai-surface-strong: rgba(255, 255, 255, 0.05);
+    --ai-gold-bg: rgba(212, 168, 67, 0.1);
+    --ai-gold-border: rgba(212, 168, 67, 0.22);
+    --ai-gold-border-strong: rgba(212, 168, 67, 0.38);
+    --ai-gold-glow: rgba(212, 168, 67, 0.15);
+    --ai-msg-user-bg: rgba(212, 168, 67, 0.1);
+    --ai-msg-ai-bg: rgba(255, 255, 255, 0.05);
+    --ai-input-wrap-bg: rgba(255, 255, 255, 0.04);
 }
 
 /* ── 浅色主题 ── */
@@ -108,6 +126,24 @@
     --sidebar-border: rgba(0, 0, 0, 0.06);
     --user-hover-bg: rgba(0, 0, 0, 0.04);
     --surface-muted: #ebedf0;
+    /* AI 助手弹窗 — 全半透明磨砂 */
+    --ai-overlay-bg: rgba(255, 255, 255, 0.08);
+    --ai-grid-color: rgba(184, 146, 46, 0.06);
+    --ai-scanline-color: rgba(0, 0, 0, 0.015);
+    --ai-panel-bg: rgba(255, 255, 255, 0.32);
+    --ai-panel-border: rgba(184, 146, 46, 0.18);
+    --ai-panel-shadow: 0 0 40px rgba(184, 146, 46, 0.06), 0 8px 32px rgba(0, 0, 0, 0.06);
+    --ai-panel-header-bg: rgba(255, 255, 255, 0.2);
+    --ai-panel-divider: rgba(184, 146, 46, 0.12);
+    --ai-surface: rgba(255, 255, 255, 0.25);
+    --ai-surface-strong: rgba(255, 255, 255, 0.18);
+    --ai-gold-bg: rgba(184, 146, 46, 0.1);
+    --ai-gold-border: rgba(184, 146, 46, 0.22);
+    --ai-gold-border-strong: rgba(184, 146, 46, 0.36);
+    --ai-gold-glow: rgba(184, 146, 46, 0.12);
+    --ai-msg-user-bg: rgba(184, 146, 46, 0.1);
+    --ai-msg-ai-bg: rgba(255, 255, 255, 0.35);
+    --ai-input-wrap-bg: rgba(255, 255, 255, 0.3);
 }
 
 * {
