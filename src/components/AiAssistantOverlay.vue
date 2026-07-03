@@ -59,8 +59,8 @@
               </div>
               <div class="ai-msg-body">
                 <div
-                  class="ai-msg-text"
-                  v-html="formatContent(msg.content)"
+                  class="ai-msg-text markdown-body"
+                  v-html="renderMarkdown(msg.content)"
                 ></div>
               </div>
             </div>
@@ -118,6 +118,7 @@ import type { AiMessage } from "../types";
 import { useSettingsStore } from "../stores/settings";
 import { usePageContext } from "../composables/usePageContext";
 import { useAiModelSelection } from "../composables/useAiModelSelection";
+import { renderMarkdown } from "../utils/markdown";
 
 const props = defineProps<{ show: boolean }>();
 const emit = defineEmits<{ (e: "update:show", val: boolean): void }>();
@@ -138,13 +139,6 @@ function genId(): string {
 
 function close() {
   emit("update:show", false);
-}
-
-function formatContent(content: string): string {
-  return content
-    .replace(/\n/g, "<br>")
-    .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>")
-    .replace(/`(.*?)`/g, "<code>$1</code>");
 }
 
 function scrollToBottom(): void {
@@ -553,21 +547,7 @@ async function callAIStream(
 }
 
 .ai-msg-text {
-  color: var(--text-secondary);
-  line-height: 1.65;
   font-size: 13px;
-}
-
-.ai-msg-text :deep(b) {
-  color: var(--text-primary);
-  font-weight: 600;
-}
-
-.ai-msg-text :deep(code) {
-  background: var(--bg-card);
-  padding: 2px 5px;
-  border-radius: 4px;
-  font-size: 12px;
 }
 
 .ai-loading {

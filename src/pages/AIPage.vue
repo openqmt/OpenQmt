@@ -36,7 +36,10 @@
             {{ msg.role === "user" ? "👤" : "🤖" }}
           </div>
           <div class="bubble-body">
-            <div class="bubble-text" v-html="formatContent(msg.content)"></div>
+            <div
+              class="bubble-text markdown-body"
+              v-html="renderMarkdown(msg.content)"
+            ></div>
             <div class="bubble-time">
               {{ formatTime(msg.timestamp) }}
             </div>
@@ -91,6 +94,7 @@ import type { AiMessage } from "../types";
 import { useSettingsStore } from "../stores/settings";
 import { useAiStore } from "../stores/ai";
 import { useAiModelSelection } from "../composables/useAiModelSelection";
+import { renderMarkdown } from "../utils/markdown";
 
 const settingsStore = useSettingsStore();
 const aiStore = useAiStore();
@@ -134,13 +138,6 @@ function formatTime(ts: number): string {
     hour: "2-digit",
     minute: "2-digit",
   });
-}
-
-function formatContent(content: string): string {
-  return content
-    .replace(/\n/g, "<br>")
-    .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>")
-    .replace(/`(.*?)`/g, "<code>$1</code>");
 }
 
 function scrollToBottom(): void {
@@ -465,19 +462,6 @@ async function callAIStream(
   color: var(--text-secondary);
   line-height: 1.65;
   font-size: 14px;
-}
-
-.bubble-text :deep(b) {
-  color: var(--text-primary);
-  font-weight: 600;
-}
-
-.bubble-text :deep(code) {
-  background: var(--bg-card);
-  padding: 2px 6px;
-  border-radius: 4px;
-
-  font-size: 13px;
 }
 
 .bubble-time {
