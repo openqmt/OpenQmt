@@ -84,35 +84,6 @@
                     />
                 </div>
 
-                <h3 class="section-title">规模变化</h3>
-                <div class="surface-card table-card">
-                    <n-data-table
-                        v-if="detail.scales.length"
-                        :columns="scaleColumns"
-                        :data="detail.scales"
-                        :bordered="false"
-                        size="small"
-                        :pagination="false"
-                    />
-                    <n-empty v-else description="暂无规模数据" />
-                </div>
-
-                <h3 v-if="detail.bonuses.length" class="section-title">
-                    分红记录
-                </h3>
-                <div
-                    v-if="detail.bonuses.length"
-                    class="surface-card table-card"
-                >
-                    <n-data-table
-                        :columns="bonusColumns"
-                        :data="detail.bonuses"
-                        :bordered="false"
-                        size="small"
-                        :pagination="false"
-                    />
-                </div>
-
                 <!-- 基金档案 -->
                 <template v-if="detail.profile">
                     <h3 class="section-title">基金档案</h3>
@@ -469,6 +440,35 @@
                         </div>
                     </div>
                 </template>
+
+                <h3 class="section-title">规模变化</h3>
+                <div class="surface-card table-card">
+                    <n-data-table
+                        v-if="detail.scales.length"
+                        :columns="scaleColumns"
+                        :data="detail.scales"
+                        :bordered="false"
+                        size="small"
+                        :pagination="false"
+                    />
+                    <n-empty v-else description="暂无规模数据" />
+                </div>
+
+                <h3 v-if="detail.bonuses.length" class="section-title">
+                    分红记录
+                </h3>
+                <div
+                    v-if="detail.bonuses.length"
+                    class="surface-card table-card"
+                >
+                    <n-data-table
+                        :columns="bonusColumns"
+                        :data="detail.bonuses"
+                        :bordered="false"
+                        size="small"
+                        :pagination="false"
+                    />
+                </div>
             </template>
         </n-spin>
     </div>
