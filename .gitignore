@@ -31,3 +31,7 @@ node_modules/
 .env
 
 src-tauri/target
+
+docs/.vitepress/dist
+
+docs/.vitepress/cache

@@ -1,37 +1,41 @@
 {
-    "name": "OpenQmt",
-    "private": true,
-    "version": "0.1.0",
-    "type": "module",
-    "scripts": {
-        "tauri-dev": "tauri dev",
-        "dev": "vite",
-        "build": "vue-tsc --noEmit && vite build",
-        "preview": "vite preview",
-        "tauri": "tauri",
-        "icon": "tauri icon",
-        "tauri-build": "tauri build"
-    },
-    "dependencies": {
-        "@tauri-apps/api": "^2",
-        "@tauri-apps/plugin-http": "^2",
-        "@tauri-apps/plugin-store": "^2.4.3",
-        "@tauri-apps/plugin-updater": "~2.10.1",
-        "@vicons/ionicons5": "^0.12.0",
-        "axios": "^1.18.0",
-        "echarts": "^6.1.0",
-        "marked": "^18.0.5",
-        "naive-ui": "^2.40.0",
-        "pinia": "^2.3.0",
-        "vue": "^3.5.0",
-        "vue-router": "^4.5.0"
-    },
-    "devDependencies": {
-        "@tauri-apps/cli": "^2",
-        "@types/node": "^25.9.3",
-        "@vitejs/plugin-vue": "^5.2.0",
-        "typescript": "~5.7.0",
-        "vite": "^6.0.0",
-        "vue-tsc": "^2.2.0"
-    }
+  "name": "OpenQmt",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "tauri-dev": "tauri dev",
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "icon": "tauri icon",
+    "tauri-build": "tauri build",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-http": "^2",
+    "@tauri-apps/plugin-store": "^2.4.3",
+    "@tauri-apps/plugin-updater": "~2.10.1",
+    "@vicons/ionicons5": "^0.12.0",
+    "axios": "^1.18.0",
+    "echarts": "^6.1.0",
+    "marked": "^18.0.5",
+    "naive-ui": "^2.40.0",
+    "pinia": "^2.3.0",
+    "vue": "^3.5.0",
+    "vue-router": "^4.5.0"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2",
+    "@types/node": "^25.9.3",
+    "@vitejs/plugin-vue": "^5.2.0",
+    "typescript": "~5.7.0",
+    "vite": "^6.0.0",
+    "vitepress": "2.0.0-alpha.18",
+    "vue-tsc": "^2.2.0"
+  }
 }
