@@ -247,7 +247,6 @@ import {
   LogInOutline,
   LogOutOutline,
   PersonOutline,
-  LockClosedOutline,
   ChevronDownOutline,
   SunnyOutline,
   MoonOutline,
@@ -400,21 +399,6 @@ const currentThemeOverrides = computed(() =>
 const renderIcon = (icon: any) => () =>
   h(NIcon, { size: 18 }, { default: () => h(icon) });
 
-const renderLabelWithLock = (label: string, requiresAuth: boolean) => {
-  if (requiresAuth && !authStore.isAuthenticated) {
-    return () =>
-      h("div", { style: "display:flex;align-items:center;gap:6px" }, [
-        h("span", label),
-        h(
-          NIcon,
-          { size: 12, color: "var(--text-muted)" },
-          { default: () => h(LockClosedOutline) },
-        ),
-      ]);
-  }
-  return label;
-};
-
 const menuOptions = computed<MenuOption[]>(() => {
   const visibleKeys = new Set(
     settingsStore.sortedMenuItems
@@ -437,12 +421,12 @@ const menuOptions = computed<MenuOption[]>(() => {
     },
     { label: "基金排行", key: "fund", icon: renderIcon(WalletOutline) },
     {
-      label: renderLabelWithLock("认知学习", true),
+      label: "认知学习",
       key: "learn",
       icon: renderIcon(BookOutline),
     },
     {
-      label: renderLabelWithLock("AI 分析", true),
+      label: "AI 分析",
       key: "ai",
       icon: renderIcon(SparklesOutline),
       children: [

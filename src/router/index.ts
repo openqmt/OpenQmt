@@ -70,19 +70,19 @@ const routes: RouteRecordRaw[] = [
         path: '/learn',
         name: 'Learn',
         component: () => import('../pages/LearnPage.vue'),
-        meta: { title: '认知学习', requiresAuth: true },
+        meta: { title: '认知学习' },
     },
     {
         path: '/ai',
         name: 'AI',
         component: () => import('../pages/AIPage.vue'),
-        meta: { title: 'AI分析', requiresAuth: true },
+        meta: { title: 'AI分析' },
     },
     {
         path: '/ai/:id',
         name: 'AIConversation',
         component: () => import('../pages/AIPage.vue'),
-        meta: { title: 'AI分析', requiresAuth: true },
+        meta: { title: 'AI分析' },
     },
     {
         path: '/profile',
