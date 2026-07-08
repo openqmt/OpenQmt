@@ -24,7 +24,8 @@
                     </div>
                     <div class="sidebar-divider"></div>
                     <n-menu
-                        v-model:value="activeKey"
+                        :value="activeKey"
+                        @update:value="handleMenuUpdate"
                         :collapsed="collapsed"
                         :collapsed-width="64"
                         :collapsed-icon-size="20"
@@ -218,7 +219,8 @@
                     </div>
                     <div class="sidebar-divider"></div>
                     <n-menu
-                        v-model:value="activeKey"
+                        :value="activeKey"
+                        @update:value="handleMenuUpdate"
                         :options="
                             isInSettingsArea ? settingsMenuOptions : menuOptions
                         "
@@ -564,6 +566,16 @@ async function handleUserDropdown(key: string) {
     } else if (key === 'about') {
         showAboutDialog.value = true
     }
+}
+
+// 菜单选择处理：未登录时点击个人中心弹出登录框
+function handleMenuUpdate(key: string) {
+    if (key === 'profile' && !authStore.isAuthenticated) {
+        authStore.pendingAuthRoute = '/profile'
+        showAuthDialog.value = true
+        return
+    }
+    activeKey.value = key
 }
 
 function backToMain() {
