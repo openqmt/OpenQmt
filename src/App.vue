@@ -137,54 +137,37 @@
                   </n-icon>
                 </template>
               </n-button>
-              <!-- 未登录 -->
-              <template v-if="!authStore.isAuthenticated">
-                <n-button
-                  size="small"
-                  type="primary"
-                  ghost
-                  @click="showAuthDialog = true"
-                  class="login-btn"
-                >
-                  <template #icon>
-                    <n-icon :component="LogInOutline" />
-                  </template>
-                  登录
-                </n-button>
-              </template>
-              <!-- 已登录 -->
-              <template v-else>
-                <n-dropdown
-                  :options="userDropdownOptions"
-                  @select="handleUserDropdown"
-                >
-                  <div class="user-area">
-                    <n-avatar
-                      v-if="authStore.user?.avatar_url"
-                      :src="authStore.user.avatar_url"
-                      :size="28"
-                      round
+              <n-dropdown
+                :options="userDropdownOptions"
+                @select="handleUserDropdown"
+              >
+                <div class="user-area">
+                  <n-avatar
+                    v-if="authStore.user?.avatar_url"
+                    :src="authStore.user.avatar_url"
+                    :size="28"
+                    round
+                  />
+                  <n-avatar v-else :size="28" round class="user-avatar-default">
+                    <n-icon
+                      v-if="!authStore.isAuthenticated"
+                      :component="PersonOutline"
+                      :size="16"
                     />
-                    <n-avatar
-                      v-else
-                      :size="28"
-                      round
-                      class="user-avatar-default"
-                    >
-                      {{
-                        authStore.user?.nickname?.charAt(0)?.toUpperCase() ||
-                        "U"
-                      }}
-                    </n-avatar>
-                    <span class="user-name" v-if="!isMobile">{{
-                      authStore.user?.nickname || authStore.user?.email
-                    }}</span>
-                    <n-icon size="14" color="var(--text-muted)"
-                      ><ChevronDownOutline
-                    /></n-icon>
-                  </div>
-                </n-dropdown>
-              </template>
+                    <template v-else>{{
+                      authStore.user?.nickname?.charAt(0)?.toUpperCase() || "U"
+                    }}</template>
+                  </n-avatar>
+                  <span class="user-name" v-if="!isMobile">{{
+                    authStore.isAuthenticated
+                      ? authStore.user?.nickname || authStore.user?.email
+                      : "未登录"
+                  }}</span>
+                  <n-icon size="14" color="var(--text-muted)"
+                    ><ChevronDownOutline
+                  /></n-icon>
+                </div>
+              </n-dropdown>
             </div>
           </n-layout-header>
           <n-layout-content
@@ -506,20 +489,43 @@ const settingsMenuOptions = computed<MenuOption[]>(() => [
   },
 ]);
 
-const userDropdownOptions: DropdownOption[] = [
-  { label: "个人中心", key: "profile", icon: renderIcon(PersonOutline) },
-  { label: "系统设置", key: "settings", icon: renderIcon(SettingsOutline) },
-  {
-    label: "关于我们",
-    key: "about",
-    icon: renderIcon(InformationCircleOutline),
-  },
-  { type: "divider" },
-  { label: "退出登录", key: "logout", icon: renderIcon(LogOutOutline) },
-];
+// 根据登录状态生成下拉菜单选项：未登录时显示"登录注册"，已登录显示"个人中心"
+const userDropdownOptions = computed<DropdownOption[]>(() =>
+  authStore.isAuthenticated
+    ? [
+        { label: "个人中心", key: "profile", icon: renderIcon(PersonOutline) },
+        {
+          label: "系统设置",
+          key: "settings",
+          icon: renderIcon(SettingsOutline),
+        },
+        {
+          label: "关于我们",
+          key: "about",
+          icon: renderIcon(InformationCircleOutline),
+        },
+        { type: "divider" },
+        { label: "退出登录", key: "logout", icon: renderIcon(LogOutOutline) },
+      ]
+    : [
+        { label: "登录注册", key: "login", icon: renderIcon(LogInOutline) },
+        {
+          label: "系统设置",
+          key: "settings",
+          icon: renderIcon(SettingsOutline),
+        },
+        {
+          label: "关于我们",
+          key: "about",
+          icon: renderIcon(InformationCircleOutline),
+        },
+      ],
+);
 
 async function handleUserDropdown(key: string) {
-  if (key === "logout") {
+  if (key === "login") {
+    showAuthDialog.value = true;
+  } else if (key === "logout") {
     await authStore.logout();
   } else if (key === "profile") {
     router.push("/profile");
@@ -944,10 +950,6 @@ onUnmounted(() => {
 .ai-assistant-btn:hover {
   color: var(--gold-primary) !important;
   background: rgba(212, 168, 67, 0.08) !important;
-}
-
-.login-btn {
-  font-size: 13px;
 }
 
 .user-area {

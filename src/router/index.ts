@@ -94,19 +94,19 @@ const routes: RouteRecordRaw[] = [
         path: '/settings',
         name: 'Settings',
         component: () => import('../pages/SettingsPage.vue'),
-        meta: { title: '系统设置', requiresAuth: true },
+        meta: { title: '系统设置' },
     },
     {
         path: '/notifications',
         name: 'Notifications',
         component: () => import('../pages/NotificationsPage.vue'),
-        meta: { title: '推送通知', requiresAuth: true },
+        meta: { title: '推送通知' },
     },
     {
         path: '/feature-control',
         name: 'FeatureControl',
         component: () => import('../pages/FeatureControlPage.vue'),
-        meta: { title: '功能控制', requiresAuth: true },
+        meta: { title: '功能控制' },
     },
 ]
 
