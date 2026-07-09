@@ -1,3 +1,9 @@
+---
+title: 快速上手
+description: OpenQmt 安装与开发环境配置指南，支持 Windows、macOS、Linux 跨平台部署。
+keywords: OpenQmt,快速上手,安装,开发环境,pnpm,Tauri
+---
+
 # 快速上手
 
 ## 环境要求

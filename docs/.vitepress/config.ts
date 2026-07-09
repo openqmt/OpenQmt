@@ -1,13 +1,67 @@
 import { defineConfig } from 'vitepress'
 
+const SITE_URL = 'https://docs.openqmt.com'
+const SITE_TITLE = 'OpenQmt — 最简单的 AI 投资助手'
+const SITE_DESC = '基于 Tauri 2 + Vue 3 构建的跨平台股票分析工具，支持黄金行情、股市行情、基金排行、AI 智能分析，仅 8MB 体积，开箱即用。'
+
 export default defineConfig({
   lang: 'zh-CN',
   title: 'OpenQmt',
-  description: '最简单的 AI 投资助手 — 基于 Tauri 2 + Vue 3 的股票分析工具',
+  titleTemplate: ':title - OpenQmt',
+  description: SITE_DESC,
 
   head: [
     ['meta', { name: 'theme-color', content: '#b8922e' }],
+    ['meta', { name: 'keywords', content: 'OpenQmt,AI投资助手,股票分析,黄金行情,基金排行,AI分析,跨平台,Tauri,Vue3,开源' }],
+    ['meta', { name: 'author', content: 'OpenQmt' }],
+    ['meta', { name: 'robots', content: 'index, follow' }],
+    ['meta', { property: 'og:type', content: 'website' }],
+    ['meta', { property: 'og:site_name', content: 'OpenQmt' }],
+    ['meta', { property: 'og:locale', content: 'zh_CN' }],
+    ['meta', { property: 'og:title', content: SITE_TITLE }],
+    ['meta', { property: 'og:description', content: SITE_DESC }],
+    ['meta', { property: 'og:image', content: `${SITE_URL}/logo.png` }],
+    ['meta', { property: 'og:url', content: SITE_URL }],
+    ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+    ['meta', { name: 'twitter:title', content: SITE_TITLE }],
+    ['meta', { name: 'twitter:description', content: SITE_DESC }],
+    ['meta', { name: 'twitter:image', content: `${SITE_URL}/logo.png` }],
+    ['script', { type: 'application/ld+json' }, JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'SoftwareApplication',
+      name: 'OpenQmt',
+      description: SITE_DESC,
+      url: SITE_URL,
+      applicationCategory: 'FinanceApplication',
+      operatingSystem: 'Windows, macOS, Linux, iOS, Android',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      author: { '@type': 'Organization', name: 'OpenQmt' },
+    })],
   ],
+
+  sitemap: {
+    hostname: SITE_URL,
+  },
+
+  transformHead({ pageData }) {
+    const head: [string, Record<string, string>][] = []
+    const title = pageData.title ? `${pageData.title} - OpenQmt` : SITE_TITLE
+    const desc = pageData.frontmatter.description || SITE_DESC
+    const url = `${SITE_URL}/${pageData.relativePath}`.replace(/index\.md$/, '').replace(/\.md$/, '.html')
+
+    head.push(['meta', { property: 'og:title', content: title }])
+    head.push(['meta', { property: 'og:description', content: desc }])
+    head.push(['meta', { property: 'og:url', content: url }])
+    head.push(['meta', { name: 'twitter:title', content: title }])
+    head.push(['meta', { name: 'twitter:description', content: desc }])
+    head.push(['link', { rel: 'canonical', href: url }])
+
+    if (pageData.frontmatter.keywords) {
+      head.push(['meta', { name: 'keywords', content: pageData.frontmatter.keywords }])
+    }
+
+    return head
+  },
 
   themeConfig: {
     logo: '/logo.png',

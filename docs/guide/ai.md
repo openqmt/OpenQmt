@@ -1,3 +1,9 @@
+---
+title: AI 分析
+description: 对接 OpenAI、DeepSeek、通义千问等大模型，流式对话实时分析股票与市场，免登录即可使用。
+keywords: AI分析,大模型,OpenAI,DeepSeek,通义千问,智能分析,股票分析
+---
+
 # AI 分析
 
 > 免登录访问
