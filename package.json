@@ -37,12 +37,5 @@
     "vite": "^6.0.0",
     "vitepress": "^2.0.0-alpha.18",
     "vue-tsc": "^2.2.0"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "sharp",
-      "vue-demi"
-    ]
   }
 }
