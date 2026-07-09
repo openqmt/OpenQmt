@@ -110,7 +110,7 @@ jobs:
 
       - name: Install frontend dependencies
         if: ${{ matrix.enabled }}
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Install Rust stable
         if: ${{ matrix.enabled }}
