@@ -284,7 +284,7 @@ async function handleUpdatePassword() {
   align-items: center;
   gap: 24px;
   padding: 28px 32px;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 
 .profile-avatar-default {
@@ -329,7 +329,7 @@ async function handleUpdatePassword() {
 .profile-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 12px;
 }
 
 .profile-card {

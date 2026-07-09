@@ -363,7 +363,7 @@ function handleReset() {
 .notifications-container {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 12px;
   width: 100%;
 }
 
