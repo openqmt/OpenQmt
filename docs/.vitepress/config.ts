@@ -16,6 +16,7 @@ export default defineConfig({
       { text: '首页', link: '/' },
       { text: '指南', link: '/guide/introduction', activeMatch: '/guide/' },
       { text: '功能', link: '/guide/features', activeMatch: '/guide/features' },
+      { text: '下载', link: '/guide/download' },
     ],
 
     sidebar: {
@@ -25,6 +26,7 @@ export default defineConfig({
           items: [
             { text: '项目介绍', link: '/guide/introduction' },
             { text: '快速上手', link: '/guide/getting-started' },
+            { text: '下载', link: '/guide/download' },
           ],
         },
         {
