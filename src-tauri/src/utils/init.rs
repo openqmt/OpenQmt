@@ -2,6 +2,17 @@ use serde_json::json;
 use tauri::{Manager, WindowEvent};
 use tauri_plugin_store::StoreExt;
 
+/// 单例模式：当新实例启动时，聚焦已有窗口
+#[cfg(desktop)]
+pub fn setup_single_instance(builder: tauri::Builder<tauri::Wry>) -> tauri::Builder<tauri::Wry> {
+    builder.plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
+        let _ = app
+            .get_webview_window("main")
+            .expect("no main window")
+            .set_focus();
+    }))
+}
+
 /// 恢复窗口位置和大小，并监听事件持久化状态
 pub fn setup_window_state(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     let store = app

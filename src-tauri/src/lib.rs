@@ -1,8 +1,12 @@
 mod utils;
 
 pub fn run() {
-    tauri::Builder::default()
-        .plugin(tauri_plugin_single_instance::init(|app, args, cwd| {}))
+    let builder = tauri::Builder::default();
+
+    #[cfg(desktop)]
+    let builder = utils::init::setup_single_instance(builder);
+
+    builder
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_store::Builder::default().build())
