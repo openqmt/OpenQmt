@@ -63,6 +63,8 @@ pub fn setup_window_state(app: &mut tauri::App) -> Result<(), Box<dyn std::error
         }
         _ => {}
     });
-
+    window.unminimize().unwrap();
+    window.show().unwrap();
+    window.set_focus().unwrap();
     Ok(())
 }
