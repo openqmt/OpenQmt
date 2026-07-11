@@ -27,8 +27,12 @@ export const DEFAULT_MENU_ITEMS: MenuItemConfig[] = [
     { key: 'ai', label: 'AI 分析', visible: true, order: 4 },
 ]
 
-/** 基金列表可控制的收益率列 */
-export const FUND_YIELD_COLUMNS: Array<{ key: string; label: string }> = [
+/** 基金列表可控制的列 */
+export const FUND_LIST_COLUMNS: Array<{ key: string; label: string }> = [
+    { key: 'code', label: '代码' },
+    { key: 'name', label: '基金名称' },
+    { key: 'type', label: '类型' },
+    { key: 'nav', label: '净值' },
     { key: 'dayChange', label: '日涨跌' },
     { key: 'weekChange', label: '近一周' },
     { key: 'monthChange', label: '近一月' },
@@ -41,8 +45,12 @@ export const FUND_YIELD_COLUMNS: Array<{ key: string; label: string }> = [
     { key: 'incepChange', label: '成立来' },
 ]
 
-/** 默认仅展示：日涨跌、近一周、近一月、近三月、近六月 */
+/** 默认列显示配置 */
 const DEFAULT_FUND_COLUMNS: Record<string, boolean> = {
+    code: true,
+    name: true,
+    type: true,
+    nav: true,
     dayChange: true,
     weekChange: true,
     monthChange: true,
@@ -392,7 +400,7 @@ export const useSettingsStore = defineStore('settings', () => {
             if (saved && typeof saved === 'object') {
                 // 合并默认值，确保新增字段使用 DEFAULT_FUND_COLUMNS 中的默认值
                 const result: Record<string, boolean> = {}
-                for (const col of FUND_YIELD_COLUMNS) {
+                for (const col of FUND_LIST_COLUMNS) {
                     result[col.key] =
                         saved[col.key] ?? DEFAULT_FUND_COLUMNS[col.key] ?? false
                 }
