@@ -13,6 +13,7 @@ const SETTINGS_KEY = 'openqmt_model_settings'
 const MENU_SETTINGS_KEY = 'openqmt_menu_settings'
 const FUND_COLUMNS_KEY = 'openqmt_fund_columns'
 const LEARN_LAYOUT_KEY = 'openqmt_learn_layout'
+const SIDEBAR_COLLAPSED_KEY = 'openqmt_sidebar_collapsed'
 
 /** 认知学习页面布局模式 */
 export type LearnLayout = 'masonry' | 'list' | 'card' | 'compact'
@@ -449,6 +450,22 @@ export const useSettingsStore = defineStore('settings', () => {
         storage.set(LEARN_LAYOUT_KEY, 'masonry')
     }
 
+    // ── 侧栏折叠状态 ──
+    function loadSidebarCollapsed(): boolean {
+        try {
+            const saved = storage.getSync<boolean>(SIDEBAR_COLLAPSED_KEY)
+            if (typeof saved === 'boolean') return saved
+        } catch {}
+        return false
+    }
+
+    const sidebarCollapsed = ref<boolean>(loadSidebarCollapsed())
+
+    function setSidebarCollapsed(val: boolean) {
+        sidebarCollapsed.value = val
+        storage.set(SIDEBAR_COLLAPSED_KEY, val)
+    }
+
     return {
         model,
         providerLabel,
@@ -474,5 +491,7 @@ export const useSettingsStore = defineStore('settings', () => {
         learnLayout,
         setLearnLayout,
         resetLearnLayout,
+        sidebarCollapsed,
+        setSidebarCollapsed,
     }
 })

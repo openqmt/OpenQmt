@@ -287,7 +287,10 @@ const aiStore = useAiStore()
 const settingsStore = useSettingsStore()
 const { isMobile } = useBreakpoint()
 const activeKey = ref<string>('')
-const collapsed = ref(false)
+const collapsed = computed({
+    get: () => settingsStore.sidebarCollapsed,
+    set: (val: boolean) => settingsStore.setSidebarCollapsed(val),
+})
 const mobileSidebarOpen = ref(false)
 const currentTime = ref('')
 const showAuthDialog = ref(false)
