@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 const SITE_URL = 'https://openqmt.com'
 const SITE_TITLE = 'OpenQmt — 最简单的 AI 投资助手'
 const SITE_DESC =
-    '基于 Tauri 2 + Vue 3 构建的开源跨平台股票分析工具，支持黄金行情、股市行情、基金排行、AI 智能分析，仅 8MB 体积，开箱即用。'
+    '仅8M的开源免费Ai投资分析工具，简洁、高效、开箱即用，支持黄金行情、股市行情、基金排行、AI 智能分析，开箱即用。'
 
 export default defineConfig({
     lang: 'zh-CN',

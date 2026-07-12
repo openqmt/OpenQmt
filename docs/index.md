@@ -4,7 +4,7 @@ layout: home
 hero:
     name: OpenQmt
     text: 最简单的 AI 投资助手
-    tagline: 仅8M的开源Ai投资分析工具，简洁、高效、开箱即用
+    tagline: 仅8M的开源免费Ai投资分析工具，简洁、高效、开箱即用
     image:
         src: /logo.png
         alt: OpenQmt
