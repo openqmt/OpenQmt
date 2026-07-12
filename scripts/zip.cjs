@@ -15,9 +15,6 @@ const versionObj = JSON.parse(packageJson)
 // 当前时间
 const now = new Date().toISOString()
 
-// 读取 .env.prod 文件中的环境变量
-const webBranch = process.env.VITE_WEB_BRANCH
-
 const content =
     'version: ' +
     versionObj.version +
@@ -25,9 +22,7 @@ const content =
     'build time: ' +
     now +
     '\n' +
-    'web branch: ' +
-    webBranch
-console.log('version.txt content', content)
+    console.log('version.txt content', content)
 
 fs.writeFileSync(path.join(distPath, 'version.txt'), content)
 
