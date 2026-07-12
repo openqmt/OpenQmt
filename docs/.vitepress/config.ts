@@ -124,7 +124,9 @@ export default defineConfig({
             ],
         },
 
-        socialLinks: [{ icon: 'github', link: 'https://github.com' }],
+        socialLinks: [
+            { icon: 'github', link: 'https://github.com/openqmt/OpenQmt' },
+        ],
 
         footer: {
             message: '基于 MIT 协议发布',
