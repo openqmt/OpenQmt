@@ -6,7 +6,7 @@
         @update:show="$emit('update:show', $event)"
     >
         <div class="about-dialog">
-            <div class="about-logo">
+            <div class="about-logo" @click="onLogoClick">
                 <img class="logo-icon" :src="logoImg" alt="logo" />
             </div>
             <h2 class="about-title">OpenQmt</h2>
@@ -40,10 +40,35 @@
 
 <script setup lang="ts">
 import { NModal, NButton } from 'naive-ui'
+import { invoke, isTauri } from '@tauri-apps/api/core'
 import logoImg from '@/assets/images/logo.png'
 
 defineProps<{ show: boolean }>()
 const emit = defineEmits<{ 'update:show': [value: boolean] }>()
+
+let logoClickCount = 0
+let logoClickTimer: ReturnType<typeof setTimeout> | null = null
+
+async function onLogoClick() {
+    if (!isTauri()) return
+
+    logoClickCount++
+    if (logoClickTimer) clearTimeout(logoClickTimer)
+
+    if (logoClickCount >= 3) {
+        logoClickCount = 0
+        try {
+            await invoke('open_devtools')
+        } catch (error) {
+            console.warn('Failed to open devtools:', error)
+        }
+        return
+    }
+
+    logoClickTimer = setTimeout(() => {
+        logoClickCount = 0
+    }, 500)
+}
 </script>
 
 <style scoped>
