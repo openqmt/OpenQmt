@@ -16,13 +16,8 @@ const versionObj = JSON.parse(packageJson)
 const now = new Date().toISOString()
 
 const content =
-    'version: ' +
-    versionObj.version +
-    '\n' +
-    'build time: ' +
-    now +
-    '\n' +
-    console.log('version.txt content', content)
+    'version: ' + versionObj.version + '\n' + 'build time: ' + now + '\n'
+console.log('version.txt content', content)
 
 fs.writeFileSync(path.join(distPath, 'version.txt'), content)
 
