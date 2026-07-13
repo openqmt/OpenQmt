@@ -52,9 +52,18 @@ const upNotesStore = useUpNotesStore()
 let logoClickCount = 0
 let logoClickTimer: ReturnType<typeof setTimeout> | null = null
 
+const consoleLog = () => {
+    // 打印环境变量
+    console.log('VITE_NOTE_URL', import.meta.env.VITE_NOTE_URL)
+    console.log('VITE_UPDATE_URL', import.meta.env.VITE_UPDATE_URL)
+    console.log('VITE_FUND_DETAIL', import.meta.env.VITE_FUND_DETAIL)
+    console.log('VITE_FUND_STOCK', import.meta.env.VITE_FUND_STOCK)
+    console.log('VITE_FUND_FUND', import.meta.env.VITE_FUND_FUND)
+}
+
 async function onLogoClick() {
     if (!isTauri() || !upNotesStore.devtoolsEnabled) return
-
+    consoleLog()
     logoClickCount++
     if (logoClickTimer) clearTimeout(logoClickTimer)
 
