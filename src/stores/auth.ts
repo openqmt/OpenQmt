@@ -449,6 +449,10 @@ export const useAuthStore = defineStore('auth', () => {
         }
     }
 
+    function emailExists(email: string): boolean {
+        return loadMockUsers().some((u) => u.email === email)
+    }
+
     return {
         user,
         token,
@@ -465,5 +469,6 @@ export const useAuthStore = defineStore('auth', () => {
         updateNickname,
         updatePassword,
         rechargeCredits,
+        emailExists,
     }
 })

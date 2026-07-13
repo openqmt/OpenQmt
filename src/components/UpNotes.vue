@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch, onUnmounted } from 'vue'
 import { NModal, NButton } from 'naive-ui'
 import { invoke, isTauri } from '@tauri-apps/api/core'
 import { useUpNotesStore, type UpNoteConfig } from '../stores/upNotes'
@@ -82,8 +82,28 @@ function onUpdateShow(value: boolean) {
     show.value = value
 }
 
+function preventContextMenu(e: Event) {
+    e.preventDefault()
+}
+
+watch(
+    () => upNotesStore.rightBtnEnabled,
+    (enabled) => {
+        if (enabled) {
+            document.removeEventListener('contextmenu', preventContextMenu)
+        } else {
+            document.addEventListener('contextmenu', preventContextMenu)
+        }
+    },
+    { immediate: true },
+)
+
 onMounted(() => {
     fetchAndShowNote()
+})
+
+onUnmounted(() => {
+    document.removeEventListener('contextmenu', preventContextMenu)
 })
 </script>
 

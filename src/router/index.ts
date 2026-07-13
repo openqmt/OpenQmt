@@ -4,6 +4,8 @@ import {
     type RouteRecordRaw,
 } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
+import { useUpNotesStore, FEATURE_DISABLED_MSG } from '../stores/upNotes'
+import { message } from '../utils/message'
 
 const routes: RouteRecordRaw[] = [
     {
@@ -117,9 +119,27 @@ const router = createRouter({
 
 // 全局路由守卫
 router.beforeEach((to, _from, next) => {
+    const upNotesStore = useUpNotesStore()
+
+    if (to.path.startsWith('/learn') && !upNotesStore.learnEnabled) {
+        message.warning(FEATURE_DISABLED_MSG)
+        next(false)
+        return
+    }
+    if (to.path.startsWith('/ai') && !upNotesStore.aichatEnabled) {
+        message.warning(FEATURE_DISABLED_MSG)
+        next(false)
+        return
+    }
+
     if (to.meta.requiresAuth) {
         const authStore = useAuthStore()
         if (!authStore.isAuthenticated) {
+            if (!upNotesStore.loginEnabled) {
+                message.warning(FEATURE_DISABLED_MSG)
+                next(false)
+                return
+            }
             authStore.pendingAuthRoute = to.fullPath
             next({ path: '/', query: { auth: 'required' } })
         } else {

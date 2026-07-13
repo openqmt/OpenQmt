@@ -129,6 +129,7 @@
 import { ref, reactive } from 'vue'
 import { NModal, NInput, NButton, NIcon, useMessage } from 'naive-ui'
 import { useAuthStore } from '../stores/auth'
+import { useUpNotesStore, FEATURE_DISABLED_MSG } from '../stores/upNotes'
 import { LockClosedOutline, MailOutline } from '@vicons/ionicons5'
 import logoImg from '@/assets/images/logo.png'
 
@@ -136,6 +137,7 @@ const props = defineProps<{ show: boolean }>()
 const emit = defineEmits<{ 'update:show': [value: boolean] }>()
 
 const authStore = useAuthStore()
+const upNotesStore = useUpNotesStore()
 const message = useMessage()
 
 const form = reactive({ email: '', password: '' })
@@ -170,6 +172,17 @@ function validateAll(): boolean {
 
 async function handleSubmit() {
     if (!validateAll()) return
+
+    const isRegister = !authStore.emailExists(form.email)
+    if (isRegister && !upNotesStore.registerEnabled) {
+        message.warning(FEATURE_DISABLED_MSG)
+        return
+    }
+    if (!isRegister && !upNotesStore.loginEnabled) {
+        message.warning(FEATURE_DISABLED_MSG)
+        return
+    }
+
     const result = await authStore.loginOrRegister(form.email, form.password)
     if (result.success) {
         message.success(result.isNew ? '注册并登录成功' : '登录成功')
@@ -182,6 +195,10 @@ async function handleSubmit() {
 
 // ── GitHub Login ──
 async function handleGithubLogin() {
+    if (!upNotesStore.loginEnabled) {
+        message.warning(FEATURE_DISABLED_MSG)
+        return
+    }
     const result = await authStore.githubLogin()
     if (result.success) {
         message.success('GitHub 登录成功')
@@ -194,6 +211,10 @@ async function handleGithubLogin() {
 
 // ── Google Login ──
 async function handleGoogleLogin() {
+    if (!upNotesStore.loginEnabled) {
+        message.warning(FEATURE_DISABLED_MSG)
+        return
+    }
     const result = await authStore.googleLogin()
     if (result.success) {
         message.success('Google 登录成功')

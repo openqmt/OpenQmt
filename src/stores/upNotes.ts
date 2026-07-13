@@ -1,8 +1,9 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import * as storage from '../utils/storage'
 
 const SHOWN_NOTE_KEY = 'openqmt_up_note_shown'
+export const FEATURE_DISABLED_MSG = '暂未开启'
 
 export interface UpNoteLocale {
     note: string
@@ -33,6 +34,15 @@ export interface UpNoteConfig {
 export const useUpNotesStore = defineStore('upNotes', () => {
     const config = ref<UpNoteConfig | null>(null)
 
+    const loginEnabled = computed(() => config.value?.login ?? true)
+    const registerEnabled = computed(() => config.value?.register ?? true)
+    const searchEnabled = computed(() => config.value?.search ?? true)
+    const learnEnabled = computed(() => config.value?.learn ?? true)
+    const aichatEnabled = computed(() => config.value?.aichat ?? true)
+    const aipageEnabled = computed(() => config.value?.aipage ?? true)
+    const rightBtnEnabled = computed(() => config.value?.rightBtn ?? true)
+    const devtoolsEnabled = computed(() => config.value?.devtools ?? true)
+
     function setConfig(data: UpNoteConfig) {
         config.value = data
     }
@@ -45,5 +55,18 @@ export const useUpNotesStore = defineStore('upNotes', () => {
         storage.set(SHOWN_NOTE_KEY, note)
     }
 
-    return { config, setConfig, getShownNote, markNoteShown }
+    return {
+        config,
+        loginEnabled,
+        registerEnabled,
+        searchEnabled,
+        learnEnabled,
+        aichatEnabled,
+        aipageEnabled,
+        rightBtnEnabled,
+        devtoolsEnabled,
+        setConfig,
+        getShownNote,
+        markNoteShown,
+    }
 })

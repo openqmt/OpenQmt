@@ -41,16 +41,19 @@
 <script setup lang="ts">
 import { NModal, NButton } from 'naive-ui'
 import { invoke, isTauri } from '@tauri-apps/api/core'
+import { useUpNotesStore } from '../stores/upNotes'
 import logoImg from '@/assets/images/logo.png'
 
 defineProps<{ show: boolean }>()
 const emit = defineEmits<{ 'update:show': [value: boolean] }>()
 
+const upNotesStore = useUpNotesStore()
+
 let logoClickCount = 0
 let logoClickTimer: ReturnType<typeof setTimeout> | null = null
 
 async function onLogoClick() {
-    if (!isTauri()) return
+    if (!isTauri() || !upNotesStore.devtoolsEnabled) return
 
     logoClickCount++
     if (logoClickTimer) clearTimeout(logoClickTimer)

@@ -118,6 +118,7 @@
                             >
                             <!-- AI 页面助手 -->
                             <n-button
+                                v-if="upNotesStore.aipageEnabled"
                                 quaternary
                                 circle
                                 size="small"
@@ -274,6 +275,8 @@ import { useAuthStore } from './stores/auth'
 import { useThemeStore } from './stores/theme'
 import { useAiStore } from './stores/ai'
 import { useSettingsStore } from './stores/settings'
+import { useUpNotesStore, FEATURE_DISABLED_MSG } from './stores/upNotes'
+import { message } from './utils/message'
 import logoImg from './assets/images/logo.png'
 import AuthDialog from './components/AuthDialog.vue'
 import SettingsDialog from './components/SettingsDialog.vue'
@@ -287,6 +290,7 @@ const authStore = useAuthStore()
 const themeStore = useThemeStore()
 const aiStore = useAiStore()
 const settingsStore = useSettingsStore()
+const upNotesStore = useUpNotesStore()
 const { isMobile } = useBreakpoint()
 const activeKey = ref<string>('')
 const collapsed = computed({
@@ -461,8 +465,7 @@ const menuOptions = computed<MenuOption[]>(() => {
                                     {
                                         style: 'overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0',
                                         onClick: () => {
-                                            aiStore.switchConversation(conv.id)
-                                            router.push(`/ai/${conv.id}`)
+                                            openAiConversation(conv.id)
                                         },
                                     },
                                     conv.title,
@@ -561,6 +564,10 @@ const userDropdownOptions = computed<DropdownOption[]>(() =>
 
 async function handleUserDropdown(key: string) {
     if (key === 'login') {
+        if (!upNotesStore.loginEnabled) {
+            message.warning(FEATURE_DISABLED_MSG)
+            return
+        }
         showAuthDialog.value = true
     } else if (key === 'logout') {
         await authStore.logout()
@@ -573,11 +580,25 @@ async function handleUserDropdown(key: string) {
     }
 }
 
-// 菜单选择处理：未登录时点击个人中心弹出登录框
 function handleMenuUpdate(key: string) {
     if (key === 'profile' && !authStore.isAuthenticated) {
+        if (!upNotesStore.loginEnabled) {
+            message.warning(FEATURE_DISABLED_MSG)
+            return
+        }
         authStore.pendingAuthRoute = '/profile'
         showAuthDialog.value = true
+        return
+    }
+    if (key === 'learn' && !upNotesStore.learnEnabled) {
+        message.warning(FEATURE_DISABLED_MSG)
+        return
+    }
+    if (
+        (key === 'ai' || key === 'ai-new' || key.startsWith('ai-conv-')) &&
+        !upNotesStore.aichatEnabled
+    ) {
+        message.warning(FEATURE_DISABLED_MSG)
         return
     }
     activeKey.value = key
@@ -589,6 +610,15 @@ function backToMain() {
 
 function handleBack() {
     router.back()
+}
+
+function openAiConversation(convId: string) {
+    if (!upNotesStore.aichatEnabled) {
+        message.warning(FEATURE_DISABLED_MSG)
+        return
+    }
+    aiStore.switchConversation(convId)
+    router.push(`/ai/${convId}`)
 }
 
 const titleMap: Record<string, string> = {
@@ -636,8 +666,10 @@ const showPageToolbar = computed(() => {
 const searchQuery = ref('')
 const searchExpanded = ref(false)
 const searchInputRef = ref<InstanceType<typeof NInput> | null>(null)
-const showSearchBox = computed(() =>
-    ['gold', 'stock', 'fund'].includes(activeKey.value),
+const showSearchBox = computed(
+    () =>
+        upNotesStore.searchEnabled &&
+        ['gold', 'stock', 'fund'].includes(activeKey.value),
 )
 const searchPlaceholder = computed(() => {
     const map: Record<string, string> = {
@@ -748,6 +780,10 @@ watch(
     () => route.query.auth,
     (auth) => {
         if (auth === 'required') {
+            if (!upNotesStore.loginEnabled) {
+                message.warning(FEATURE_DISABLED_MSG)
+                return
+            }
             showAuthDialog.value = true
         }
     },
