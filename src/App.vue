@@ -233,6 +233,7 @@
             <AuthDialog v-model:show="showAuthDialog" />
             <SettingsDialog v-model:show="showSettingsDialog" />
             <AboutDialog v-model:show="showAboutDialog" />
+            <UpNotes />
             <AiAssistantOverlay v-model:show="showAiAssistant" />
         </n-message-provider>
     </n-config-provider>
@@ -277,6 +278,7 @@ import logoImg from './assets/images/logo.png'
 import AuthDialog from './components/AuthDialog.vue'
 import SettingsDialog from './components/SettingsDialog.vue'
 import AboutDialog from './components/AboutDialog.vue'
+import UpNotes from './components/UpNotes.vue'
 import PageToolbar from './components/PageToolbar.vue'
 import AiAssistantOverlay from './components/AiAssistantOverlay.vue'
 
