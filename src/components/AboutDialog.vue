@@ -63,13 +63,13 @@ const consoleLog = () => {
 
 async function onLogoClick() {
     if (!isTauri() || !upNotesStore.devtoolsEnabled) return
-    consoleLog()
     logoClickCount++
     if (logoClickTimer) clearTimeout(logoClickTimer)
 
     if (logoClickCount >= 3) {
         logoClickCount = 0
         try {
+            consoleLog()
             await invoke('open_devtools')
         } catch (error) {
             console.warn('Failed to open devtools:', error)
