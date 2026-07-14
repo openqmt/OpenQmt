@@ -40,7 +40,7 @@
         "updater": {
             "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEE5MkM1RkJCMTM3RjUzRjkKUldUNVUzOFR1MThzcVhoWXRlakxCSWRQRW4zWTY4cXk3Zm05SkF0NnNXMlduVkk4bnV3ZWpOdkMK",
             "endpoints": [
-                "https://github.com/user/repo/releases/latest/download/latest.json"
+                "https://files.openqmt.com/files/qmtupdate.json"
             ]
         }
     }
