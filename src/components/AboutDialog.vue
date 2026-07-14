@@ -24,6 +24,10 @@
           <span class="info-label">行情数据</span>
           <span class="info-value"> 互联网公开的财经数据，仅供参考 </span>
         </div>
+        <div class="info-row">
+          <span class="info-label">开源地址</span>
+          <span class="info-value">https://github.com/openqmt/OpenQmt</span>
+        </div>
       </div>
       <p class="about-note">投资有风险，AI 分析仅供参考，不构成投资建议。</p>
       <n-button block type="primary" @click="emit('update:show', false)">
