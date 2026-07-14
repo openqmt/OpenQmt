@@ -12,11 +12,27 @@
 
             <template v-if="updating">
                 <p class="up-notes-status">升级中.....</p>
-                <n-progress type="line" :percentage="progress" :show-indicator="true" />
+                <n-progress
+                    type="line"
+                    :percentage="progress"
+                    :show-indicator="true"
+                />
             </template>
             <div v-else class="up-notes-actions">
-                <n-button v-if="!updateForce" class="up-notes-btn" @click="onCancelUpdate">取消</n-button>
-                <n-button class="up-notes-btn" type="primary" @click="onConfirmUpdate">升级</n-button>
+                <n-button
+                    v-if="!updateForce"
+                    class="up-notes-btn"
+                    @click="onCancelUpdate"
+                >
+                    取消
+                </n-button>
+                <n-button
+                    class="up-notes-btn"
+                    type="primary"
+                    @click="onConfirmUpdate"
+                >
+                    升级
+                </n-button>
             </div>
         </div>
     </n-modal>
@@ -83,7 +99,7 @@ async function fetchAndShowNote() {
 
         const data = (await res.json()) as UpNoteConfig
         upNotesStore.setConfig(data)
-
+        console.log('data', data)
         if (!shouldShow(data)) return
 
         noteText.value = data.zh.note
@@ -151,7 +167,7 @@ async function onConfirmUpdate() {
                     if (contentLength > 0) {
                         progress.value = Math.min(
                             100,
-                            Math.round((downloaded / contentLength) * 100),
+                            Math.round((downloaded / contentLength) * 100)
                         )
                     }
                     break
@@ -219,7 +235,7 @@ watch(
             document.addEventListener('contextmenu', preventContextMenu)
         }
     },
-    { immediate: true },
+    { immediate: true }
 )
 
 onMounted(async () => {
