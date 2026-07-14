@@ -1,19 +1,31 @@
 {
     "version": "0.1.2",
     "notes": "",
-    "pub_date": "2026-07-12T06:12:25.093Z",
+    "pub_date": "2026-07-14T13:30:50.685Z",
     "platforms": {
         "darwin-aarch64": {
-            "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUNVUzOFR1MThzcVMxOEp3ZmRnMi9zajUyaXBXeUhyaWFOOGE3amFLR1ZqR2VZN3pDUE5wV0IxQnBmZnN3ek11aDh4aFpIU2hqQ1g2Y1lMUjA4NE1yU2xzeWw1Q1JwWWdBPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzgzODM2NzQwCWZpbGU6T3BlblFtdC5hcHAudGFyLmd6ClE2NkltVCtiMTJaOUpDNGx6OHR2VjlGUXlLZ0FLNXBaNmZtNFdzNEV5UThDTlVHYUhNUUNkeDBrQU1IdFllSnF0Y3BXbzM2RkJXRTNWL1dpNzkvSEJnPT0K",
-            "url": "https://gh-proxy.org/https://github.com/openqmt/OpenQmt/releases/download/OpenQmt-v0.1.0/OpenQmt_aarch64.app.tar.gz"
+            "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUNVUzOFR1MThzcWNqbEdiQkNnVWFUUmIzNG1ydjlnWlJwWVJlTTFCaHhMWUx4ZTMxcWJVRjFIcFpiTmQybER4OE1xMnNZSGZqNlc5TVAwSk1LMURHYThLUGl4Z1FHeEFzPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg0MDIwMjQyCWZpbGU6T3BlblFtdC5hcHAudGFyLmd6CkVaU2NMaUh4Mk9CNEJwcE5CWEhERGFIK0R2TmI3T3QvNGpNdm5rcmxtdUcvcEFTaG1DaUxDTVF0cjMwclR0TVVLZGhaQUtOZ2dlUUh2dkFGUWpuYkRBPT0K",
+            "url": "https://gh-proxy.org/https://github.com/openqmt/OpenQmt/releases/download/OpenQmt-v0.1.1/OpenQmt_aarch64.app.tar.gz"
         },
         "darwin-aarch64-app": {
-            "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUNVUzOFR1MThzcVMxOEp3ZmRnMi9zajUyaXBXeUhyaWFOOGE3amFLR1ZqR2VZN3pDUE5wV0IxQnBmZnN3ek11aDh4aFpIU2hqQ1g2Y1lMUjA4NE1yU2xzeWw1Q1JwWWdBPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzgzODM2NzQwCWZpbGU6T3BlblFtdC5hcHAudGFyLmd6ClE2NkltVCtiMTJaOUpDNGx6OHR2VjlGUXlLZ0FLNXBaNmZtNFdzNEV5UThDTlVHYUhNUUNkeDBrQU1IdFllSnF0Y3BXbzM2RkJXRTNWL1dpNzkvSEJnPT0K",
-            "url": "https://gh-proxy.org/https://github.com/openqmt/OpenQmt/releases/download/OpenQmt-v0.1.0/OpenQmt_aarch64.app.tar.gz"
+            "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUNVUzOFR1MThzcWNqbEdiQkNnVWFUUmIzNG1ydjlnWlJwWVJlTTFCaHhMWUx4ZTMxcWJVRjFIcFpiTmQybER4OE1xMnNZSGZqNlc5TVAwSk1LMURHYThLUGl4Z1FHeEFzPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg0MDIwMjQyCWZpbGU6T3BlblFtdC5hcHAudGFyLmd6CkVaU2NMaUh4Mk9CNEJwcE5CWEhERGFIK0R2TmI3T3QvNGpNdm5rcmxtdUcvcEFTaG1DaUxDTVF0cjMwclR0TVVLZGhaQUtOZ2dlUUh2dkFGUWpuYkRBPT0K",
+            "url": "https://gh-proxy.org/https://github.com/openqmt/OpenQmt/releases/download/OpenQmt-v0.1.1/OpenQmt_aarch64.app.tar.gz"
+        },
+        "windows-x86_64": {
+            "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUNVUzOFR1MThzcWY0WWUvMkpMcFN2NnRpZVVGZkxxSmNSSGxnM2ltR0tTRUMvTVgxV3JVdWx1cGJ2b2Q4ZG5aYjBtWnNvYzR2NHRXYlFFKzVGNUpQYnpmajVSck1tQ1F3PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg0MDM1ODQ2CWZpbGU6T3BlblFtdF8wLjEuMV94NjRfZW4tVVMubXNpCjJlNXR0T2RhUlQ4NkRVK2pzZjdoT1NRajhDQ2Y1NXJ1eGZNc3k5bmJ4cGlYbDRMdklySlBnLytXQUtweWdiVU5wOEoyeC9TYXZ1aUZDOTI3NVZ6UENRPT0K",
+            "url": "https://gh-proxy.org/https://github.com/openqmt/OpenQmt/releases/download/OpenQmt-v0.1.1/OpenQmt_0.1.1_x64_en-US.msi"
+        },
+        "windows-x86_64-msi": {
+            "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUNVUzOFR1MThzcWY0WWUvMkpMcFN2NnRpZVVGZkxxSmNSSGxnM2ltR0tTRUMvTVgxV3JVdWx1cGJ2b2Q4ZG5aYjBtWnNvYzR2NHRXYlFFKzVGNUpQYnpmajVSck1tQ1F3PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg0MDM1ODQ2CWZpbGU6T3BlblFtdF8wLjEuMV94NjRfZW4tVVMubXNpCjJlNXR0T2RhUlQ4NkRVK2pzZjdoT1NRajhDQ2Y1NXJ1eGZNc3k5bmJ4cGlYbDRMdklySlBnLytXQUtweWdiVU5wOEoyeC9TYXZ1aUZDOTI3NVZ6UENRPT0K",
+            "url": "https://gh-proxy.org/https://github.com/openqmt/OpenQmt/releases/download/OpenQmt-v0.1.1/OpenQmt_0.1.1_x64_en-US.msi"
+        },
+        "windows-x86_64-nsis": {
+            "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUNVUzOFR1MThzcVZ1b2lnWXhnSm4zRy82SUF0VVFXamZLcUNzZG9QdlRUei9HampHaVIySlpLeVJraDIwc0xtTVM4TnFTc1VnWE16NThERXVBaGwydFN4SE84UmF6M3dnPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg0MDM1ODQ2CWZpbGU6T3BlblFtdF8wLjEuMV94NjQtc2V0dXAuZXhlCmx1dGpvS1pMa01uSGx1ekFkR29GUE9kV1VXMTFIbjBwekVBeTU5Q2huanZNcFVKZi9aRmVvWTVtZUl0a2ovT1IzZ2prSXBLem1zZDRSYW5VUUN1c0FRPT0K",
+            "url": "https://gh-proxy.org/https://github.com/openqmt/OpenQmt/releases/download/OpenQmt-v0.1.1/OpenQmt_0.1.1_x64-setup.exe"
         }
     },
     "force": false,
-    "zh": "222222",
-    "en": "333333",
-    "ja": "44444"
+    "zh": "中文升级说明",
+    "en": "英文升级说明",
+    "ja": "日文升级说明"
 }
