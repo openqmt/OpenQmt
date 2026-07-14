@@ -11,7 +11,7 @@
         "preview": "vite preview",
         "tauri": "tauri",
         "icon": "tauri icon",
-        "tauri-build": "tauri build",
+        "tauri-build": "pnpm run build && tauri build",
         "docs:dev": "vitepress dev docs",
         "docs:build": "vitepress build docs",
         "docs:preview": "vitepress preview docs"
