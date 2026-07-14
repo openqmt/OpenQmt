@@ -17,8 +17,8 @@
       </p>
       <div class="about-info">
         <div class="info-row">
-          <span class="info-label">技术栈</span>
-          <span class="info-value">Vue 3 · Tauri 2 · Naive UI</span>
+          <span class="info-label">官网地址</span>
+          <span class="info-value">https://www.openqmt.com</span>
         </div>
         <div class="info-row">
           <span class="info-label">行情数据</span>
