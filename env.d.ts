@@ -6,6 +6,7 @@ interface ImportMetaEnv {
   readonly VITE_FUND_RANK_BASE_URL: string
   readonly VITE_FUND_DETAIL_BASE_URL: string
   readonly VITE_NOTE_URL: string
+  readonly VITE_UPDATE_URL: string
 }
 
 interface ImportMeta {

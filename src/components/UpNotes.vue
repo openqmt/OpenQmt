@@ -1,4 +1,26 @@
 <template>
+    <!-- 升级提醒优先于通知 -->
+    <n-modal
+        :show="showUpdate"
+        :mask-closable="false"
+        :close-on-esc="false"
+        @update:show="onUpdateShowUpdate"
+    >
+        <div class="up-notes-dialog">
+            <h2 class="up-notes-title">发现新版本 {{ updateVersion }}</h2>
+            <p class="up-notes-content">{{ updateNotes }}</p>
+
+            <template v-if="updating">
+                <p class="up-notes-status">升级中.....</p>
+                <n-progress type="line" :percentage="progress" :show-indicator="true" />
+            </template>
+            <div v-else class="up-notes-actions">
+                <n-button v-if="!updateForce" class="up-notes-btn" @click="onCancelUpdate">取消</n-button>
+                <n-button class="up-notes-btn" type="primary" @click="onConfirmUpdate">升级</n-button>
+            </div>
+        </div>
+    </n-modal>
+
     <n-modal
         :show="show"
         :mask-closable="false"
@@ -15,13 +37,31 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch, onUnmounted } from 'vue'
-import { NModal, NButton } from 'naive-ui'
+import { NModal, NButton, NProgress } from 'naive-ui'
 import { invoke, isTauri } from '@tauri-apps/api/core'
+import { getVersion } from '@tauri-apps/api/app'
+import { check } from '@tauri-apps/plugin-updater'
+import { relaunch } from '@tauri-apps/plugin-process'
 import { useUpNotesStore, type UpNoteConfig } from '../stores/upNotes'
+
+interface UpdateConfig {
+    version: string
+    force: boolean
+    zh: string
+    en?: string
+    ja?: string
+}
 
 const upNotesStore = useUpNotesStore()
 const show = ref(false)
 const noteText = ref('')
+
+const showUpdate = ref(false)
+const updateVersion = ref('')
+const updateNotes = ref('')
+const updateForce = ref(false)
+const updating = ref(false)
+const progress = ref(0)
 
 function shouldShow(data: UpNoteConfig): boolean {
     if (!data.show) return false
@@ -54,6 +94,90 @@ async function fetchAndShowNote() {
     } catch (error) {
         console.warn('Failed to fetch up notes:', error)
     }
+}
+
+/** 检查升级，有新版本返回 true */
+async function checkAndShowUpdate(): Promise<boolean> {
+    if (!isTauri()) return false
+
+    const url = import.meta.env.VITE_UPDATE_URL
+    if (!url) return false
+
+    try {
+        const res = await fetch(url)
+        if (!res.ok) return false
+
+        const data = (await res.json()) as UpdateConfig
+        const localVersion = await getVersion()
+        if (!data.version || data.version === localVersion) return false
+
+        updateVersion.value = data.version
+        updateNotes.value = data.zh || ''
+        updateForce.value = !!data.force
+        showUpdate.value = true
+        return true
+    } catch (error) {
+        console.warn('Failed to fetch update info:', error)
+        return false
+    }
+}
+
+async function onConfirmUpdate() {
+    if (updating.value) return
+    updating.value = true
+    progress.value = 0
+
+    try {
+        const update = await check()
+        if (!update) {
+            updating.value = false
+            showUpdate.value = false
+            await fetchAndShowNote()
+            return
+        }
+
+        let downloaded = 0
+        let contentLength = 0
+
+        await update.downloadAndInstall((event) => {
+            switch (event.event) {
+                case 'Started':
+                    contentLength = event.data.contentLength ?? 0
+                    downloaded = 0
+                    progress.value = 0
+                    break
+                case 'Progress':
+                    downloaded += event.data.chunkLength
+                    if (contentLength > 0) {
+                        progress.value = Math.min(
+                            100,
+                            Math.round((downloaded / contentLength) * 100),
+                        )
+                    }
+                    break
+                case 'Finished':
+                    progress.value = 100
+                    break
+            }
+        })
+
+        await relaunch()
+    } catch (error) {
+        console.warn('Failed to update:', error)
+        updating.value = false
+    }
+}
+
+async function onCancelUpdate() {
+    if (updateForce.value || updating.value) return
+    showUpdate.value = false
+    await fetchAndShowNote()
+}
+
+function onUpdateShowUpdate(value: boolean) {
+    // 强制升级或升级中不允许关闭
+    if (!value && (updateForce.value || updating.value)) return
+    showUpdate.value = value
 }
 
 async function openUrl(url: string) {
@@ -98,8 +222,11 @@ watch(
     { immediate: true },
 )
 
-onMounted(() => {
-    fetchAndShowNote()
+onMounted(async () => {
+    const hasUpdate = await checkAndShowUpdate()
+    if (!hasUpdate) {
+        await fetchAndShowNote()
+    }
 })
 
 onUnmounted(() => {
@@ -130,5 +257,21 @@ onUnmounted(() => {
     line-height: 1.7;
     color: var(--text-secondary);
     white-space: pre-wrap;
+}
+
+.up-notes-status {
+    margin: 0 0 12px;
+    font-size: 14px;
+    color: var(--text-primary);
+    text-align: center;
+}
+
+.up-notes-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.up-notes-btn {
+    flex: 1;
 }
 </style>
