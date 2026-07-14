@@ -62,6 +62,18 @@ export default defineConfig({
             gtag('js', new Date());
             gtag('config', 'G-1NBCMY0QMB');`,
         ],
+        // Baidu Analytics
+        [
+            'script',
+            {},
+            `var _hmt = _hmt || [];
+            (function() {
+              var hm = document.createElement("script");
+              hm.src = "https://hm.baidu.com/hm.js?044d200013d860fe6cbf21a8b5d33adb";
+              var s = document.getElementsByTagName("script")[0];
+              s.parentNode.insertBefore(hm, s);
+            })();`,
+        ],
     ],
 
     sitemap: {
