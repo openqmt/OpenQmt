@@ -18,15 +18,23 @@
       <div class="about-info">
         <div class="info-row">
           <span class="info-label">官网地址</span>
-          <span class="info-value">https://www.openqmt.com</span>
+          <span
+            class="info-value info-link"
+            @click="openUrl('https://openqmt.com')"
+            >https://openqmt.com</span
+          >
+        </div>
+        <div class="info-row">
+          <span class="info-label">开源地址</span>
+          <span
+            class="info-value info-link"
+            @click="openUrl('https://github.com/openqmt/OpenQmt')"
+            >https://github.com/openqmt/OpenQmt</span
+          >
         </div>
         <div class="info-row">
           <span class="info-label">行情数据</span>
           <span class="info-value"> 互联网公开的财经数据，仅供参考 </span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">开源地址</span>
-          <span class="info-value">https://github.com/openqmt/OpenQmt</span>
         </div>
       </div>
       <p class="about-note">投资有风险，AI 分析仅供参考，不构成投资建议。</p>
@@ -84,6 +92,15 @@ async function onLogoClick() {
   logoClickTimer = setTimeout(() => {
     logoClickCount = 0;
   }, 500);
+}
+
+async function openUrl(url: string) {
+  if (!isTauri()) return;
+  try {
+    await invoke("open_url", { url });
+  } catch (e) {
+    console.warn("Failed to open url:", e);
+  }
 }
 
 onMounted(async () => {
@@ -175,6 +192,15 @@ onMounted(async () => {
 .info-value {
   color: var(--text-primary);
   text-align: right;
+}
+
+.info-link {
+  color: var(--gold-primary);
+  cursor: pointer;
+}
+
+.info-link:hover {
+  text-decoration: underline;
 }
 
 .about-note {
