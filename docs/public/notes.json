@@ -1,0 +1,27 @@
+{
+    "version": "",
+    "show": true,
+    "webShow": true,
+    "appShow": true,
+    "pub_date": "2026-07-02T04:00:09.755Z",
+    "openUrl": "",
+    "repeatShow": true,
+    "login": true,
+    "register": true,
+    "search": false,
+    "learn": false,
+    "aichat": true,
+    "aipage": true,
+    "payMethods": [
+        "wechat",
+        "code",
+        "alipay"
+    ],
+    "zh": {
+        "note": "近期有人被百度搜索出来的广告诈骗，骗子软件伪装 PakePlus 官网，并提供下载链接，但是下载后发现安装 PakePlus 需要付费！谨防诈骗",
+        "always": "PakePlus是开源软件，更多功能权限可以通过贡献代码/赞助/宣传的方式获取",
+        "contact": "遇到问题请联系客服微信/QQ：648133599"
+    },
+    "rightBtn": false,
+    "devtools": false
+}
