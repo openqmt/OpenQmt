@@ -118,7 +118,6 @@ export default defineConfig({
         activeMatch: "/guide/",
       },
       { text: "社区", link: "/community/community" },
-      { text: "下载", link: "/guide/download" },
     ],
 
     sidebar: {
